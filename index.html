@@ -1,24 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>TSSR - Notes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TSSR - Nivvlem</title>
+
+  <!-- Thème sombre -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable/dist/css/theme-simple-dark.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <div id="app">Chargement de Docsify...</div>
+  <div id="app">Chargement…</div>
 
   <script>
     window.$docsify = {
-      name: 'TSSR - Services Réseau',
+      name: 'TSSR',
       repo: '',
       loadSidebar: true,
+      loadNavbar: true,
       subMaxLevel: 2,
+      auto2top: true,
       relativePath: true,
-      homepage: 'README.md'
+      homepage: 'README.md',
+      search: {
+        maxAge: 86400000,
+        placeholder: '🔍 Rechercher...',
+        noData: 'Aucun résultat trouvé',
+        depth: 2
+      }
+      copyCode: {
+        buttonText: '📋 Copier',
+        errorText: 'Erreur',
+        successText: 'Copié !'
+      }
     };
   </script>
 
+  <!-- Docsify Core -->
   <script src="https://cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+
+  <!-- Plugin recherche -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+
+  <!-- Plugin bouton de copie dans les blocs de code -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  
 </body>
 </html>
