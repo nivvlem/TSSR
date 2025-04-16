@@ -12,7 +12,7 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <div id="app">Chargement…</div>
+  <div id="app"></div>
 
   <script>
     window.$docsify = {
@@ -28,7 +28,9 @@
         maxAge: 86400000,
         placeholder: '🔍 Rechercher...',
         noData: 'Aucun résultat trouvé',
-        depth: 2
+        depth: 4,  // Augmente cette valeur pour indexer plus de niveaux
+        paths: 'auto',  // Important pour le mode multi-page
+        hideOtherSidebarContent: false  // Permet de voir tous les résultats
       },
       copyCode: {
         buttonText: '📋 Copier',
@@ -38,14 +40,9 @@
     };
   </script>
 
-  <!-- Docsify Core -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-
-  <!-- Plugin recherche -->
+  <!-- Docsify Core + Plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-
-  <!-- Plugin bouton de copie dans les blocs de code -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code"></script>
 </body>
 </html>
