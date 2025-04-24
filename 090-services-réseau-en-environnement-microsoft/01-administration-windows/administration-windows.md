@@ -1,106 +1,124 @@
-# 📘 01 – Administration Windows
+# Administration Windows
 
-## 🖥️ Familles de systèmes
-### Systèmes clients
-Windows 11, 10, 8.1, 8, 7, Vista...
+## 🪟 Panorama Windows : client vs serveur
 
-### Systèmes serveurs
-Windows Server 2019, 2016, 2012 R2, 2008 R2…
+### Systèmes clients :
 
----
+- Windows 10, 8.1, 8, 7, Vista
+- Destinés à être utilisés en station de travail par un utilisateur
 
-## ⚙️ Éditions Windows Server
+### Systèmes serveurs :
 
-| Édition     | RAM min. | CPU       | Stockage min. | Droits de virtualisation      |
-|-------------|----------|-----------|---------------|-------------------------------|
-| Standard    | 2 Go     | 1.4 GHz   | 160 Go        | 2 VM + 1 hôte Hyper-V         |
-| Datacenter  | 2 Go     | 1.4 GHz   | 160 Go        | Illimité + 1 hôte Hyper-V     |
-| Essentials  | 2 Go     | 1.4 GHz   | 160 Go        | Pas de Hyper-V intégré        |
+- Windows Server 2008 à 2019
+- Fournissent des **services réseau, stockage, virtualisation**, etc.
 
-> ⚠️ **Attention** :
->  **CAL (Client Access License)** : certains services nécessitent des licences d'accès client supplémentaires.
-> 
-> 🔧 **Bonnes pratiques** :  
-> ✅ Privilégier **Datacenter** pour les environnements virtualisés.  
-> ✅ Vérifier les **CAL (Client Access License)** pour les services comme RDS.
+### Éditions de Windows Server :
+
+|Édition|Virtualisation|Licence|
+|---|---|---|
+|Standard|2 VM + 1 hôte Hyper-V|Licence serveur|
+|Datacenter|Illimité VM + 1 hôte Hyper-V|Licence serveur|
+|Essentials|Pas d’Hyper-V|Simplifiée|
 
 ---
 
-## 📌 Services réseau intégrés à Windows Server
+## 🔐 Rappels sur la gestion des licences
 
-| Service                  | Description                                                   |
-| ------------------------ | ------------------------------------------------------------- |
-| Active Directory (AD DS) | Gestion des utilisateurs, ordinateurs, politiques             |
-| AD FS / RMS / CS         | Services d'identité, de droits et de certificats (hors cours) |
-| DHCP / DNS               | Gestion d'adresses IP et résolution de noms                   |
-| Hyper-V                  | Virtualisation (machines virtuelles)                          |
-| WDS / WSUS               | Déploiement OS et mises à jour centralisées                   |
+- La **licence client** permet d’installer le SE
+- Les **CAL (Client Access License)** permettent l’accès à certains services (ex : RDS)
+- L’accès à un rôle ou service peut nécessiter une licence complémentaire
 
 ---
 
-## 🛠️ Installation et gestion
+## 🧰 Services réseau intégrés à Windows Server
 
-- **Types d’installation** :
-  - Server Core : interface minimaliste (ligne de commande)
-  - Avec interface graphique (GUI)
->🔧 **Bonnes pratiques** :  
->✅ Utiliser **PowerShell** pour les installations automatisées (ex : `Install-WindowsFeature`)
+|Service|Fonction principale|
+|---|---|
+|Active Directory DS|Gestion centralisée des identités et des ressources|
+|AD CS / AD FS / RMS|PKI, fédération, gestion des droits (non abordés ici)|
+|DNS / DHCP|Résolution de noms / Attribution automatique d’IP|
+|Hyper-V|Virtualisation native|
+|WDS / WSUS|Déploiement / gestion des mises à jour Microsoft|
 
-- **Outils d’administration** :
-  - Gestionnaire de serveur
-  - PowerShell
-  - `diskmgmt.msc`, `diskpart`
-
----
-
-## 💾 Gestion du stockage
-
-### 1. Tables de partition
-- **MBR** (ancien) : 4 partitions primaires max
-- **GPT** (moderne) : meilleur support UEFI + tolérance de panne
->🔧 **Bonnes pratiques** :  
->✅ **Préférer GPT** sur disques récents (SSD/UEFI
-
-### 2. Types de disques
-- **De base** : partitions simples
->⚠️ **Attention** : limité à 4 partitions principales
-- **Dynamiques** : volumes étendus, RAID logiciel possible
-
-### 3. Volumes RAID
-
-| Type                  | RAID | Caractéristiques                                  |
-|-----------------------|------|---------------------------------------------------|
-| Volume agrégé par bandes | 0    | Performances ++, pas de tolérance de panne       |
-| Volume en miroir         | 1    | Données copiées sur 2 disques                    |
-| Volume avec parité       | 5    | 3 disques min, bon compromis sécurité/coût       |
->🔧 **Bonnes pratiques** :
-> ✅ Utiliser **RAID-1 ou RAID-5** pour les données critiques  
+> 📌 Ces services peuvent être ajoutés depuis le **Gestionnaire de serveur** ou via PowerShell
 
 ---
 
-## 🧩 Formatage et systèmes de fichiers
+## 🖥️ Installation et modes de Windows Server
 
-| Système  | Avantages | Inconvénients | Cas d'usage typique |
-|----------|-----------|---------------|---------------------|
-| **NTFS** | ✅ Sécurité avancée (ACL, chiffrement EFS)<br>✅ Journalisation intégrée<br>✅ Taille max fichier : 16 To<br>✅ Compression/quotas disque | ❌ Performances inférieures à ReFS sur très gros volumes<br>❌ Fragmentation possible | Serveurs de fichiers<br>Volumes système (OS)<br>Bases de données |
-| **ReFS** | ✅ Résilience (vérification auto des corruptions)<br>✅ Performances élevées avec Storage Spaces<br>✅ Taille max fichier : 35 To | ❌ Incompatible avec BitLocker/démarrage OS<br>❌ Nécessite Windows Server 2016+ | Hyper-V (fichiers VHDX)<br>Stockage en cluster (SAN) |
-| **FAT32** | ✅ Compatible avec tous les OS<br>✅ Léger et simple | ❌ Taille max fichier : 4 Go<br>❌ Pas de permissions ni journalisation | Clés USB/disques externes<br>Appareils embarqués |
->🔧 **Bonnes pratiques** :  
-✅ **Toujours utiliser NTFS** pour les volumes avec gestion de droits  
+### Deux modes d’installation :
+
+- **Server Core** (sans GUI) : plus sécurisé, plus léger
+- **Installation avec interface graphique** (GUI) : plus conviviale
+
+### Ajout de rôles/fonctionnalités :
+
+- Via **Gestionnaire de serveur**
+- Via PowerShell avec `Install-WindowsFeature`
+
+### Outils d’administration :
+
+- Gestionnaire de serveur
+- Consoles MMC
+- CMD, PowerShell, Server Manager
 
 ---
 
-## 🔧 Bonnes pratiques
+## 💾 Gestion du stockage et du RAID
 
-1. **Sécurité** :  
-   - Activer le chiffrement BitLocker pour les volumes sensibles.  
-   - Utiliser **AGDLP** (Comptes → Groupes Globaux → DL → Permissions) pour gérer les accès.  
+### Types de table de partition :
 
-2. **Sauvegarde** :  
-   - Planifier des sauvegardes régulières avec **Windows Server Backup** ou Veeam.  
+|Format|Caractéristiques principales|
+|---|---|
+|MBR|Ancien format, limité à 2 To et 4 partitions primaires max|
+|GPT|Moderne, supporte plus de 128 partitions, meilleure tolérance|
 
-3. **Monitoring** :  
-   - Configurer des alertes **WSUS** pour les mises à jour critiques.  
+### Types de disque :
 
-4. **Documentation** :  
-   - Maintenir un journal des modifications (ex: dates d'installation, configurations RAID).
+|Type|Description|
+|---|---|
+|De base|Données stockées dans des partitions|
+|Dynamique|Permet volumes RAID, volumes étendus, fractionnés, etc.|
+
+### Types de volumes et RAID :
+
+|Type|Description|Tolérance panne|
+|---|---|---|
+|Volume simple|Données sur une partition unique|Non|
+|Volume fractionné|Données réparties entre plusieurs disques|Non|
+|RAID 0 (Bandes)|Performances accrues, aucune redondance|Non|
+|RAID 1 (Miroir)|Données dupliquées sur 2 disques|Oui|
+|RAID 5 (Bandes avec parité)|Données réparties + parité sur ≥3 disques|Oui|
+
+> 📌 Le RAID est géré via **Disk Management**, `diskpart`, ou PowerShell
+
+---
+
+## ⚙️ Formatage et systèmes de fichiers
+
+|Système de fichiers|Utilisation recommandée|
+|---|---|
+|FAT32|Ancien, compatible mais limité (4 Go max)|
+|NTFS|Standard Windows, sécurisé|
+|ReFS|Utilisé pour les espaces de stockage|
+
+---
+
+## ✅ À retenir pour les révisions
+
+- Windows Server se décline en plusieurs **éditions**, avec des rôles, services et limitations différents
+- Les **rôles** (AD DS, DNS, DHCP…) sont activés via le gestionnaire de serveur ou PowerShell
+- Le **stockage** doit être anticipé : GPT pour les gros volumes, disques dynamiques pour RAID
+- Le **RAID logiciel** offre des solutions de performance ou de tolérance à la panne sans matériel dédié
+
+---
+
+## 📌 Bonnes pratiques professionnelles
+
+|Pratique|Pourquoi ?|
+|---|---|
+|Préférer Server Core quand possible|Moins d’exposition, moins de ressources|
+|Documenter chaque ajout de rôle/fonction|Traçabilité et auditabilité|
+|Choisir GPT pour tous les nouveaux disques|Compatibilité UEFI, meilleure tolérance aux pannes|
+|Isoler les disques système / données|Sécurité et facilité de maintenance|
+|Tester en VM avant déploiement physique|Éviter les erreurs irréversibles|

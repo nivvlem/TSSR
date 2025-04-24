@@ -1,116 +1,119 @@
-# Administration Windows Server
+# TP 1 & 2 – Installation, configuration initiale et gestion du stockage
 
-## 🧱 1. Installation de Windows Server
+## ✅ TP 1
 
-### Prérequis
-- Image ISO de Windows Server (ex. : `en_windows_server_2019_x64.iso`)
-- Logiciel de virtualisation (VMware Workstation, VirtualBox...)
-- Minimum 1 disque dur virtuel configuré
-- Accès à un clavier, souris, et un affichage graphique
+### 🔹 Création des modèles
 
-### Étapes principales
-1. **Création de la VM**
-   - Attribuer un nom, définir la RAM (ex. 4 Go), CPU (2 cœurs), disque virtuel (ex. 40 Go).
-2. **Démarrage de la VM**
-   - Boot sur l’ISO.
-   - Appuyer sur une touche pour lancer l’installation.
+- Créer deux VM :
+    - `VM_Modele_2019` avec Windows Server 2019, 2 Go RAM, 32 Go HDD
+    - `VM_Modele_W10` avec Windows 10, 2 Go RAM, 32 Go HDD
+- Réseau configuré en **mode bridge**
 
-3. **Configuration initiale**
-   - Langue : Anglais (installation)
-   - Clavier : Français
-   - Fuseau horaire : Paris
+### 🔹 Installation et configuration initiale
 
-4. **Choix de l'édition**
-   - Ex. : Windows Server 2019 Standard (Desktop Experience)
+- Installer Windows + mises à jour
+- Installer **VMware Tools**
+- Exécuter `sysprep /oobe /generalize /shutdown` dans `C:\Windows\System32\Sysprep`
+- Éteindre les VM et créer un **groupe de modèles** dans VMware
 
-5. **Type d’installation**
-   - Choix : `Custom: Install Windows only (advanced)`
+### 🔹 Clonage des VM
 
-6. **Installation**
-   - Choix du disque, validation de la licence, début de l’installation.
+- Cloner en VM complète :
+    - `W19-CD1` et `W19-SRV1` à partir de `VM_Modele_2019`
+    - `W10-CLI1` à partir de `VM_Modele_W10`
 
-7. **Post-installation**
-   - Définition du mot de passe administrateur
-   - Connexion à la session (`Ctrl + Alt + Inser`)
+### 🔹 Plan d’adressage IP statique :
 
-8. **VMware Tools (optionnel mais recommandé)**
-   - Ajout du presse-papier, glisser-déposer...
-   - Nécessite un redémarrage
+```plaintext
+W19-CD1    → 172.28.10.1
+W19-SRV1   → 172.28.10.2
+W10-CLI1   → 172.28.10.11
+Masque     → 255.255.0.0
+Passerelle → (facultative dans ce cas)
+DNS        → 127.0.0.1 (ou adresse AD si déployé ultérieurement)
+```
 
----
+### 🔹 Installation des rôles (graphiquement ou PowerShell)
 
-## 🧰 2. Ajout de rôles et de fonctionnalités
+```powershell
+Install-WindowsFeature -Name Web-Server, Windows-Server-Backup -IncludeManagementTools
+```
 
-### Objectif
-Configurer le serveur avec des services utiles (ex. : WDS, sauvegarde…).
+- Tester IIS dans un navigateur local (`http://localhost`) ou distant (`http://172.28.10.2`)
 
-### Étapes
-1. **Lancement du gestionnaire de serveur**
-   - Le Server Manager démarre automatiquement à la connexion.
+### 🔹 Activer le Bureau à distance (graphique ou PowerShell)
 
-2. **Ajout de rôles**
-   - Menu `Gérer > Ajouter des rôles et fonctionnalités`
-   - Choix du serveur local
-   - Exemple : `Windows Deployment Services (WDS)`
-   - Ajout automatique des dépendances si nécessaire
+```powershell
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+```
 
-3. **Ajout de fonctionnalités**
-   - Ex. : `Windows Server Backup`
-
-4. **Options supplémentaires**
-   - Redémarrage automatique du serveur si requis
-   - Suivi de l’installation jusqu’à la fin
+- Connexion : `mstsc /v:172.28.10.2`
 
 ---
 
-## 💾 3. Gestion du stockage & disques
+## ✅ TP 2
 
-### Objectif
-Gérer les volumes, partitions, RAID logiciels depuis l'interface Windows.
+### 🔹 Préparation
 
-### Étapes
+- Ajouter 3 disques SCSI de 10 Go à `W19-SRV1` dans VMware
 
-#### 🧩 Ajout de disques
-- Depuis VMware : ajout de 3 disques de 20 Go
-- Vérification dans la configuration matérielle de la VM
+### 🔹 Créer les volumes via **Gestion des disques**
 
-#### ⚙️ Mise en ligne et initialisation
-- Accès via `Server Manager > Tools > Computer Management > Disk Management`
-- Mise en ligne des disques
-- Initialisation en GPT
+#### 1. Volume RAID-5 – lecteur D:
 
-#### 📁 Types de volumes
+- Convertir les 3 disques en **disques dynamiques**
+- Créer un **volume RAID-5** sur les 3 disques → Lettre `D:`
+- Nom : "Données"
 
-| Type | Nom | Disques | Description |
-|------|-----|---------|-------------|
-| Volume fractionné | Volume Fractionné (F:) | 2 | Combine plusieurs disques, non redondant |
-| RAID 0 | RAID0 (G:) | 2 | Performances ↑, mais sans tolérance de panne |
-| RAID 1 | RAID1 (H:) | 2 | Miroir (tolérance de panne ↑, stockage ÷ 2) |
-| RAID 5 | RAID5 (E:) | 3 | Performances et redondance avec parité |
+#### 2. Volume miroir – montage C:\INFO-TOOLS
 
-#### 🔄 Vérification
-- Vérification visuelle des volumes dans le gestionnaire de disques
-- Formatage avec étiquette (label) de volume
+- Choisir 2 disques
+- Créer un **volume en miroir (RAID-1)**
+- Monter dans le dossier `C:\INFO-TOOLS` (créez le dossier au préalable)
 
----
+#### 3. Volume optimisé RAID-0 – lecteur E:
 
-## 🧠 Synthèse
+- Sélectionner 2 autres disques non utilisés précédemment
+- Créer un volume **RAID-0** (agrégation de bandes) → Lettre `E:`
 
-| Étape | Action principale | Objectif |
-|-------|-------------------|----------|
-| 1. Installation | Déployer le système | Base du serveur |
-| 2. Rôles | Ajouter des services | Rendre le serveur utile |
-| 3. Stockage | Gérer les volumes | Organiser les données |
+### 🔹 Vérification en PowerShell :
 
----
+```powershell
+Get-Volume | Select DriveLetter, FileSystemLabel, SizeRemaining, HealthStatus
+```
 
-## 📌 Bonnes pratiques
-- Toujours prendre des **instantanés de VM (snapshots)** avant des opérations sensibles
-- Choisir la **version Desktop Experience** si interface graphique nécessaire
-- Préférer l’**initialisation GPT** pour les disques > 2 To ou futurs RAID
-- Documenter chaque étape pour reproductibilité (comme ici 😉)
+### 🔹 Simulation de panne
+
+- Supprimer un disque dans VMware
+- Observer le comportement des volumes dans la gestion des disques :
+    - RAID-5 → toujours lisible ✅
+    - RAID-1 → lisible ✅
+    - RAID-0 → inaccessible ❌
+
+### 🔹 Réparation du RAID-5
+
+- Ajouter un nouveau disque de 10 Go
+- Convertir en dynamique
+- Étendre le volume RAID-5 pour inclure le nouveau disque via GUI
 
 ---
 
-## 🔗 Aller plus loin
-- [Documentation Microsoft Windows Server](https://learn.microsoft.com/fr-fr/windows-server/)
+## 🧠 À retenir pour les révisions
+
+- Clonage depuis un modèle sysprepé = gain de temps, homogénéité
+- Toujours tester les rôles installés immédiatement (ex : IIS via navigateur)
+- Préférer les disques dynamiques pour RAID logiciel
+- RAID-5 tolère 1 panne, RAID-1 aussi, RAID-0 **aucune**
+
+---
+
+## 📌 Bonnes pratiques professionnelles
+
+|Pratique|Pourquoi ?|
+|---|---|
+|Cloner à partir de modèles Sysprepés|Gain de temps, cohérence, flexibilité|
+|Affecter des IPs statiques documentées|Meilleure lisibilité réseau, pas de conflit DHCP|
+|Toujours tester le service post-install|Valider la configuration avant intégration dans un SI|
+|Utiliser la GUI pour RAID complexe|Moins d’erreurs pour des manipulations critiques|
+|Utiliser PowerShell pour l’automatisation|Permet l’industrialisation du déploiement|
