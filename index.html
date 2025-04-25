@@ -14,36 +14,76 @@
   <!-- Favicon -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-  <style>
-    /* Lien Accueil */
-    [href="#/"] {
-      background: #2c3e50;
-      padding: 8px 12px;
-      border-radius: 4px;
-      color: white;
-      text-decoration: none;
-    }
+<style>
+  body {
+    background-color: #1e1e1e;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
 
-    /* Style des titres déroulants (summary) */
-    details summary {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #4fd1c5;
-      cursor: pointer;
-      padding: 6px;
-      list-style: none;
-    }
+  /* Lien Accueil */
+  [href="#/"] {
+    background: #3a3f4b;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+  }
 
-    /* Hover sur les summary */
-    details summary:hover {
-      color: #38b2ac;
-    }
+  /* Sidebar background */
+  .sidebar {
+    background-color: #1a1d23;
+    color: #dcdcdc;
+  }
 
-    /* Enlever le triangle par défaut de certains navigateurs */
-    details summary::-webkit-details-marker {
-      display: none;
-    }
-  </style>
+  /* Sidebar titre repliable */
+  details summary {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: #8be9fd;
+    cursor: pointer;
+    padding: 6px;
+    list-style: none;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  details summary:hover {
+    color: #50fa7b;
+  }
+
+  /* Flèche ➤ / ▼ */
+  details summary::before {
+    content: "➤";
+    position: absolute;
+    left: -1em;
+    transition: transform 0.3s ease;
+  }
+
+  details[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  /* Liens de la sidebar */
+  .sidebar ul li a {
+    color: #8be9fd;
+    text-decoration: none;
+    font-weight: normal;
+  }
+
+  .sidebar ul li a:hover {
+    color: #50fa7b;
+    font-weight: bold;
+  }
+
+  /* Icônes emojis dans sidebar */
+  .sidebar li {
+    font-size: 0.95em;
+    padding-left: 0.5em;
+  }
+</style>
 </head>
 <body>
   <div id="app">
