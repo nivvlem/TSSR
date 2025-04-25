@@ -16,10 +16,10 @@
 
 <style>
   body {
-    background-color: #1e1e1e;
+    background-color: #1e1e2e;
     font-family: 'Segoe UI', 'Roboto', sans-serif;
     font-size: 15px;
-    line-height: 1.6;
+    color: #dcd7ba;
   }
 
   /* Lien Accueil */
@@ -29,59 +29,67 @@
     border-radius: 4px;
     color: #ffffff;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 500;
   }
 
-  /* Sidebar background */
+  /* Sidebar */
   .sidebar {
-    background-color: #1a1d23;
-    color: #dcdcdc;
+    background-color: #1b1d25;
   }
 
-  /* Sidebar titre repliable */
+  .sidebar ul li a {
+    color: #c586c0;
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  .sidebar ul li a:hover {
+    color: #d4bfff;
+  }
+
+  /* Titres déroulants */
   details summary {
-    font-size: 1.05em;
-    font-weight: 600;
-    color: #8be9fd;
+    font-size: 1em;
+    font-weight: 500;
+    color: #d4bfff;
     cursor: pointer;
-    padding: 6px;
+    padding: 6px 0;
+    position: relative;
     list-style: none;
     transition: color 0.2s ease;
-    position: relative;
   }
 
   details summary:hover {
-    color: #50fa7b;
+    color: #ffffff;
   }
 
-  /* Flèche ➤ / ▼ */
+  /* Triangle ➤ / ▼ animé */
   details summary::before {
     content: "➤";
     position: absolute;
     left: -1em;
     transition: transform 0.3s ease;
+    color: #c586c0;
   }
 
   details[open] summary::before {
     transform: rotate(90deg);
   }
 
-  /* Liens de la sidebar */
-  .sidebar ul li a {
-    color: #8be9fd;
-    text-decoration: none;
-    font-weight: normal;
-  }
-
-  .sidebar ul li a:hover {
-    color: #50fa7b;
-    font-weight: bold;
-  }
-
-  /* Icônes emojis dans sidebar */
-  .sidebar li {
+  /* Blocs code + inline code */
+  code {
+    background-color: #2d3142;
+    color: #81a1c1;
+    border-radius: 4px;
+    padding: 2px 4px;
     font-size: 0.95em;
-    padding-left: 0.5em;
+  }
+
+  pre {
+    background-color: #2d3142 !important;
+    border-radius: 6px;
+    padding: 1em;
+    overflow-x: auto;
   }
 </style>
 </head>
