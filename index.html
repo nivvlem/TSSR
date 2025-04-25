@@ -15,16 +15,17 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
 <style>
+  /* Fond de page et police */
   body {
-    background-color: #1e1e2e;
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    background-color: #1e1e20;
+    color: #dcdcdc;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
     font-size: 15px;
-    color: #dcd7ba;
   }
 
-  /* Lien Accueil */
+  /* Lien Accueil fixe */
   [href="#/"] {
-    background: #3a3f4b;
+    background: #2a2a2d;
     padding: 8px 12px;
     border-radius: 4px;
     color: #ffffff;
@@ -34,64 +35,70 @@
 
   /* Sidebar */
   .sidebar {
-    background-color: #1b1d25;
+    background-color: #1c1c1e;
+    color: #dcdcdc;
   }
 
   .sidebar ul li a {
-    color: #c586c0;
-    font-weight: 400;
+    color: #8caaee;
     text-decoration: none;
   }
 
   .sidebar ul li a:hover {
-    color: #d4bfff;
+    color: #a6d189;
   }
 
-  /* Titres déroulants */
+  /* Titre repliables (summary) */
   details summary {
     font-size: 1em;
     font-weight: 500;
-    color: #d4bfff;
+    color: #e5c07b;
     cursor: pointer;
     padding: 6px 0;
     position: relative;
     list-style: none;
-    transition: color 0.2s ease;
   }
 
-  details summary:hover {
-    color: #ffffff;
-  }
-
-  /* Triangle ➤ / ▼ animé */
   details summary::before {
-    content: "➤";
+    content: "▶";
     position: absolute;
     left: -1em;
+    color: #8caaee;
     transition: transform 0.3s ease;
-    color: #c586c0;
   }
 
   details[open] summary::before {
     transform: rotate(90deg);
   }
 
-  /* Blocs code + inline code */
+  /* Code inline */
   code {
-    background-color: #2d3142;
-    color: #81a1c1;
+    background-color: #2e2e30;
+    color: #c6d0f5;
     border-radius: 4px;
     padding: 2px 4px;
+    font-family: monospace;
     font-size: 0.95em;
   }
 
+  /* Blocs de code */
   pre {
-    background-color: #2d3142 !important;
+    background-color: #2e2e30 !important;
+    color: #c6d0f5;
     border-radius: 6px;
     padding: 1em;
     overflow-x: auto;
   }
+
+  /* Blocs info/alertes si tu utilises ::: tip etc. */
+  .markdown-section blockquote {
+    background-color: #232326;
+    border-left: 3px solid #8caaee;
+    padding: 0.5em 1em;
+    color: #c0c0c0;
+  }
 </style>
+
 </head>
 <body>
   <div id="app">
