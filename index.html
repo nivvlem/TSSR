@@ -15,13 +15,34 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
   <style>
-  [href="#/"] {
-    background: #2c3e50;
-    padding: 8px 12px;
-    border-radius: 4px;
-    color: white;
-    text-decoration: none;
-  }
+    /* Lien Accueil */
+    [href="#/"] {
+      background: #2c3e50;
+      padding: 8px 12px;
+      border-radius: 4px;
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Style des titres déroulants (summary) */
+    details summary {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #4fd1c5;
+      cursor: pointer;
+      padding: 6px;
+      list-style: none;
+    }
+
+    /* Hover sur les summary */
+    details summary:hover {
+      color: #38b2ac;
+    }
+
+    /* Enlever le triangle par défaut de certains navigateurs */
+    details summary::-webkit-details-marker {
+      display: none;
+    }
   </style>
 </head>
 <body>
