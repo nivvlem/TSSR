@@ -65,9 +65,9 @@
 <details>
 <summary>🧪 MSP Services Réseau</summary>
 
-- [Analyse](/120-mise-en-situation-professionnelle-services-réseau/01-analyse/analyse.md)
-- [Architecture](/120-mise-en-situation-professionnelle-services-réseau/02-architecture/architecture.md)
-- [Serveurs](/120-mise-en-situation-professionnelle-services-réseau/03-serveurs/serveurs.md)
+- [Analyse](/120-mise-en-situation-professionnelle-services-réseau/01-analyse.md)
+- [Architecture](/120-mise-en-situation-professionnelle-services-réseau/02-architecture.md)
+- [Serveurs](/120-mise-en-situation-professionnelle-services-réseau/03-serveurs.md)
 - [Clients](/120-mise-en-situation-professionnelle-services-réseau/04-clients.md)
 - [Services DHCP & DNS](/120-mise-en-situation-professionnelle-services-réseau/05-services-dhcp-dns.md)
 - [Domaine AD](/120-mise-en-situation-professionnelle-services-réseau/06-domaine-ad.md)
