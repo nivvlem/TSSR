@@ -1,7 +1,7 @@
-- [🏠 Accueil](/README.md)
+#### [🏠 Accueil](/README.md)
 
 <details>
-<summary>📚 <b>Microsoft 365</b></summary>
+<summary>📚 Microsoft 365</summary>
 
 - [Découverte](/010-microsoft365/01-découverte/découverte.md)
 - [Word](/010-microsoft365/02-word/word.md)
@@ -12,7 +12,7 @@
 </details>
 
 <details>
-<summary>🌐 <b>Base des réseaux</b></summary>
+<summary>🌐 Base des réseaux</summary>
 
 - [Modèle OSI](/020-base-des-réseaux/01-modèle-osi/modèle-osi.md)
 - [Unités informatiques](/020-base-des-réseaux/02-unités-informatiques/unités-informatiques.md)
@@ -24,7 +24,7 @@
 </details>
 
 <details>
-<summary>🛠️ <b>Services réseau Microsoft</b></summary>
+<summary>🛠️ Services réseau Microsoft</summary>
 
 - [Administration Windows](/090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
     - [🛠 Exemple](/090-services-réseau-en-environnement-microsoft/01-administration-windows/exemple-pratique.md)
@@ -43,7 +43,7 @@
 </details>
 
 <details>
-<summary>🐧 <b>Services réseau Linux</b></summary>
+<summary>🐧 Services réseau Linux</summary>
 
 - [Introduction](/100-services-réseau-en-environnement-linux/01-introduction/introduction.md)
 - [Adressage réseau](/100-services-réseau-en-environnement-linux/02-adressage-réseau/adressage-réseau.md)
@@ -63,7 +63,7 @@
 </details>
 
 <details>
-<summary>🧪 <b>MSP Services Réseau</b></summary>
+<summary>🧪 MSP Services Réseau</summary>
 
 - [Analyse](/120-mise-en-situation-professionnelle-services-réseau/01-analyse/analyse.md)
 - [Architecture](/120-mise-en-situation-professionnelle-services-réseau/02-architecture/architecture.md)
@@ -81,7 +81,7 @@
 </details>
 
 <details>
-<summary>🐚 <b>Scripting Bash</b></summary>
+<summary>🐚 Scripting Bash</summary>
 
 - [Analyse](/130-initiation-au-scripting-bash/01-analyse/analyse.md)
     - [🛠 Exemple](/130-initiation-au-scripting-bash/01-analyse/exemple-pratique.md)
@@ -104,7 +104,7 @@
 </details>
 
 <details>
-<summary>⚡ <b>PowerShell</b></summary>
+<summary>⚡ PowerShell</summary>
 
 - [Présentation](/140-initiation-à-powershell/01-présentation/présentation.md)
     - [🛠 Exemple](/140-initiation-à-powershell/01-présentation/exemple-pratique.md)
