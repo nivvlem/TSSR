@@ -70,7 +70,7 @@ done
 
 ---
 
-## 📚 4. Boucle `for`
+## 📚 Boucle `for`
 
 ### Boucle sur une **liste de valeurs** :
 

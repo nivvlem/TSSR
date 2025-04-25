@@ -92,7 +92,7 @@ $TTL 86400
 
 ---
 
-## 🔁 4. Zone secondaire (slave)
+## 🔁 Zone secondaire (slave)
 
 ### 🔹 Configuration sur le serveur secondaire
 

@@ -31,7 +31,7 @@ Il remplace la gestion manuelle par le fichier `hosts` local, tout en permettant
 
 ---
 
-## 🛠️ 3. Installation du rôle DNS
+## 🛠️ Installation du rôle DNS
 
 ### 🔹 Via l’interface graphique
 

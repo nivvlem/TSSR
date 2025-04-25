@@ -59,7 +59,7 @@ Syntaxe stricte à respecter :
 
 ---
 
-## 🎨 3. Coloriser les sorties
+## 🎨 Coloriser les sorties
 
 ### ➤ Codes ANSI pour les couleurs
 

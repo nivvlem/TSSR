@@ -105,7 +105,7 @@ hostnamectl set-hostname srv1
 
 ---
 
-## 🧩 5. Client DNS
+## 🧩 Client DNS
 
 ### 🔹 Méthodes de configuration
 
