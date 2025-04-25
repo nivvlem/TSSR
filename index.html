@@ -8,7 +8,7 @@
   <!-- Thème sombre Docsify -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable/dist/css/theme-simple-dark.css">
 
-  <!-- Thème Prism.js (coloration syntaxique) -->
+  <!-- Thème Prism.js (coloration syntaxique foncée) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
 
   <!-- Favicon -->
@@ -29,6 +29,7 @@
     <a href="#/" style="position: fixed; top: 10px; right: 10px; z-index: 100;">🏠 Accueil</a>
   </div>
 
+  <!-- Configuration Docsify -->
   <script>
     window.$docsify = {
       name: 'TSSR',
@@ -60,10 +61,21 @@
   <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code"></script>
 
-  <!-- Prism.js Core + Langages -->
+  <!-- Prism.js Core -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <!-- Langages supplémentaires -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-powershell.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+
+  <!-- Forcer la coloration Prism si nécessaire -->
+  <script>
+    window.$docsify = window.$docsify || {};
+    window.$docsify.plugins = [].concat(function(hook) {
+      hook.doneEach(function() {
+        Prism.highlightAll();
+      });
+    }, window.$docsify.plugins || []);
+  </script>
 </body>
 </html>
