@@ -57,7 +57,7 @@ Get-Command -Verb Get
 
 ---
 
-## 📚 4. Aide intégrée avec `Get-Help`
+## 📚 Aide intégrée avec `Get-Help`
 
 - Obtenir l’aide sur une commande :
 
