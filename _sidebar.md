@@ -24,6 +24,38 @@
 </details>
 
 <details>
+<summary>🪟 Systèmes clients Microsoft</summary>
+
+- [Systèmes d’exploitation](/030-systèmes-clients-microsoft/01-systèmes-d’exploitation/systèmes-d’exploitation.md)
+- [Installation](/030-systèmes-clients-microsoft/02-installation/installation.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/02-installation/exemple-pratique.md)
+- [Interagir avec Windows](/030-systèmes-clients-microsoft/03-interagir-avec-windows/interagir-avec-windows.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/03-interagir-avec-windows/exemple-pratique.md)
+- [Gestion stockage](/030-systèmes-clients-microsoft/04-gestion-stockage/gestion-stockage.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/04-gestion-stockage/exemple-pratique.md)
+- [Utilisateurs et groupes](/030-systèmes-clients-microsoft/05-utilisateurs-et-groupes/utilisateurs-et-groupes.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/05-utilisateurs-et-groupes/exemple-pratique.md)
+- [Sécurité NTFS et ACL](/030-systèmes-clients-microsoft/06-sécurité-ntfs-et-acl/sécurité-ntfs-et-acl.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/06-sécurité-ntfs-et-acl/exemple-pratique.md)
+- [Gestion réseau et pare-feu](/030-systèmes-clients-microsoft/07-gestion-réseau-et-pare-feu/gestion-réseau-et-pare-feu.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/07-gestion-réseau-et-pare-feu/exemple-pratique.md)
+- [Partage de ressources](/030-systèmes-clients-microsoft/08-partage-de-ressources/partage-de-ressources.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/08-partage-de-ressources/exemple-pratique.md)
+- [Pilotes et imprimantes](/030-systèmes-clients-microsoft/09-pilotes-et-mprimantes/pilotes-et-mprimantes.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/09-pilotes-et-mprimantes/exemple-pratique.md)
+- [Maintenance système](/030-systèmes-clients-microsoft/10-maintenance-système/maintenance-système.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/10-maintenance-système/exemple-pratique.md)
+- [Plus loin avec PowerShell](/030-systèmes-clients-microsoft/11-plus-loin-avec-powershell/plus-loin-avec-powershell.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/11-plus-loin-avec-powershell/exemple-pratique.md)
+- [Capture et déploiement d’image](/030-systèmes-clients-microsoft/12-introduction-capture-et-déploiement-d’image/introduction-capture-et-déploiement-d’image.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/12-introduction-capture-et-déploiement-d’image/exemple-pratique.md)
+- [Stratégies groupe local](/030-systèmes-clients-microsoft/13-stratégies-groupe-local/stratégies-groupe-local.md)
+    - [🛠 Exemple](/030-systèmes-clients-microsoft/13-stratégies-groupe-local/exemple-pratique.md)
+- [🧾 Synthèse](/030-systèmes-clients-microsoft/synthèse/synthèse.md)
+
+</details>
+
+<details>
 <summary>🛠️ Services réseau Microsoft</summary>
 
 - [Administration Windows](/090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
@@ -119,5 +151,41 @@
 - [Pour aller plus loin](/140-initiation-à-powershell/06-pour-aller-plus-loin/pour-aller-plus-loin.md)
     - [🛠 Exemple](/140-initiation-à-powershell/06-pour-aller-plus-loin/exemple-pratique.md)
 - [🧾 Synthèse](/140-initiation-à-powershell/synthèse/synthèse.md)
+
+</details>
+
+<details>
+<summary>🧱 Virtualisation de serveurs</summary>
+
+- [Présentation](/110-virtualisation-de-serveurs/01-présentation/présentation.md)
+- [Applications sur poste de travail](/110-virtualisation-de-serveurs/02-applications-sur-poste-de-travail/applications-sur-poste-de-travail.md)
+    - [🛠 Exemple](/110-virtualisation-de-serveurs/02-applications-sur-poste-de-travail/exemple-pratique.md)
+- [Virtualisation des serveurs](/110-virtualisation-de-serveurs/03-virtualisation-des-serveurs/virtualisation-des-serveurs.md)
+- [Découverte d’Hyper-V](/110-virtualisation-de-serveurs/04-découverte-d’hyper-v/découverte-d’hyper-v.md)
+    - [🛠 Exemple](/110-virtualisation-de-serveurs/04-découverte-d’hyper-v/exemple-pratique.md)
+- [Composantes vSphere](/110-virtualisation-de-serveurs/05-composantes-infrastructure-vsphere/composantes-infrastructure-vsphere.md)
+    - [🛠 Exemple](/110-virtualisation-de-serveurs/05-composantes-infrastructure-vsphere/exemple-pratique.md)
+- [Gestion réseau](/110-virtualisation-de-serveurs/06-gestion-réseau/gestion-réseau.md)
+    - [🛠 Exemple](/110-virtualisation-de-serveurs/06-gestion-réseau/exemple-pratique.md)
+- [Gestion stockage](/110-virtualisation-de-serveurs/07-gestion-stockage/gestion-stockage.md)
+    - [🛠 Exemple](/110-virtualisation-de-serveurs/07-gestion-stockage/exemple-pratique.md)
+- [Gestion datacenter](/110-virtualisation-de-serveurs/08-gestion-datacenter/gestion-datacenter.md)
+    - [🛠 Exemple](/110-virtualisation-de-serveurs/08-gestion-datacenter/exemple-pratique.md)
+- [🧾 Synthèse](/110-virtualisation-de-serveurs/synthèse/synthèse.md)
+
+</details>
+
+<details>
+<summary>💾 Sauvegarde et restauration</summary>
+
+- [Concepts, enjeux et définitions](/145-sauvegarde-et-restauration/01-concept-enjeux-définition/concept-enjeux-définition.md)
+    - [🛠 Exemple](/145-sauvegarde-et-restauration/01-concept-enjeux-définition/exemple-pratique.md)
+- [Types de sauvegarde](/145-sauvegarde-et-restauration/02-types-de-sauvegarde/types-de-sauvegarde.md)
+    - [🛠 Exemple](/145-sauvegarde-et-restauration/02-types-de-sauvegarde/exemple-pratique.md)
+- [Gestion stockage](/145-sauvegarde-et-restauration/03-gestion-stockage/gestion-stockage.md)
+    - [🛠 Exemple](/145-sauvegarde-et-restauration/03-gestion-stockage/exemple-pratique.md)
+- [Redondance / RAID](/145-sauvegarde-et-restauration/04-redondance-données-raid/redondance-données-raid.md)
+    - [🛠 Exemple](/145-sauvegarde-et-restauration/04-redondance-données-raid/exemple-pratique.md)
+- [🧾 Synthèse](/145-sauvegarde-et-restauration/synthèse/synthèse.md)
 
 </details>

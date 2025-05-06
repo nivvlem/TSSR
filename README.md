@@ -24,6 +24,21 @@ Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques
   - [Premières commandes](020-base-des-réseaux/05-premières-commandes/premières-commandes.md)
   - [Adressage IPv6](020-base-des-réseaux/06-adressage-ipv6/adressage-ipv6.md)
 
+- [Systèmes clients Microsoft](#030---systèmes-clients-microsoft)
+  - [Systèmes d’exploitation](030-systèmes-clients-microsoft/01-systèmes-d’exploitation/systèmes-d’exploitation.md)
+  - [Installation](030-systèmes-clients-microsoft/02-installation/installation.md)
+  - [Interagir avec Windows](030-systèmes-clients-microsoft/03-interagir-avec-windows/interagir-avec-windows.md)
+  - [Gestion stockage](030-systèmes-clients-microsoft/04-gestion-stockage/gestion-stockage.md)
+  - [Utilisateurs et groupes](030-systèmes-clients-microsoft/05-utilisateurs-et-groupes/utilisateurs-et-groupes.md)
+  - [Sécurité NTFS et ACL](030-systèmes-clients-microsoft/06-sécurité-ntfs-et-acl/sécurité-ntfs-et-acl.md)
+  - [Réseau & Pare-feu](030-systèmes-clients-microsoft/07-gestion-réseau-et-pare-feu/gestion-réseau-et-pare-feu.md)
+  - [Partage de ressources](030-systèmes-clients-microsoft/08-partage-de-ressources/partage-de-ressources.md)
+  - [Pilotes et imprimantes](030-systèmes-clients-microsoft/09-pilotes-et-mprimantes/pilotes-et-mprimantes.md)
+  - [Maintenance système](030-systèmes-clients-microsoft/10-maintenance-système/maintenance-système.md)
+  - [PowerShell avancé](030-systèmes-clients-microsoft/11-plus-loin-avec-powershell/plus-loin-avec-powershell.md)
+  - [Déploiement d’image](030-systèmes-clients-microsoft/12-introduction-capture-et-déploiement-d’image/introduction-capture-et-déploiement-d’image.md)
+  - [Stratégies groupe local](030-systèmes-clients-microsoft/13-stratégies-groupe-local/stratégies-groupe-local.md)
+
 - [Services réseau Microsoft](#090---services-réseau-microsoft)
   - [Administration Windows](090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
   - [Active Directory](090-services-réseau-en-environnement-microsoft/02-active-directory/active-directory.md)
@@ -73,6 +88,21 @@ Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques
   - [Réalisation de script](140-initiation-à-powershell/05-réalisation-de-script/réalisation-de-script.md)
   - [Pour aller plus loin](140-initiation-à-powershell/06-pour-aller-plus-loin/pour-aller-plus-loin.md)
 
+- [Virtualisation de serveurs](#110---virtualisation-de-serveurs)
+  - [Présentation](110-virtualisation-de-serveurs/01-présentation/présentation.md)
+  - [Applications sur poste de travail](110-virtualisation-de-serveurs/02-applications-sur-poste-de-travail/applications-sur-poste-de-travail.md)
+  - [Virtualisation des serveurs](110-virtualisation-de-serveurs/03-virtualisation-des-serveurs/virtualisation-des-serveurs.md)
+  - [Hyper-V](110-virtualisation-de-serveurs/04-découverte-d’hyper-v/découverte-d’hyper-v.md)
+  - [vSphere](110-virtualisation-de-serveurs/05-composantes-infrastructure-vsphere/composantes-infrastructure-vsphere.md)
+  - [Réseau](110-virtualisation-de-serveurs/06-gestion-réseau/gestion-réseau.md)
+  - [Stockage](110-virtualisation-de-serveurs/07-gestion-stockage/gestion-stockage.md)
+  - [Datacenter](110-virtualisation-de-serveurs/08-gestion-datacenter/gestion-datacenter.md)
+
+- [Sauvegarde et restauration](#145---sauvegarde-et-restauration)
+  - [Concepts, enjeux et définitions](145-sauvegarde-et-restauration/01-concept-enjeux-définition/concept-enjeux-définition.md)
+  - [Types de sauvegarde](145-sauvegarde-et-restauration/02-types-de-sauvegarde/types-de-sauvegarde.md)
+  - [Gestion stockage](145-sauvegarde-et-restauration/03-gestion-stockage/gestion-stockage.md)
+  - [Redondance / RAID](145-sauvegarde-et-restauration/04-redondance-données-raid/redondance-données-raid.md)
 
 ---
 
