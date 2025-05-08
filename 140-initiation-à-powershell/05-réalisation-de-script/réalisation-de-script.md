@@ -1,145 +1,224 @@
-# Réalisation de scripts PowerShell
+# Réalisation d’un script
 
-## 🛠️ Environnements de développement (IDE)
+## 🧠 Méthodologie de création d’un script
 
-### PowerShell ISE (Windows)
+### Étapes préparatoires
 
-- Intégré à Windows
-- Coloration syntaxique, exécution ligne par ligne, débogage
-- Limité aux scripts Windows (non Core, pas multiplateforme)
+1. **Définir l’objectif** du script
+2. **Lister les actions** nécessaires (tests, vérifications, boucles…)
+3. **Formaliser un algorithme** clair, exemple :
 
-### Visual Studio Code
+```txt
+1. Vérifier l’existence d’un dossier
+2. Créer s’il n’existe pas
+3. Remplir avec des fichiers exemples
+4. Archiver les fichiers selon la date
+```
 
-- Léger, multiplateforme, riche en extensions (PowerShell, PSScriptAnalyzer...)
-- Intégration avec Git, Terminal, Auto-complétion intelligente
-- **Recommandé** pour le scripting PowerShell moderne
+4. **Structurer et tester** chaque étape une à une
 
 ---
 
-## 🧾 Commentaires et documentation
+## 🛠️ Environnements de script (IDE)
 
-### Commentaire sur une ligne :
+### PowerShell ISE
+
+- Inclus avec Windows PowerShell
+- Console, éditeur, suggestions syntaxiques (IntelliSense)
+- Parfait pour les débutants et scripts simples
+
+### Visual Studio Code (VSCode)
+
+- Multiplateforme, léger, extensible
+- Supporte PowerShell 5.1 et Core
+- Extensions : PowerShell, GitHub, JSON…
+- Intégration Git et partage de scripts en dépôt (GitHub)
+
+---
+
+## 💬 Commentaires dans un script
+
+### Commentaires simples
 
 ```powershell
 # Ceci est un commentaire
+Write-Host "Bonjour"  # commentaire en fin de ligne
 ```
 
-### Bloc de commentaires :
+### Bloc de commentaires (multiligne)
 
 ```powershell
 <#
-Script : install.ps1
-Auteur : Niv
-Description : Installe les outils nécessaires
+Ce bloc ne sera pas interprété
+Toutes les lignes sont ignorées
 #>
 ```
 
-> 💡 Utilise les commentaires pour documenter la structure, les paramètres et la logique
-
 ---
 
-## 🔗 Enchaînement des commandes
+## 📏 Enchaînement des commandes et lisibilité
 
-- Les commandes s’enchaînent naturellement via `;`
+### Enchaîner sur une seule ligne
 
 ```powershell
-mkdir D:\Test; cd D:\Test
+Get-Service; Get-Process
 ```
 
-- Mais il est **préférable de séparer les blocs** logiques sur plusieurs lignes pour la lisibilité.
-
----
-
-## 🧨 Gestion des erreurs
-
-### Mode silencieux avec `-ErrorAction`
+### Commandes sur plusieurs lignes avec backtick
 
 ```powershell
-Get-Item 'C:\toto' -ErrorAction SilentlyContinue
-```
-
-### Récupérer l'erreur :
-
-```powershell
-$Error[0]  # dernière erreur
+Get-Process `
+| Sort-Object CPU `
+| Select-Object -First 10
 ```
 
 ---
 
-## 🛡️ Bloc `Try / Catch / Finally`
+## ❗ Gestion des erreurs
 
-### Structure :
+### Options de contrôle
+
+- `-ErrorAction`: contrôle local à la commande
+    - `Continue`, `SilentlyContinue`, `Stop`, `Ignore`, etc.
+- `$ErrorActionPreference`: comportement global
+- `-ErrorVariable` : redirige l’erreur dans une variable personnalisée
+
+### Exemple :
 
 ```powershell
-try {
-  # Code sensible
-  Get-Item 'C:\toto'
-} catch {
-  Write-Host "Erreur détectée : $_"
-} finally {
-  Write-Host "Nettoyage ou confirmation"
+Get-Item C:\inexistant -ErrorAction SilentlyContinue -ErrorVariable errFichier
+```
+
+---
+
+## 🧱 Structure Try / Catch / Finally
+
+### Exemple simple
+
+```powershell
+Try {
+  Get-Item C:\Fichier.txt -ErrorAction Stop
+}
+Catch {
+  Write-Host "Erreur : $($_.Exception.Message)"
+}
+Finally {
+  Write-Host "Bloc Finally exécuté."
 }
 ```
 
-> Utiliser `try/catch` permet de gérer les exceptions de façon claire et professionnelle
+- `Try` : code à tester
+- `Catch` : exécuté en cas d’erreur bloquante
+- `Finally` : toujours exécuté (qu’il y ait erreur ou non)
 
 ---
 
-## 🧱 Créer et appeler des fonctions
+## 🔁 Fonctions et paramètres
+
+### Création d’une fonction
 
 ```powershell
-function Get-InfoSystem {
-  Get-ComputerInfo | Select OSName, OSArchitecture, CsName
+Function Hello {
+  Write-Host "Bienvenue $env:USERNAME"
 }
-
-# Appel de la fonction
-Get-InfoSystem
 ```
 
-> ✅ Mettre les fonctions **en haut de script ou dans un fichier externe**
+### Fonction avec paramètres
+
+```powershell
+Function Addition {
+  Param(
+    [int]$a,
+    [int]$b
+  )
+  return ($a + $b)
+}
+Addition -a 2 -b 3
+```
+
+### Paramètre obligatoire
+
+```powershell
+Param(
+  [Parameter(Mandatory=$true)]
+  [string]$Nom
+)
+```
 
 ---
 
-## 🌐 Exécution distante (Remoting)
+## 🌐 Remoting PowerShell
 
-### Activation :
-
-```powershell
-Enable-PSRemoting -Force
-```
-
-### Utiliser `Invoke-Command`
+### Activation sur la machine distante
 
 ```powershell
-Invoke-Command -ComputerName CLI02 -ScriptBlock { Get-Process }
+Enable-PSRemoting -Force -SkipNetworkProfileCheck
 ```
 
-### Lancer un script distant :
+### Ouvrir une session distante
 
 ```powershell
-Invoke-Command -ComputerName CLI02 -FilePath .\audit.ps1
+Enter-PSSession -ComputerName DC01
+Exit-PSSession
 ```
 
-> ⚠️ Les sessions distantes nécessitent **WinRM activé et configuré**
+### Utilisation de `New-PSSession`
+
+```powershell
+$session = New-PSSession -ComputerName DC01
+Invoke-Command -Session $session -ScriptBlock { Get-Process }
+Remove-PSSession -Session $session
+```
+
+---
+
+## 📦 Exécution simultanée avec `Invoke-Command`
+
+### Exécuter une commande sur plusieurs machines
+
+```powershell
+Invoke-Command -ComputerName SRV01,SRV02 -ScriptBlock {
+  Get-Service -Name Spooler
+}
+```
+
+### Passage de variable avec `$Using:`
+
+```powershell
+$NomService = "Spooler"
+Invoke-Command -ComputerName SRV01 -ScriptBlock {
+  Get-Service -Name $Using:NomService
+}
+```
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Utiliser VS Code avec l’extension PowerShell pour une meilleure expérience
-- Documenter les scripts avec des commentaires de bloc `#` ou `<# ... #>`
-- Utiliser `try/catch/finally` pour capter et gérer les erreurs critiques
-- Organiser son script : **fonctions en haut, corps du script en bas**
-- Le remoting permet d’exécuter des scripts à distance avec `Invoke-Command`
+- Un script structuré commence par un objectif et une logique claire (algorithme)
+- ISE pour débuter, VSCode pour des projets plus complexes
+- `Try/Catch/Finally` pour fiabiliser l’exécution
+- Les fonctions rendent le code **modulaire et réutilisable**
+- Le remoting permet de **gérer plusieurs machines à distance efficacement**
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Nommer les scripts clairement|Facilite la maintenance et l’audit|
-|Documenter chaque script avec bloc `<#>`|Clarté pour les collègues, auditabilité|
-|Isoler les fonctions réutilisables|Encourage la modularité|
-|Utiliser `try/catch` autour des commandes sensibles|Prévention des plantages en production|
-|Utiliser `VS Code` + Git|Travail collaboratif, versionnage intégré|
+- Toujours **commenter** vos scripts
+- Isoler les fonctions et réutiliser le code
+- Éviter les erreurs bloquantes avec `Try/Catch`
+- Utiliser le **Remoting** pour les tâches répétitives sur plusieurs serveurs
+- Tester chaque bloc indépendamment avant mise en production
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Function Nom { Param(...) ... }
+Try { ... } Catch { ... } Finally { ... }
+Enable-PSRemoting -Force
+Enter-PSSession / Exit-PSSession
+Invoke-Command -ComputerName ...
+```

@@ -1,68 +1,67 @@
-# TP – Outils pour le scripting PowerShell
+# TP – Outils pour le scripting
+## 🧱 Partie 1 – Script de test de présence d’un service
 
-## 📄 Énoncé synthétisé
-
-> **Machine utilisée :** CLI01 (client) et CD01 (serveur)  
-
-### Consignes principales :
-
-1. Créer un **script** qui teste plusieurs noms de services transmis en paramètre
-    - Aucun message affiché si le service n’existe pas, mais le consigner dans une variable
-    - Un message final s'affiche à la fin du traitement
-2. Transformer ce script en **fonction** prenant le nom du service en paramètre
-3. **Créer une session distante PowerShell** vers le serveur CD01 et la stocker dans une variable
-4. Créer un **script** pour rechercher les ordinateurs dans l’AD
-    - Si ce ne sont pas des **contrôleurs de domaine**, alors déclencher leur extinction
-5. Transformer ce script en **fonction** avec le nom du domaine en paramètre
-6. Modifier le comportement de PowerShell ISE :
-    - Stocker les erreurs dans une variable
-    - Ne plus afficher les erreurs dans la console
-
----
-
-## ✅ Résolution structurée
-
-### 🔹 1. Tester la présence de services
+### Script principal
 
 ```powershell
-$Services = @("Spooler", "NonExistant", "BITS")
-$Missing = @()
+$services = @("Spooler", "InvalidService", "W32Time")
+$nonTrouves = @()
 
-foreach ($svc in $Services) {
-    try {
-        Get-Service -Name $svc -ErrorAction Stop > $null
-    } catch {
-        $Missing += $svc
+ForEach ($service in $services) {
+    Try {
+        Get-Service -Name $service -ErrorAction Stop | Out-Null
+    } Catch {
+        $nonTrouves += $service
     }
 }
 
-Write-Host "Tous les services ont été vérifiés."
-Write-Host "Services introuvables : $($Missing -join ", ")"
+Write-Host "Vérification terminée."
 ```
 
-### 🔹 2. Transformation en fonction
+### Affichage conditionnel
 
 ```powershell
-function Test-ServiceExistence {
-    param ([string[]]$Services)
-    $Missing = @()
-    foreach ($svc in $Services) {
-        try {
-            Get-Service -Name $svc -ErrorAction Stop > $null
-        } catch {
-            $Missing += $svc
+If ($nonTrouves.Count -gt 0) {
+    Write-Host "Services non trouvés : $($nonTrouves -join ", ")"
+}
+```
+
+---
+
+## 🔁 Partie 2 – Transformation en fonction
+
+### Fonction paramétrée
+
+```powershell
+Function Test-Service {
+    Param(
+        [Parameter(Mandatory)]
+        [string[]]$Noms
+    )
+    $nonTrouves = @()
+    ForEach ($s in $Noms) {
+        Try {
+            Get-Service -Name $s -ErrorAction Stop | Out-Null
+        } Catch {
+            $nonTrouves += $s
         }
     }
-    return $Missing
+    If ($nonTrouves.Count -gt 0) {
+        Write-Host "Non trouvés : $($nonTrouves -join ", ")"
+    }
+    Else {
+        Write-Host "Tous les services existent."
+    }
 }
 
-# Exemple d’appel :
-Test-ServiceExistence -Services @("WSearch", "FakeService")
+Test-Service -Noms "Spooler", "FakeService"
 ```
 
 ---
 
-### 🔹 3. Créer une session distante vers CD01
+## 🌐 Partie 3 – Remoting : connexion à un serveur distant
+
+### Créer une session distante vers CD01
 
 ```powershell
 $session = New-PSSession -ComputerName CD01
@@ -70,68 +69,85 @@ $session = New-PSSession -ComputerName CD01
 
 ---
 
-### 🔹 4. Éteindre les machines non contrôleurs de domaine
+## 🧮 Partie 4 – Ordinateurs AD & extinction conditionnelle
+
+### Script d’extinction (hors contrôleurs de domaine)
 
 ```powershell
-$computers = Get-ADComputer -Filter * -Property *
-foreach ($comp in $computers) {
-    if ($comp.PrimaryGroupID -ne 516) {
-        Stop-Computer -ComputerName $comp.Name -Force -WhatIf
+$pcs = Get-ADComputer -Filter * -Properties OperatingSystem
+
+ForEach ($pc in $pcs) {
+    If ($pc.OperatingSystem -notlike "*Domain Controller*") {
+        Stop-Computer -ComputerName $pc.Name -Force
     }
 }
 ```
 
-> ✅ L’ID 516 correspond aux contrôleurs de domaine (à valider selon contexte AD)
-
-> Utilise `-WhatIf` pour simuler avant de déployer
-
 ---
 
-### 🔹 5. Version fonction avec domaine en paramètre
+## 🔁 Partie 5 – Transformation en fonction (paramètre : nom de domaine)
+
+### Fonction avec domaine en paramètre
 
 ```powershell
-function Stop-NonDC {
-    param ([string]$Domain)
-    $computers = Get-ADComputer -Filter * -Server $Domain -Property *
-    foreach ($comp in $computers) {
-        if ($comp.PrimaryGroupID -ne 516) {
-            Stop-Computer -ComputerName $comp.Name -Force -WhatIf
+Function Eteindre-MachinesNonDC {
+    Param(
+        [string]$Domaine
+    )
+    $pcs = Get-ADComputer -Filter {DNSHostName -like "*.$Domaine"} -Properties OperatingSystem
+    ForEach ($pc in $pcs) {
+        If ($pc.OperatingSystem -notlike "*Domain Controller*") {
+            Stop-Computer -ComputerName $pc.Name -Force
         }
     }
 }
+
+Eteindre-MachinesNonDC -Domaine "ad.campus-eni.fr"
 ```
 
 ---
 
-### 🔹 6. Modifier durablement le comportement de PowerShell ISE
+## ⚙️ Partie 6 – Modification du comportement d’erreur dans l’ISE et la console
+
+### Stockage automatique des erreurs dans une variable
 
 ```powershell
-$ErrorActionPreference = 'SilentlyContinue'
-$global:LastErrors = @()
-Register-EngineEvent PowerShell.OnError -Action {
-    $global:LastErrors += $Event.MessageData
-}
+$ErrorActionPreference = "SilentlyContinue"
 ```
 
-> À placer dans le **profil ISE** : `$PROFILE.CurrentUserCurrentHost`
+### Exemple : désactivation de message d’erreur visible
+
+```powershell
+Get-Item C:\inexistant -ErrorAction SilentlyContinue -ErrorVariable erreurScript
+```
+
+> 📌 Cette configuration peut être ajoutée dans le profil ISE : `$PROFILE`
 
 ---
 
-## 🧠 À retenir pour les révisions
+## ✅ À retenir pour les révisions
 
-- Utiliser `try/catch` pour capter les erreurs de service
-- Le remoting avec `New-PSSession` permet d’exécuter des scripts sur un serveur distant
-- Tester les machines AD selon leur rôle avant de les administrer
-- ISE peut être personnalisé via `$PROFILE` pour adapter son comportement
+- Un script modulaire s’organise autour de **fonctions avec paramètres**
+- Le **remoting** PowerShell est puissant mais doit être sécurisé
+- La gestion d’erreurs permet un comportement **fiable et silencieux** dans un script automatisé
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Toujours encapsuler le code dans des fonctions|Meilleure lisibilité et réutilisabilité|
-|Utiliser `try/catch` pour tous les accès système|Éviter les plantages silencieux|
-|Tester avec `-WhatIf` avant de déployer|Pour simuler sans danger|
-|Centraliser les erreurs dans une variable globale|Permet de les logguer ou afficher plus tard|
-|Isoler le code d’extinction dans une fonction|Empêche les erreurs de déploiement massif involontaire|
+- Toujours capturer les erreurs dans une variable (`-ErrorVariable`)
+- Documenter chaque fonction (`.SYNOPSIS`, `.DESCRIPTION` dans des blocs de commentaires)
+- Tester les scripts avec **Verbose** et **WhatIf** si disponible
+- Ne jamais éteindre un parc de machines sans vérification claire du rôle
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+New-PSSession -ComputerName CD01
+Invoke-Command -Session $session -ScriptBlock {...}
+Stop-Computer -ComputerName ...
+$ErrorActionPreference = "SilentlyContinue"
+```
+

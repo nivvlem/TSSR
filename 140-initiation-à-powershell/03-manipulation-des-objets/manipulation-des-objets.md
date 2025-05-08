@@ -1,174 +1,148 @@
 # Manipulation des objets
 
-## 🔗 Le pipeline PowerShell (`|`)
+## 🔄 Le pipeline PowerShell
 
-- Permet de **chaîner les commandes** : l’objet généré devient l’entrée de la commande suivante
+### Concept clé
 
-```powershell
-Get-Service | Get-Member
-```
-
-- Utilise la variable spéciale `$PSItem` (ou `$_` raccourci) dans les filtres
+- Le **pipeline** (`|`) permet de **chaîner** des Cmdlets : la sortie de l'une devient l'entrée de l'autre
+- Exemple :
 
 ```powershell
-Get-Process | Where { $_.Id -gt 1500 }
+Get-Service | Where-Object {$_.Status -eq 'Running'}
 ```
 
 ---
 
-## 🎯 Cmdlets de manipulation
+## 🧩 Cmdlets de manipulation de base
 
-### 🔹 `Select-Object`
+### 🎯 `Select-Object`
 
-- Sélectionne des **propriétés spécifiques** d’un objet
+- Sélection de propriétés, dédoublonnage
 
 ```powershell
-Get-Service | Select-Object -Property Name, Status
+Get-Process | Select-Object -Property Name, CPU
+Get-Process | Select-Object -First 5
 ```
 
-- Paramètres utiles :
-    - `-First`, `-Last`, `-Unique`, `-ExpandProperty`
+### 📊 `Measure-Object`
 
-### 🔹 `Sort-Object`
-
-- Trie les objets selon une propriété
+- Statistiques (count, sum, average…)
 
 ```powershell
-Get-Process | Sort-Object -Property Id -Descending
+Get-Process | Measure-Object -Property CPU -Sum -Average
 ```
 
-### 🔹 `Measure-Object`
+### 🔃 `Sort-Object`
 
-- Calcule **le nombre**, la **somme**, la **moyenne**, le **min**, le **max**
+- Tri par propriété
 
 ```powershell
-Get-Process | Measure-Object
-Get-ChildItem -File | Measure-Object -Property Length -Average
+Get-Service | Sort-Object -Property Status
 ```
 
-### 🔹 `Where-Object`
+### 🔎 `Where-Object`
 
-- Filtre les objets selon une condition sur leurs propriétés
-
-```powershell
-Get-Service | Where-Object { $_.Status -eq "Running" }
-Get-Process | Where { $_.Name -like "Power*" -or $_.Id -lt 5000 }
-```
-
-> ⚠️ Opérateurs sensibles à la casse : `-eq`/`-ceq`, `-like`/`-clike`, etc.
-
----
-
-## 📦 Mise en forme et export
-
-### 🔹 `Format-Table`
-
-- Présentation **tabulaire** : colonnes personnalisables, regroupement, en-têtes masqués
+- Filtrage conditionnel
 
 ```powershell
-Get-Service | Format-Table Name, Status
-```
-
-### 🔹 `Format-Wide`
-
-- Affiche une seule propriété, répartie sur plusieurs colonnes
-
-```powershell
-Get-Service | Format-Wide -Column 3
-```
-
-### 🔹 `Format-List`
-
-- Présente **chaque propriété sur une ligne** (affichage vertical)
-
-```powershell
-Get-Process | Format-List Name, Id
-```
-
-### 🔹 `Export-Csv`
-
-- Exporte des objets PowerShell vers un fichier CSV
-
-```powershell
-Get-Process | Export-Csv C:\temp\process.csv -NoTypeInformation -Delimiter ";"
-```
-
-### 🔹 `ConvertTo-Html` / `ConvertTo-Json`
-
-- Conversion au format HTML/JSON, à coupler avec `Out-File`
-
-```powershell
-Get-Service | ConvertTo-Html | Out-File C:\temp\services.html
+Get-Process | Where-Object {$_.CPU -gt 10}
 ```
 
 ---
 
-## 🔄 Gestion des fichiers : lecture et écriture
+## 🖼️ Formatage de l'affichage
 
-### 🔹 `Out-File`
+### `Format-Table` (Ft)
 
-- Écrit les résultats dans un fichier
-
-```powershell
-Get-Service | Out-File C:\temp\services.txt
-```
-
-- Options : `-Append`, `-Width`
-
-### 🔹 `Get-Content`
-
-- Lit un fichier ligne par ligne
+- Affichage en tableau
 
 ```powershell
-Get-Content C:\temp\services.txt
-Get-Content C:\temp\services.txt -Tail 5
+Get-Process | Format-Table -Property Name, CPU -AutoSize
 ```
 
-### 🔹 `Import-Csv`
+### `Format-Wide`
 
-- Transforme un fichier CSV en **objet PowerShell**
+- Affichage en colonnes (1 propriété)
 
 ```powershell
-Import-Csv C:\users.csv -Delimiter ";" | New-Object
+Get-Service | Format-Wide -Property Name -Column 3
 ```
 
-> ⚠️ Les noms de colonnes doivent **correspondre aux propriétés attendues**
+### `Format-List`
+
+- Affichage détaillé (liste verticale)
+
+```powershell
+Get-Process | Format-List -Property *
+```
+
+> ⚠️ Les Cmdlets Format-* doivent être utilisées **en fin de pipeline**
 
 ---
 
-## 🧮 Propriétés calculées
+## 💾 Exportation, conversion, importation
 
-- Permet de **créer ou renommer dynamiquement** une propriété à l’affichage
-
-```powershell
-Get-ChildItem -File | Select Name, @{Name='Taille (Mo)'; Expression={ '{0:N2}' -f ($_.Length / 1MB) }}
-```
-
-- Autre exemple avec plusieurs propriétés :
+### 📤 `Export-Csv`
 
 ```powershell
-Get-Volume | Select DriveLetter,
-@{n='Taille (GB)'; e={ '{0:N2}' -f ($_.Size / 1GB) }},
-@{n='Espace Libre (GB)'; e={ '{0:N2}' -f ($_.SizeRemaining / 1GB) }}
+Get-Process | Export-Csv -Path .\process.csv -NoTypeInformation -Encoding UTF8
 ```
+
+### 🔁 `ConvertTo-Json` / `ConvertTo-Html`
+
+```powershell
+Get-Process | ConvertTo-Json
+Get-Service | ConvertTo-Html | Out-File .\services.html
+```
+
+### 📥 `Get-Content` & `Import-Csv`
+
+```powershell
+Get-Content .\log.txt
+Import-Csv .\process.csv | Format-Table
+```
+
+---
+
+## 🔧 Propriétés calculées
+
+### Utiliser des expressions personnalisées avec `Select-Object`
+
+```powershell
+Get-Process | Select-Object Name, @{Name="RAM(MB)";Expression={[math]::Round($_.WS / 1MB, 2)}}
+```
+
+- `@{Name=...; Expression=...}` permet de renommer et manipuler dynamiquement des valeurs
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le **pipeline `|`** est central pour manipuler les objets en série
-- `Select`, `Where`, `Sort`, `Measure`, `Format`, `Export`, `Convert` → commandes essentielles
-- PowerShell permet une **présentation soignée** et une **exportation efficace** des données
-- Les **propriétés calculées** enrichissent dynamiquement l’information à afficher ou exporter
+- Le **pipeline** permet de chaîner efficacement les commandes
+- `Select-`, `Where-`, `Sort-`, `Measure-` : les outils fondamentaux de tri et filtrage
+- Les Cmdlets `Format-*` modifient l’affichage (non les objets)
+- `Export-Csv`, `ConvertTo-*`, `Import-Csv` permettent la persistance et l’exploitation des données
+- Les **propriétés calculées** offrent une grande souplesse dans l'analyse
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Utiliser `Select` tôt dans la chaîne|Limite la charge mémoire et améliore les performances|
-|Chainer avec `|` jusqu’au format final|
-|Toujours vérifier les formats d’export|Évite les erreurs de compatibilité lors des imports|
-|Documenter les propriétés calculées|Facilite la relecture des scripts complexes|
-|Ne pas mélanger formatage (`Format-*`) et export (`Export-*`)|Les `Format-*` produisent du texte, pas des objets exploitables|
+- Travailler sur des objets structurés et non sur du texte brut
+- Toujours vérifier les résultats de tri/filtrage avec `Format-Table` ou `Out-GridView`
+- Conserver une trace des exports (CSV, HTML, JSON) avec nom, date et encodage précisé
+- Utiliser des propriétés calculées pour adapter les données aux besoins métiers
+- Tester les conversions et importations en environnement de test
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-Service | Where-Object {$_.Status -eq 'Running'}
+Get-Process | Select-Object -Property Name, CPU
+Get-Process | Measure-Object -Property CPU -Average
+Get-Service | Sort-Object Status
+Get-Process | Export-Csv .\data.csv -NoTypeInformation
+Import-Csv .\data.csv | Format-Table
+```

@@ -2,172 +2,208 @@
 
 ## 💡 Les variables PowerShell
 
-### Déclaration de base :
+### Déclaration
 
 ```powershell
-$nom = "Alphonse"
-$nombre = 42
+$nom = "Saya"
+$age = 30
+$service = Get-Service -Name Spooler
 ```
 
-### Obtenir le type :
+- Le type est implicite selon la valeur (String, Int, Object…)
+- Utiliser `$maVariable.GetType()` pour connaître le type
+
+### Variables système utiles
+
+- `$PSItem`, `$PROFILE`, `$env:`
+
+### Saisie utilisateur et affichage
 
 ```powershell
-$nom.GetType().FullName
-```
-
-### Saisie utilisateur :
-
-```powershell
-$choix = Read-Host "Entrez votre choix"
-```
-
-### Affichage dans une chaîne :
-
-```powershell
-Write-Host "Votre choix est $choix"
-```
-
-### Variables contenant des objets :
-
-```powershell
-$services = Get-Service
-$services[0].DisplayName
-```
-
-### Méthodes applicables :
-
-```powershell
-$date = (Get-Date).ToString("yyyyMMdd")
-$date.GetType()
+$choix = Read-Host "Votre choix"
+Write-Host "Vous avez choisi : $choix"
 ```
 
 ---
 
-## 📋 Types de variables
+## 🔢 Types de variables
 
-|Type|Description|Exemple|
-|---|---|---|
-|`String`|Texte entre guillemets|`$s = "Bonjour"`|
-|`Int`|Entier numérique|`$a = 2; $b = 3; $c = $a + $b`|
-|`Array`|Tableau à taille fixe|`$array = "a","b","c"`|
-|`ArrayList`|Tableau dynamique (ajout/suppression possible)|`[System.Collections.ArrayList]$list = "PC1","PC2"`|
-
-### Ajout et suppression avec ArrayList :
+### String
 
 ```powershell
-$list.Add("PC3")
-$list.Remove("PC1")
+$a = "abc"
+$b = "def"
+$c = $a + $b  # abcdef
+```
+
+### Int
+
+```powershell
+$a = 1
+$b = 2
+$c = $a + $b  # 3
+```
+
+### Array (tableau à taille fixe)
+
+```powershell
+$array = "PC1", "PC2", "PC3"
+$array[1]  # PC2
+```
+
+### ArrayList (tableau à taille dynamique)
+
+```powershell
+[System.Collections.ArrayList]$machines = "PC1", "PC2"
+$machines.Add("PC3")
+$machines.Remove("PC2")
 ```
 
 ---
 
-## 🧠 Structures conditionnelles : If / ElseIf / Else
+## 🧠 Objet dans une variable
 
 ```powershell
-if ($x -eq 10) {
-    Write-Host "x vaut 10"
-} elseif ($x -lt 10) {
-    Write-Host "x est inférieur à 10"
-} else {
-    Write-Host "x est supérieur à 10"
+$user = Get-ADUser -Filter *
+$user[0].Name
+$user[0].Enabled
+```
+
+- Propriétés via `.`
+- Méthodes :
+
+```powershell
+(Get-Date).ToString("yyyyMMdd")
+```
+
+---
+
+## 📐 Structures conditionnelles
+
+### `If`, `Else`, `ElseIf`
+
+```powershell
+If ($x -eq 1) {
+ Write-Host "Vrai"
+} ElseIf ($x -eq 2) {
+ Write-Host "Deux"
+} Else {
+ Write-Host "Faux"
 }
 ```
 
-> 💡 Résultat toujours booléen (`$true` ou `$false`)
+### Imbrication possible (If + Switch + boucle…)
 
 ---
 
-## 🔁 Boucles
+## 🔁 Structures de boucle
 
-### `While` – test en entrée :
+### `While`
 
 ```powershell
-$x = ""
-while ($x -ne "q") {
-    $x = Read-Host "Taper q pour quitter"
+$x = "A"
+While ($x -ne "q") {
+ $x = Read-Host "Choix ?"
 }
 ```
 
-### `Do-While` – test en sortie :
+### `Do While` / `Do Until`
 
 ```powershell
-do {
-    $x = Read-Host "Choix ?"
-} while ($x -ne "q")
+Do {
+ $x = Read-Host "Entrée"
+} While ($x -ne "q")
+
+Do {
+ $x = Read-Host "Entrée"
+} Until ($x -eq "q")
 ```
-
-### `Do-Until` – boucle jusqu’à vraie condition :
-
-```powershell
-do {
-    $x = Read-Host "Choix ?"
-} until ($x -eq "q")
-```
-
-### `Foreach` – parcours de tableaux :
-
-```powershell
-$array = "PC1","PC2","PC3"
-foreach ($machine in $array) {
-    Write-Host "Machine : $machine"
-}
-```
-
-> `Break` pour sortir de la boucle, `Continue` pour passer à l’itération suivante
 
 ---
 
-## 🔀 Structure `Switch`
+## 🔄 Boucle `ForEach`
 
-Permet de traiter plusieurs cas en fonction de la valeur d’une variable :
+### Sur tableau
 
 ```powershell
-switch ($choix) {
-    '1' { Write-Host "Sauvegarde" }
-    '2' { Write-Host "Restauration" }
-    default { Write-Host "Choix invalide" }
+$array = "PC1", "PC2", "PC3"
+ForEach ($item in $array) {
+ Write-Host $item
 }
 ```
 
-> Peut aussi être utilisé avec `-Regex` pour des cas avancés
+### Sur objets
+
+```powershell
+$users = Get-ADUser -Filter *
+ForEach ($u in $users) {
+ Write-Host $u.Name
+}
+```
+
+- Actions : `break`, `continue`
 
 ---
 
-## 🧱 Imbrication de structures
-
-Il est possible de **combiner plusieurs structures** pour créer des logiques plus complexes :
+## 🔁 Switch : alternative à `If` multiples
 
 ```powershell
-do {
-    if ($x -gt 10) {
-        switch ($x) {
-            '11' { Write-Host "Valeur 11" }
-            '12' { Write-Host "Valeur 12" }
-        }
-    } else {
-        $x = Read-Host "Saisir une valeur > 10"
-    }
-} while ($x -lt 100)
+Switch ($choix) {
+ '1' { Write-Host "Un" }
+ '2' { Write-Host "Deux" }
+ default { Write-Host "Invalide" }
+}
+```
+
+- Accepte les actions `Break` / `Continue`
+    
+- Peut utiliser `-Regex` pour tester des motifs
+    
+
+---
+
+## 🧱 Imbrication des structures
+
+```powershell
+Do {
+ If ($x -gt 10) {
+   Switch ($x) {
+     '11' { Write-Host "Onze" }
+   }
+ } Else {
+   $x = Read-Host "Saisir > 10"
+ }
+} While ($x -lt 100)
 ```
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Toutes les variables commencent par `$`
-- `ArrayList` est préférable à `Array` quand on veut ajouter/retirer dynamiquement
-- `If`, `While`, `Switch`, `Foreach` sont les structures de base d’un script PowerShell
-- Une boucle doit toujours **avoir une condition claire** pour ne pas être infinie
-- Imbriquer les structures permet de créer des **menus interactifs puissants**
+- `$` : toutes les variables en PowerShell commencent par ce symbole
+- Types : String, Int, Array, ArrayList, Object
+- Structures classiques : `If`, `While`, `ForEach`, `Switch`, `Do-Until`, `Do-While`
+- Les objets permettent d’accéder aux propriétés/méthodes via `.`
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Nommer les variables explicitement|Facilite la compréhension et la maintenance|
-|Initialiser les variables avant usage|Évite les erreurs de comparaison ou les boucles bloquées|
-|Utiliser `ArrayList` pour la souplesse|Plus simple à manipuler dans les boucles|
-|Préférer `Switch` à plusieurs `If`|Plus lisible pour gérer des cas multiples|
-|Ajouter des commentaires clairs|Indique la logique derrière les choix ou conditions|
+- Noms de variables clairs, cohérents avec le contenu
+- Initialiser les variables avant les boucles conditionnelles
+- Utiliser des structures simples, bien indentées
+- Toujours tester les scripts dans un environnement isolé avant production
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+$var.GetType()
+[array]$arr = "A", "B"
+[System.Collections.ArrayList]$list = "PC1", "PC2"
+Switch ($input) { ... }
+While (...) { ... }
+ForEach (...) { ... }
+```
+

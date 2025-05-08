@@ -1,141 +1,147 @@
-# TP – Variables et structures PowerShell
+# TP – Variables et structures 
 
-## 📄 Énoncé synthétisé
+## 🧱 Partie 1 – Manipulation de variables et journal système
 
-> **Machine utilisée :** CLI01  
-
-Ce TP contient 5 exercices concrets autour des variables, des structures conditionnelles et de boucles.
-
----
-
-## ✅ Résolution structurée
-
-### 🔹 1. Manipulation de journaux d’événements
-
-**Stocker l’objet `Get-EventLog System` dans une variable** :
+### 📥 Stocker le journal système dans une variable
 
 ```powershell
-$log = Get-EventLog -LogName System
+$logs = Get-EventLog -LogName System
 ```
 
-**Afficher l’entrée n°10 et son index :**
+### 🔍 Afficher l’entrée numéro 10 et sa valeur d’index
 
 ```powershell
-$log[9]  # car index commence à 0
-$log[9].Index
+$logs[9]  # car l’index PowerShell commence à 0
+$logs[9].Index
 ```
 
-**Addition des index 10 et 20 :**
+### ➕ Addition des index des entrées 10 et 20
 
 ```powershell
-$add = $log[9].Index + $log[19].Index
-$add
+$addition = $logs[9].Index + $logs[19].Index
 ```
 
 ---
 
-### 🔹 2. Jeu de devinette – Date de naissance
+## 🧠 Partie 2 – Deviner la date de naissance (DoWhile + If)
 
-**Script `guess-date.ps1` :**
+### 🎯 Script de devinette
 
 ```powershell
-$birthdate = Read-Host "Entrez votre date de naissance (format JJ/MM)"
-$guess = ""
-$attempts = 0
-
-do {
-    $guess = Read-Host "Devinez la date de naissance (JJ/MM)"
-    $attempts++
-
-    if ($guess -eq $birthdate) {
-        Write-Host "Bravo ! Date correcte."
-    } elseif ($guess -lt $birthdate) {
-        Write-Host "C’est après."
-    } else {
-        Write-Host "C’est avant."
+$birthdate = Read-Host "Définissez une date de naissance (format AAAAMMJJ)"
+$essais = 0
+Do {
+    $saisie = Read-Host "Essayez de deviner la date"
+    $essais++
+    If ($saisie -lt $birthdate) {
+        Write-Host "Trop tôt"
+    } ElseIf ($saisie -gt $birthdate) {
+        Write-Host "Trop tard"
     }
-
-} while ($guess -ne $birthdate)
-
-Write-Host "Vous avez trouvé en $attempts tentative(s)."
+} While ($saisie -ne $birthdate)
+Write-Host "Bravo ! Trouvé en $essais essai(s)."
 ```
 
 ---
 
-### 🔹 3. Récupération des utilisateurs AD actifs/inactifs
+## 👥 Partie 3 – Utilisateurs AD : tableaux + comptage
 
-```powershell
-$UserActif = Get-ADUser -Filter 'Enabled -eq $true'
-$UserInactif = Get-ADUser -Filter 'Enabled -eq $false'
-
-"Utilisateurs actifs : $($UserActif.Count)"
-"Utilisateurs inactifs : $($UserInactif.Count)"
-```
-
----
-
-### 🔹 4. Menu interactif à choix multiples
-
-```powershell
-do {
-    Clear-Host
-    Write-Host "Bienvenue dans l'outil d'inventaire, faites votre choix :"
-    Write-Host "1) Affichage des ordinateurs du domaine"
-    Write-Host "2) Affichage des groupes de domaine locaux"
-    Write-Host "3) Importation des utilisateurs AD via CSV"
-    Write-Host "4) Quitter"
-
-    $choix = Read-Host "Entrez votre choix"
-
-    switch ($choix) {
-        '1' { Get-ADComputer -Filter * | Select Name, OperatingSystem }
-        '2' { Get-ADGroup -Filter * | Where {$_.GroupScope -eq "DomainLocal"} }
-        '3' {
-            Import-Csv .\users.csv -Delimiter ";" | ForEach-Object {
-                New-ADUser -Name $_.Nom -GivenName $_.Prenom -SamAccountName $_.SAM -AccountPassword (ConvertTo-SecureString "P@ssw0rd!" -AsPlainText -Force) -Enabled $true
-            }
-        }
-        '4' { Write-Host "Au revoir." }
-        default { Write-Host "Erreur : choix invalide." }
-    }
-    Pause
-} while ($choix -ne '4')
-```
-
----
-
-### 🔹 5. Réinitialisation et activation des comptes AD
+### 🧾 Script avec `ForEach` et `If`
 
 ```powershell
 $users = Get-ADUser -Filter *
+$UserActif = New-Object System.Collections.ArrayList
+$UserInActif = New-Object System.Collections.ArrayList
 
-foreach ($user in $users) {
-    $pwd = ConvertTo-SecureString "P@ssw0rd!" -AsPlainText -Force
-    Set-ADAccountPassword -Identity $user.SamAccountName -NewPassword $pwd -Reset
+ForEach ($i in $users) {
+    if ($i.Enabled -eq $true) {
+        $UserActif.Add($i) | Out-Null
+    } else {
+        $UserInActif.Add($i) | Out-Null
+    }
+}
 
-    if (-not $user.Enabled) {
-        Enable-ADAccount -Identity $user.SamAccountName
+Write-Host "Voici le nombre d'utilisateur actif : " -NoNewline ; ($UserActif | Measure-Object).Count
+Write-Host "Voici le nombre d'utilisateur inactifs : " -NoNewline ; ($UserInActif | Measure-Object).Count
+```
+
+---
+
+## 🖥️ Partie 4 – Menu interactif (While + Switch)
+
+### 🗂️ Script de menu
+
+```powershell
+Do {
+    Clear-Host
+    Write-Host "Bienvenue dans l'outil d'inventaire, choisissez :"
+    Write-Host "1) Afficher ordinateurs du domaine"
+    Write-Host "2) Afficher groupes de domaine locaux"
+    Write-Host "3) Importer utilisateurs AD depuis CSV"
+    Write-Host "4) Quitter"
+    $choix = Read-Host "Votre choix"
+
+    Switch ($choix) {
+        '1' { Get-ADComputer -Filter * | Select Name }
+        '2' { Get-ADGroup -Filter * | Where {$_.GroupScope -eq "DomainLocal"} }
+        '3' {
+            Import-Csv \\CD01\Partage\Users.csv | ForEach-Object {
+                New-ADUser -Name $_.Nom -GivenName $_.Prenom -SamAccountName $_.Login
+            }
+        }
+        '4' { Write-Host "Au revoir !" }
+        Default { Write-Host "Saisie incorrecte. Réessayez..."; Start-Sleep 1 }
+    }
+} While ($choix -ne '4')
+```
+
+---
+
+## 🔁 Partie 5 – Réinitialisation utilisateurs AD
+
+### 📋 Chargement dans une variable
+
+```powershell
+$users = Get-ADUser -Filter *
+```
+
+### 🔄 Pour chaque utilisateur : reset mot de passe et activation
+
+```powershell
+ForEach ($u in $users) {
+    Set-ADAccountPassword -Identity $u -Reset -NewPassword (ConvertTo-SecureString "P@ssw0rd!" -AsPlainText -Force)
+    If (-not $u.Enabled) {
+        Enable-ADAccount -Identity $u
     }
 }
 ```
 
 ---
 
-## 🧠 À retenir pour les révisions
+## ✅ À retenir pour les révisions
 
-- Toutes les structures (`if`, `do/while`, `switch`, `foreach`) sont combinables
-- `ArrayList` utile si besoin d’un tableau dynamique
-- `Pause`, `Clear-Host`, `Switch`, `Break` sont très pratiques pour créer des menus interactifs
-- Penser à **tester les filtres AD avant toute action** (ex : `Disable-ADUser`)
+- Les variables peuvent stocker des objets complexes (`Get-EventLog`, `Get-ADUser`, etc.)
+- Les structures `DoWhile`, `Switch`, `If`, `ForEach` sont à combiner pour créer des scripts interactifs
+- `$variable.Count` permet de compter le nombre d’éléments dans un tableau
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Isoler chaque logique dans un bloc|Meilleure lisibilité|
-|Ajouter un compteur de tentatives|Pour retour utilisateur et statistique|
-|Toujours initialiser ses variables|Évite erreurs inattendues dans les structures conditionnelles|
-|Utiliser des variables parlantes|Ex : `$UserActif` et non `$ua`|
-|Bien gérer les erreurs d’import|Pour éviter les doublons ou mauvaises données AD|
+- Valider les fichiers CSV avant import
+- Ne pas faire de boucle infinie sans condition d’arrêt claire
+- Toujours tester la logique du script dans un environnement isolé
+- Séparer les blocs logiques (lecture, traitement, affichage)
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-EventLog -LogName System
+Get-ADUser -Filter {Enabled -eq $true}
+Set-ADAccountPassword -Identity $user -Reset -NewPassword ...
+Switch ($var) { ... }
+Do { ... } While (...)
+```
+

@@ -1,90 +1,122 @@
 # TP – Premières commandes PowerShell
+## 🧱 Partie 1 – Découverte de PowerShell et PowerShell Core
 
-## 📄 Énoncé du TP
+### 📥 Comparer les deux consoles
 
-Ce TP se déroule sur deux machines virtuelles : `CLI01` et `CD01`, dans un environnement de test fourni par le formateur.
+```powershell
+Get-Command | Measure
+```
 
-### Étapes principales :
+> En PowerShell 5.1 : ~2855 cmdlets / PowerShell Core : ~2825 cmdlets
 
-- Lancer PowerShell et PowerShell Core en mode administrateur
-- Utiliser `Get-Command`, `Get-Verb`, `Get-Help`
-- Rechercher des commandes spécifiques (user, group, services...)
-- Créer un utilisateur, modifier sa description
-- Gérer les modules, l’aide, et la politique d’exécution
-- Créer un profil PowerShell et personnaliser la console
+### 📑 Verbes PowerShell
+
+```powershell
+Get-Verb | Measure
+```
+
+> PowerShell 5.1 : 98 verbes / Core : 100 verbes (légère évolution)
+
+### 🔍 Filtrage de cmdlets
+
+```powershell
+Get-Command -Verb New
+Get-Command -Noun *User*
+```
+
+> Cmdlet pour créer un utilisateur local : `New-LocalUser`
 
 ---
 
-## ✅ Résolution structurée
+## 🧪 Partie 2 – Requête sur utilisateurs locaux
 
-### 🔹 Découverte et commandes de base
+### 📋 Liste des 5 premiers utilisateurs sur chaque machine
 
 ```powershell
-Get-Command | Measure   # Affiche le nombre total de commandes
-Get-Verb                  # Liste les verbes disponibles
-Get-Command -Verb New     # Liste toutes les cmdlets avec le verbe New
-Get-Command -Noun *User*  # Recherche les cmdlets contenant 'User'
-Get-Command -Noun *localuser*  # Trouver la commande de création de compte
-Get-LocalUser | Select -First 5  # Afficher les 5 premiers utilisateurs
+Get-LocalUser | Select-Object -First 5
 ```
 
-### 🔹 Modifier un utilisateur (bonus)
+### ✏️ Modifier la description d’un utilisateur
 
 ```powershell
-Set-LocalUser -Name "FerdinandMorse" -Description "TP"
-Get-LocalUser -Name "FerdinandMorse"
+Set-LocalUser -Name "Nom" -Description "TP"
 ```
 
-### 🔹 Utilisation de l’aide
+---
+
+## 📖 Partie 3 – Utilisation de l’aide
+
+### Afficher l’aide d’une cmdlet
 
 ```powershell
-Get-Help Get-Service                    # Aide simple
-Get-Help Get-Service -ShowWindow       # Fenêtre interactive
-Get-Help Get-Service -Full             # Aide détaillée
-Get-Help Get-Service -Online           # Version web
+Get-Help Get-Service
+Get-Help Get-Service -ShowWindow
+Get-Help Get-Service -Full
 ```
 
-### 🔹 Mise à jour de l’aide
+### Aide en ligne
 
 ```powershell
-Update-Help -SourcePath \\CD01\Partage\Depot\CLI01 -UICulture EN-US
-Update-Help -SourcePath \\CD01\Partage\Depot\CLI01 -UICulture fr-FR
+Get-Help Get-LocalGroup -Online
 ```
 
-> Remarque : certaines aides ne sont pas disponibles, surtout en français.
-
-### 🔹 Modules PowerShell
+### Mise à jour depuis un dépôt local
 
 ```powershell
-Get-Module -ListAvailable              # Liste tous les modules
-Get-Module | Measure                   # Compte les modules disponibles
-Get-Command Get-LocalUser | Select Module # Voir le module lié à la cmdlet
-$env:PSModulePath                      # Emplacement des modules
+Update-Help -SourcePath "\\CD01\Partage\Depot\CLI01\" -UICulture en-US
+Update-Help -SourcePath "\\CD01\Partage\Depot\CLI01\" -UICulture fr-FR
 ```
 
-### 🔹 Installer un module personnalisé
+> ⚠️ Peu de modules ont une traduction disponible en `fr-FR`
+
+---
+
+## 📦 Partie 4 – Modules PowerShell
+
+### Liste des modules et origine d’une commande
 
 ```powershell
-# Après avoir copié l’archive depuis le partage
-Import-Module AWSPowerShell            # Importer le module
-# Si erreur :
+Get-Module | Measure
+Get-Command Get-LocalUser | Select-Object Module
+```
+
+> Module : `Microsoft.PowerShell.LocalAccounts`
+
+### Emplacements des modules
+
+```powershell
+$env:PSModulePath -split ';'
+```
+
+### Importer un module distant (ex : AWS)
+
+```powershell
+Import-Module "\\CD01\Partage\Modules\AWSPowerShell"
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-# Exemples de cmdlets AWS :
+```
+
+### Exemples de cmdlets AWS
+
+```powershell
 Get-AWSCredential
 New-EC2Instance
 Get-S3Bucket
 ```
 
-### 🔹 Créer un profil utilisateur PowerShell
+---
+
+## 🎨 Partie 5 – Personnalisation et profil
+
+### Créer un profil utilisateur
 
 ```powershell
 New-Item -Path $PROFILE -ItemType File -Force
 notepad $PROFILE
-# Exemple de contenu :
-Get-Help Get-Command
 ```
 
-### 🔹 Modifier le prompt (bonus)
+- Exemple : ajouter `Get-Help Get-Command -Examples`
+
+### Modifier le prompt avec script externe
 
 ```powershell
 function Get-Time {
@@ -131,22 +163,33 @@ Write-Host '+---------------------------------------------------+'
 
 ---
 
-## 🧠 À retenir pour les révisions
+## ✅ À retenir pour les révisions
 
-- `Get-Command`, `Get-Verb` et `Get-Help` sont les outils clés pour débuter
-- PowerShell est très modulaire → chaque Cmdlet est liée à un module
-- L’aide est téléchargeable et multilingue (selon disponibilité)
-- La console est personnalisable (profil, couleurs, prompt)
-- Les scripts ne sont pas autorisés par défaut : `Set-ExecutionPolicy` est indispensable
+- PowerShell est structuré autour de Cmdlets et de modules
+- `Get-Command`, `Get-Help`, `Update-Help` sont des outils fondamentaux
+- Le profil PowerShell permet de personnaliser l’environnement utilisateur
+- L’exécution de scripts est contrôlée via `ExecutionPolicy`
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Lancer PowerShell en admin|Certaines commandes nécessitent des droits élevés|
-|Utiliser `-ShowWindow` pour l’aide|Recherche + confort de lecture|
-|Mettre à jour régulièrement l’aide|Pour bénéficier des exemples et descriptions à jour|
-|Ne pas laisser la politique sur Unrestricted|Risque de sécurité|
-|Isoler les scripts de test dans des profils utilisateurs|Évite d'impacter l'environnement global|
+- Toujours exécuter PowerShell en administrateur pour les actions système
+- Ne jamais désactiver les protections (`ExecutionPolicy`) sans raison
+- Tester les modules importés avant usage régulier
+- Organiser son profil utilisateur pour automatiser ses routines (import, alias, aide)
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-Command -Verb New
+Get-Help Get-Service -ShowWindow
+Update-Help -SourcePath "\\CD01\Partage\Depot\CLI01" -UICulture en-US
+Import-Module "\\CD01\Partage\Modules\AWSPowerShell"
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+New-Item -Path $PROFILE -Type File -Force
+. "$PROFILE"
+```
+

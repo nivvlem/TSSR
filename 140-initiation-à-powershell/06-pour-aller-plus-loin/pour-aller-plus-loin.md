@@ -1,64 +1,80 @@
-# Pour aller plus loin : L’authentification PowerShell
+# Pour aller plus loin 
+## 🔐 Pourquoi l’authentification est essentielle
 
-## 🔐 Pourquoi gérer l’authentification ?
+### Contexte professionnel
 
-Dans un environnement sécurisé, l’utilisateur peut être restreint par défaut :
-
-- Interdiction d’exécuter des scripts critiques sans droits d’administrateur
-- Exécution sur des **comptes à privilèges limités** (bonnes pratiques sécurité)
-
-Pour contourner cela **sans stocker de mot de passe en clair**, PowerShell permet de demander à l’utilisateur **une authentification sécurisée au moment du besoin**.
+- En entreprise, les scripts PowerShell sont souvent exécutés **avec des comptes restreints** (non admin).
+- Certaines actions exigent des privilèges élevés (modification AD, arrêt machine, installation…)
+- Objectif : **séparer les droits élevés du contexte utilisateur standard**, tout en permettant une élévation ponctuelle
 
 ---
 
-## 🔑 La Cmdlet `Get-Credential`
+## 🧰 `Get-Credential` : outil d’authentification sécurisé
 
-Permet d’ouvrir une fenêtre de saisie sécurisée (type pop-up Windows) :
+### 📌 Syntaxe de base
 
 ```powershell
 $Cred = Get-Credential
 ```
 
-- La **variable `$Cred`** contient un objet de type `[PSCredential]`
-- Utilisable avec de nombreuses Cmdlets PowerShell qui nécessitent des credentials
+- Affiche une boîte de dialogue système
+- Demande un **nom d’utilisateur** et **un mot de passe masqué**
+- Résultat : un objet de type `[System.Management.Automation.PSCredential]`
 
-### Exemple d’usage :
+### 📋 Affichage du type
 
 ```powershell
-Invoke-Command -ComputerName CD01 -Credential $Cred -ScriptBlock { Get-Process }
+$Cred.GetType()
+# Résultat : IsPublic True, Name PSCredential
 ```
 
 ---
 
-## 🎨 Personnaliser la fenêtre de saisie
+## ✨ Personnalisation de la fenêtre d’invite
 
-Tu peux **prédéfinir le login** et personnaliser le message affiché :
+### Ajouter un message et un nom d’utilisateur par défaut
 
 ```powershell
-$Cred = Get-Credential -Message "Entrez votre login Admin du Domaine" -UserName "eni\Administrator"
+$Cred = Get-Credential -Message "Entrez vos identifiants Admin du domaine" -UserName "eni\Administrateur"
 ```
 
-> 💬 L’utilisateur doit toujours confirmer le mot de passe manuellement. Aucun mot de passe n’est écrit en dur dans le script.
+> 📌 Le mot de passe n’apparaît jamais en clair ni en mémoire ni dans l'historique de la console.
 
 ---
 
-## 🧠 À retenir pour les révisions
+## 🔐 Utilisation typique dans un script
 
-- `Get-Credential` permet une **authentification sécurisée** (popup)
-- La variable retournée est un objet `[PSCredential]`
-- Tu peux personnaliser le **message affiché** et le **nom d’utilisateur proposé**
-- Utilisé avec : `Invoke-Command`, `Enter-PSSession`, `New-PSSession`, etc.
-- **Ne jamais coder un mot de passe en dur** dans un script professionnel !
+```powershell
+$Cred = Get-Credential -Message "Connexion requise pour l’action" -UserName "DOMAIN\admin"
+Invoke-Command -ComputerName SRV01 -Credential $Cred -ScriptBlock {
+    Get-Service -Name Spooler
+}
+```
 
 ---
+
+## ✅ À retenir pour les révisions
+
+- `Get-Credential` est **l’outil standard** pour capturer des identifiants utilisateur
+- Il retourne un **objet PSCredential** que l’on peut utiliser dans n’importe quelle commande distante (`Invoke-Command`, `New-PSSession`, etc.)
+- Le mot de passe n’est **jamais visible** dans le script ni dans l’environnement
+
+---
+
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonnes pratiques|Pourquoi ?|
-|---|---|
-|Ne jamais écrire un mot de passe en clair|Risque majeur en cas de fuite de script ou de log|
-|Utiliser `Get-Credential` dès que possible|Pop-up sécurisé, supporté nativement par PowerShell|
-|Pré-remplir uniquement le `UserName`|Évite les erreurs, tout en gardant le mot de passe secret|
-|Définir `$Credential` comme paramètre facultatif dans un script|Pour pouvoir automatiser sans compromettre la sécurité|
+- **Ne jamais coder un mot de passe en clair** dans un script
+- Toujours demander les credentials à l’exécution, ou stocker un fichier chiffré si besoin
+- Préférer la **personnalisation de la boîte de dialogue** pour guider l’utilisateur
+- Nettoyer les variables sensibles après usage : `$Cred = $null`
 
+---
 
+## 🔗 Commandes utiles
+
+```powershell
+$Cred = Get-Credential
+$Cred = Get-Credential -Message "Message" -UserName "Domaine\Nom"
+Invoke-Command -ComputerName SRV01 -Credential $Cred -ScriptBlock {...}
+```
 

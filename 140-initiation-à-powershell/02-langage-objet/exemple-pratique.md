@@ -1,103 +1,114 @@
-# TP – Manipuler des objets PowerShell
+# TP – L'objet en PowerShell
 
-## 📄 Énoncé du TP
+## 🧱 Inspection d’un objet PowerShell
 
-Ce TP permet de manipuler les objets retournés par PowerShell, notamment des services et des utilisateurs locaux. Il s’appuie sur la console de la machine virtuelle `CLI01`.
-
-### Étapes principales :
-
-- Utiliser `Get-Member` pour explorer un objet
-- Identifier les propriétés et méthodes d’un objet
-- Lire et modifier des propriétés
-- Exécuter une méthode
-
----
-
-## ✅ Résolution structurée
-
-### 🔹 1. Explorer un objet
+### 🔍 Afficher les propriétés et méthodes du type `System.ServiceProcess.ServiceController`
 
 ```powershell
 Get-Service | Get-Member
 ```
 
-> Cette commande retourne les membres de type `System.ServiceProcess.ServiceController`
-
-**Exemples de propriétés `String` :**
+### ✅ Propriétés de type `string`
 
 - `DisplayName`
-- `ServiceName`
+- `MachineName`
 
-**Méthodes :**
+### ✅ Méthodes par type
 
-- `Equals()` → type Bool
-- `GetHashCode()` → type Int
+- **Méthode Bool** : `Equals(System.Object obj)`
+- **Méthode Int** : `GetHashCode()`
 
-### 🔹 2. Explorer un service spécifique
+---
+
+## 📄 Manipulation des objets
+
+### 📋 Propriétés du service `Spooler`
 
 ```powershell
 Get-Service -Name Spooler | Get-Member -MemberType Property
 Get-Service -Name Spooler
 ```
 
-**Propriétés affichées par défaut :** `Status`, `Name`, `DisplayName`
+- Propriétés affichées : `Status`, `Name`, `DisplayName`
+- Valeurs : `Running`, `Spooler`, `Print Spooler`
 
-### 🔹 3. Travailler avec un utilisateur local
+### 📋 Propriétés de l’utilisateur local `Adara Mcintyre`
 
-```powershell
-Get-LocalUser -Name "Adara Mcintyre"
-```
+````powershell
+Get-LocalUser -Name "Adara Mcintyre"\```
+- Propriétés affichées : `Name`, `Enabled`, `Description`
+- Valeurs : `Adara Mcintyre`, `$true`, `Technician`
 
-**Propriétés utiles :** `Name`, `Enabled`, `Description`
-
-#### Modifier la description :
-
+### ✏️ Mise à jour de la propriété `Description`
 ```powershell
 Set-LocalUser -Name "Adara Mcintyre" -Description "Administrateur"
-Get-LocalUser -Name "Adara Mcintyre"
-```
+````
 
 ---
 
-### 🔹 4. Utiliser une méthode : arrêter un service
+## 🛑 Contrôle d’un service via méthode
+
+### Afficher le statut du service `Spooler`
 
 ```powershell
-(Get-Service -Name Spooler).Stop()
 Get-Service -Name Spooler
 ```
 
-> Appelle directement la **méthode `Stop()`** de l’objet `ServiceController`
-
----
-
-### 🔹 Bonus : Modifier une propriété avec une méthode objet
-
-#### Définir une date d’expiration de compte dans 48h :
+### Utiliser la méthode `.Stop()` sur un objet
 
 ```powershell
-New-LocalUser "Axel Rios" -AccountExpires (Get-Date).AddDays(2) 
-Get-LocalUser -Name "Axel Rios" | Select *
+(Get-Service -Name Spooler).Stop()
 ```
 
-> `AddDays(2)` est une **méthode** de l’objet `System.DateTime` retourné par `Get-Date`
+### Vérification post-exécution
+
+```powershell
+Get-Service -Name Spooler
+```
 
 ---
 
-## 🧠 À retenir pour les révisions
+## 🧪 Bonus – Manipulation avancée de propriété avec `Get-Date`
 
-- Les objets PowerShell sont inspectables avec `Get-Member`
-- `Get-Member` donne le **type**, les **propriétés** et les **méthodes** de l’objet
-- Les propriétés se lisent comme `.NomPropriété`, les méthodes s’utilisent comme `.NomMéthode()`
-- `Set-*` permet de modifier les propriétés système (ex : `Set-LocalUser`)
-- On peut chaîner : `(Get-Service).Stop()`
+### Définir `AccountExpires` avec une date +48h (ex : utilisateur `Axel Rios`)
+
+```powershell
+Set-LocalUser -Name "Axel Rios" -AccountExpires (Get-Date).AddDays(2)
+```
+
+### Vérification
+
+```powershell
+Get-LocalUser -Name "Axel Rios" | Select-Object *
+```
+
+---
+
+## ✅ À retenir pour les révisions
+
+- Les objets PowerShell exposent des **propriétés** et des **méthodes** via `Get-Member`
+- Les méthodes s’exécutent avec `()` et les propriétés se consultent en pointé (`.`)
+- L’édition de certaines propriétés se fait **uniquement** via les Cmdlets `Set-*`
+- `Get-Date` est un objet manipulable avec `.AddDays()`
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Utiliser `Get-Member` pour tout objet|Pour découvrir toutes les capacités disponibles|
-|Ne pas modifier les propriétés critiques sans test|Évite les erreurs système|
-|Préférer les méthodes aux scripts complexes|Plus fiable et explicite|
-|Utiliser des objets jusqu’au bout|Permet d’enchaîner proprement les actions dans les scripts|
+- Tester toutes les manipulations en console avant de les intégrer dans des scripts
+- Ne modifier une propriété que sans connaître son impact
+- Toujours **vérifier** après modification (via `Get-*` ou `Select-Object *`)
+- Utiliser `Get-Member` pour découvrir les possibilités réelles de chaque objet
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-Service | Get-Member
+Get-Service -Name Spooler
+(Get-Service -Name Spooler).Stop()
+Get-LocalUser -Name "Nom"
+Set-LocalUser -Name "Nom" -Description "..."
+Set-LocalUser -Name "Nom" -AccountExpires (Get-Date).AddDays(2)
+```

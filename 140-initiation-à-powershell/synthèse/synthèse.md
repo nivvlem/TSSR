@@ -1,99 +1,157 @@
-# Synthèse – Initiation à PowerShell
+# 📘 Synthèse – Initiation à PowerShell
 
-## 📌 Les notions clés par thème
+## 🧱 Principes fondamentaux
 
-### 💡 Syntaxe et principes de base
+### ✅ À connaître absolument
 
-- PowerShell manipule des **objets**, pas du texte brut
-- Cmdlets = **Verbe-Nom** (toujours au singulier)
-- Objets = **propriétés** + **méthodes**
-- Le **pipeline (`|`)** permet de chaîner les objets
+- PowerShell repose sur la **manipulation d’objets** (et non de texte brut comme Bash).
+- Les commandes sont des **Cmdlets** au format `Verbe-Nom` (ex. : `Get-Process`).
+- L’outil est **cross-platform** depuis PowerShell Core (PS 7+).
+- Tout est extensible via **modules**, exécuté dans un **profil** personnalisé.
 
-### 🔍 Découverte et aide
+---
+
+## 📚 Structure de la syntaxe PowerShell
+
+### Cmdlets & aide intégrée
 
 ```powershell
-Get-Command        # Lister toutes les commandes disponibles
-Get-Help NomCmdlet # Obtenir l’aide d’une commande
-Get-Member         # Explorer les membres d’un objet
-Update-Help        # Mettre à jour l’aide en ligne
+Get-Command
+Get-Help Get-Process -Full
+Update-Help
 ```
 
-### 🔁 Structures de contrôle
+### Pipeline & transformation des objets
 
 ```powershell
-if ($x -eq 1) { ... } elseif (...) { ... } else { ... }
-do { ... } while ($x -ne 'q')
-foreach ($item in $liste) { ... }
-switch ($choix) { '1' { ... } default { ... } }
+Get-Service | Where-Object {$_.Status -eq "Running"} | Sort-Object Name
 ```
 
-### 🧮 Variables et types
+### Gestion des erreurs
 
 ```powershell
-$nom = "Riza"
-$nb = 42
-$array = @("un", "deux")
-$list = New-Object System.Collections.ArrayList
-$list.Add("PC1")
+Try { ... } Catch { ... } Finally { ... }
 ```
 
-### 🔄 Manipulation d’objets
+### Variables & structures
 
 ```powershell
-Get-Process | Where-Object { $_.CPU -gt 100 }
-Get-Service | Select Name, Status | Sort-Object Status
+$nom = "Utilisateur"
+$liste = @("item1", "item2")
+If ($liste.Count -gt 0) { ... }
 ```
 
-### 🖨️ Mise en forme et export
+---
+
+## ⚙️ Manipulation d’objets
+
+### Propriétés & méthodes
 
 ```powershell
-Format-Table Name, Status
-Export-Csv -Path fichier.csv -NoTypeInformation
-ConvertTo-Html | Out-File services.html
+(Get-Process).Name
+(Get-Date).AddDays(3)
 ```
 
-### 🔒 Authentification sécurisée
+### Cmdlets de traitement
 
 ```powershell
-$cred = Get-Credential -UserName "domaine\admin"
-Invoke-Command -ComputerName SRV -Credential $cred -ScriptBlock { Get-Process }
+Select-Object, Sort-Object, Measure-Object, Format-Table, Format-List
 ```
 
-### 🧱 Fonctions et scripts
+### Propriétés calculées
 
 ```powershell
-function Get-SysInfo {
-  Get-ComputerInfo | Select OSName, OSArchitecture
+Select-Object Name, @{Name="RAM";Expression={[math]::Round($_.WS/1MB,2)}}
+```
+
+---
+
+## 🧠 Scripts et fonctions
+
+### Structure type
+
+```powershell
+Function Nom {
+  Param([string]$param1)
+  Try { ... } Catch { ... }
 }
 ```
 
-- Place les **fonctions en haut**, le **code principal en bas**
-- Utilise `try/catch/finally` pour les erreurs
-- Gère les scripts distants avec `Invoke-Command`
+### Exécution sécurisée
+
+```powershell
+Set-ExecutionPolicy RemoteSigned
+```
+
+### Personnalisation
+
+```powershell
+notepad $PROFILE
+```
 
 ---
 
-## ⚠️ Pièges fréquents à éviter
+## 🌐 Remoting & administration distante
 
-|Erreur fréquente|Solution ou prévention|
-|---|---|
-|Oublier les guillemets autour des chaînes|`$var = "texte"`|
-|Ne pas initialiser une variable|Toujours la définir avant d’y appliquer un test|
-|Confondre `Format-*` avec `Export-*`|`Format-*` = texte pour affichage uniquement|
-|Mot de passe en dur dans le script|Toujours utiliser `Get-Credential`|
-|Modifier une propriété système directe|Toujours passer par `Set-*`|
+### Authentification sécurisée
+
+```powershell
+$cred = Get-Credential
+```
+
+### Exécution distante
+
+```powershell
+Invoke-Command -ComputerName SRV01 -Credential $cred -ScriptBlock { Get-Service }
+```
+
+### Sessions persistantes
+
+```powershell
+$session = New-PSSession -ComputerName DC01
+Invoke-Command -Session $session -ScriptBlock { ... }
+Remove-PSSession $session
+```
 
 ---
 
-## ✅ Bonnes pratiques professionnelles
+## 🖧 Scripts avancés (TPs)
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Utiliser des noms explicites|Clarté dans les fonctions et variables|
-|Documenter avec `<# ... #>`|Indispensable en production (usage, auteur, version)|
-|Modulariser avec des fonctions|Réutilisable, testable, claire|
-|Utiliser `try/catch` autour des opérations sensibles|Prévention des erreurs critiques|
-|Utiliser `-WhatIf`, `-Confirm`|Tester les actions destructives avant exécution réelle|
-|Gérer l’authentification dynamiquement|Sécuriser l’accès à distance et aux scripts|
-|Travailler avec `VS Code` + Git|Pour la collaboration, la clarté, le versionnage|
+### Configuration réseau (ex. DHCP vs statique)
 
+```powershell
+New-NetIPAddress, Set-DnsClientServerAddress, Set-NetIPInterface
+```
+
+### Menu AD interactif
+
+```powershell
+Do { ... Switch ($choix) { ... } } While ($choix -ne "Quitter")
+```
+
+---
+
+## ✅ À retenir pour les révisions
+
+- PowerShell est un shell **orienté objet**, sécurisé, scriptable, et puissant.
+- Les **fonctions**, **structures conditionnelles**, et **menu interactif** permettent une vraie automatisation.
+- Le **remoting** permet l'administration multi-serveur centralisée.
+- L’aide intégrée (`Get-Help`) est complète et à jour grâce à `Update-Help`.
+
+## 📌 Bonnes pratiques professionnelles
+
+- Toujours commenter les scripts (`#`, `<#...#>`), même pour usage personnel.
+- Ne jamais écrire de mots de passe en clair (utiliser `Get-Credential`).
+- Centraliser les tâches répétitives dans des **fonctions**.
+- Capturer les erreurs (`Try/Catch`, `-ErrorAction`, `$ErrorVariable`).
+- Utiliser `Export-Csv`, `ConvertTo-Json`, etc. pour automatiser les rapports/exportations.
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-Command, Get-Help, Update-Help
+Get-Process, Get-Service, Get-ADUser
+Invoke-Command, Enter-PSSession
+New-ADUser, Set-ADUser, Add-ADGroupMember
+Export-Csv, ConvertTo-Json
+```

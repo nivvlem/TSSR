@@ -1,106 +1,126 @@
-# PowerShell : Langage Objet
+# PowerShell : langage objet
 
-## 🧠 PowerShell, un langage orienté objet
+## 🧱 PowerShell = langage objet
 
-- Contrairement à Bash ou CMD, **PowerShell manipule des objets** (et non du texte brut).
-- Chaque objet est composé de **propriétés** (informations) et de **méthodes** (actions).
+Contrairement à Bash ou CMD, PowerShell **retourne des objets** issus du .NET Framework (v5.1) ou .NET Core (PowerShell 7).
 
-### Exemple simple :
+Exemple :
 
 ```powershell
-Get-Service -Name "WSearch"
+Get-Service
 ```
 
-> Cela retourne un **objet de type `System.ServiceProcess.ServiceController`**, avec des propriétés comme `Status`, `DisplayName`, `CanStop`, etc.
+Renvoie des objets `System.ServiceProcess.ServiceController` avec **propriétés** (Status, DisplayName…) et **méthodes** (Start, Stop…)
 
 ---
 
-## 🔍 Explorer un objet avec `Get-Member`
+## 🔍 Inspecter un objet : `Get-Member`
 
-- Permet de voir :
-    - Le **type d’objet**
-    - Les **propriétés** disponibles (membres statiques)
-    - Les **méthodes** disponibles (actions)
+### Syntaxe
+
+```powershell
+<commande> | Get-Member
+```
+
+### Affiche :
+
+- **TypeName** : le type d’objet
+- **MemberType** : Propriété, Méthode, Alias…
+- **Name** : nom de la propriété ou méthode
+
+### Exemple
 
 ```powershell
 Get-Service | Get-Member
 ```
 
-### Les 3 commandes clés PowerShell :
-
-```powershell
-Get-Command
-Get-Help
-Get-Member
-```
-
-> Indispensables pour découvrir et comprendre une Cmdlet ou un objet.
-
 ---
 
 ## 🧾 Propriétés d’un objet
 
-|Type|Description|
-|---|---|
-|`String`|Texte entre guillemets|
-|`Int`|Entier (positif ou négatif)|
-|`Boolean`|`$true`, `$false`, `$null`|
-|`Array`|Tableau d’éléments indexés|
-|`Object`|Un objet complet (imbriqué)|
+### Qu’est-ce qu’une propriété ?
 
-### Exemple de lecture et modification :
+- Une **information contenue dans l’objet** (nom, état, type, etc.)
+- Son **type** est important : String, Int, Bool, Array, etc.
+
+### Manipulation
 
 ```powershell
-(Get-Service -Name "WSearch").DisplayName
-
-Set-Service -Name "WSearch" -DisplayName "Recherche Windows"
+(Get-Service -Name Wsearch).DisplayName
+(Get-LocalUser -Name 'Utilisateur').Enabled
 ```
 
-> ⚠️ Pour modifier une propriété, utiliser une Cmdlet adaptée comme `Set-*`, pas d’affectation directe !
+### Modification (via Cmdlet de type `Set-`)
+
+```powershell
+Set-Service -Name Wsearch -DisplayName "Recherche Windows"
+```
+
+> 🔐 Certaines modifications nécessitent **les droits administrateur**
 
 ---
 
-## 🔄 Méthodes : effectuer des actions sur un objet
+## 🔧 Méthodes d’un objet
 
-- Contrairement aux propriétés (valeurs), les **méthodes** effectuent des actions.
-- Syntaxe : `(<objet>).<Méthode>(paramètre)`
+### Qu’est-ce qu’une méthode ?
 
-### Exemple : manipuler une date
+- Une **action exécutée** sur ou par un objet (≠ propriété statique)
+- Exemple : `.Start()`, `.Stop()`, `.AddDays()`
 
-```powershell
-(Get-Date).AddDays(1)   # Ajoute un jour à la date actuelle
-```
-
-### Exemple : contrôler un service
+### Syntaxe d’utilisation
 
 ```powershell
-$svc = Get-Service -Name "WSearch"
-$svc.Stop()    # Appelle la méthode Stop
-$svc.Start()   # Appelle la méthode Start
+(Get-Service -Name Wsearch).Stop()
+(Get-Date).AddDays(1)
 ```
 
-> 🧠 Les méthodes dépendent du type d’objet. Utilise `Get-Member` pour les découvrir !
+- L’objet est entouré de **parenthèses**
+- On utilise le **point `.`** pour accéder à la méthode
+- Les **parenthèses** de la méthode accueillent les **paramètres éventuels**
+
+---
+
+## 📚 Exemples de types de propriétés
+
+|Type|Exemple de valeur|
+|---|---|
+|String|"Utilisateur1"|
+|Int|1234|
+|Bool|`$true`, `$false`|
+|Array|`@(1,2,3)`|
+|Object|Une propriété peut elle-même contenir un objet complet|
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- PowerShell retourne et manipule des **objets** (et pas du texte brut).
-- Un objet a :
-    - Des **propriétés** (statut, nom, etc.)
-    - Des **méthodes** (Start, Stop, AddDays…)
-- Utilise `Get-Member` pour découvrir les capacités d’un objet
-- Utilise `Set-*` pour modifier des propriétés système
-- La syntaxe `(<objet>).<méthode>(valeur)` est essentielle
+- PowerShell retourne des objets complets avec propriétés + méthodes
+- `Get-Member` est **essentiel** pour comprendre comment manipuler un objet
+- La **notation pointée** (objet.propriété ou objet.méthode()) est au cœur du langage
+- Modifier une propriété nécessite d’utiliser la Cmdlet `Set-` associée
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Toujours tester avec `Get-Member`|Pour connaître toutes les possibilités d’un objet|
-|Ne pas essayer de modifier directement une propriété système|Utiliser la Cmdlet prévue (`Set-*`)|
-|Utiliser les méthodes pour des actions précises|Plus propre et plus explicite que des scripts manuels|
-|Explorer les objets renvoyés par les Cmdlets `Get-*`|Approche pédagogique et robuste de l'administration|
-|Rester en mode objet jusqu'à la sortie finale|Pour enchaîner proprement les Cmdlets et éviter les erreurs|
+- Toujours analyser les objets avec `Get-Member` avant d’en exploiter les valeurs
+- Ne jamais modifier un objet système sans comprendre le type de propriété concernée
+- Séparer l’extraction (Get-), l’inspection (`Get-Member`) et la modification (`Set-`)
+- Tester les manipulations sur des objets non critiques dans un environnement de test
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-Command
+Get-Help Get-Member -Full
+Get-Service | Get-Member
+(Get-Service -Name Wsearch).Status
+(Get-Date).AddDays(3)
+Set-Service -Name Wsearch -DisplayName "Recherche Windows"
+```
+
+## Ressources complémentaires
+
+- [https://learn.microsoft.com/powershell/scripting/learn/ps101/04-working-with-objects](https://learn.microsoft.com/powershell/scripting/learn/ps101/04-working-with-objects)

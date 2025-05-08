@@ -1,192 +1,185 @@
 # Présentation du langage PowerShell
 
-## 🧠 Présentation et historique
+## 📜 Historique & Versions
 
-- **PowerShell** est un shell Windows orienté objets, né en 2006 (V1.0).
-- Depuis la version 5.1, il est intégré à Windows 10 et Server 2019.
-- **PowerShell Core** (v6 à v7+) est multiplateforme, open source, basé sur .NET Core.
+### PowerShell classique (Windows PowerShell)
 
-### 💡 Avantages de PowerShell Core :
+- Apparue en 2006 (v1.0), intégrée à Windows depuis Vista / Server 2008
+- PowerShell 5.1 est installé par défaut sur Windows 10 / Server 2019
 
-- Compatible Windows, Linux, macOS
-- Syntaxe identique mais avec quelques limitations côté Windows (pas de WMI, tâches planifiées...)
-- Évolution continue : nouveaux modules, commandes mises à jour, performances accrues
+### PowerShell Core / PowerShell 7 (Open Source)
+
+- Multiplateforme : Windows, macOS, Linux (Debian, Ubuntu, Fedora, etc.)
+- Dépend de .NET Core
+- Exécution stricte sous Linux (sensible à la casse, certaines commandes indisponibles)
+
+> 📦 Cmdlet spéciale : `$PSVersionTable` pour afficher la version en cours
 
 ---
 
-## 🔧 Cmdlets : structure et usage
+## ⚙️ Cmdlets : les commandes PowerShell
 
-- Syntaxe standard : **Verbe-Nom** (toujours au singulier)
-
-```powershell
-Get-Process
-Start-Service
-Remove-Item
-```
-
-- Chaque Cmdlet peut recevoir des **paramètres** :
+### Structure
 
 ```powershell
-Get-LocalUser -Name "Edward"
+<Verbe>-<Nom>
 ```
 
-- Liste des verbes disponibles :
+Exemples : `Get-Process`, `Get-ChildItem`, `Set-ExecutionPolicy`
+
+- Les noms sont au **singulier**
+- Les **paramètres** sont introduits par `-`
+
+### Liste des verbes reconnus
 
 ```powershell
 Get-Verb
 ```
 
-> 📌 Cmdlets = commandes puissantes + paramétrables + lisibles
-
----
-
-## 🔍 Recherche de commandes avec `Get-Command`
-
-- Lister toutes les commandes disponibles :
+> Exemples avec paramètres :
 
 ```powershell
-Get-Command
-```
-
-- Filtrer par nom ou verbe :
-
-```powershell
-Get-Command -Name *Service
-Get-Command -Verb Get
+Get-LocalUser -Name "nom"
+Get-LocalGroupMember -Group "Groupe"
 ```
 
 ---
 
-## 📚 Aide intégrée avec `Get-Help`
+## 🔍 Rechercher les Cmdlets disponibles
 
-- Obtenir l’aide sur une commande :
-
-```powershell
-Get-Help -Name Get-Service
-```
-
-- Obtenir l’aide complète :
+### `Get-Command`
 
 ```powershell
-Get-Help -Name Get-Service -Full
+Get-Command -Name *-Service
+Get-Command -Verb Stop
 ```
 
-- Affichage dans une fenêtre dédiée (avec recherche) :
-
-```powershell
-Get-Help -Name Get-Service -ShowWindow
-```
-
-- Lister uniquement les exemples :
-
-```powershell
-Get-Help -Name Get-Service -Examples
-```
-
-- Accès à l’aide en ligne (navigateur) :
-
-```powershell
-Get-Help -Name Get-Service -Online
-```
-
-> 💡 Astuce : consulter aussi `Get-Help about_*` pour les concepts globaux (boucles, variables…)
+> 🔧 Utile pour lister toutes les commandes ou filtrer sur un nom ou verbe
 
 ---
 
-## ♻️ Mise à jour de l’aide
+## 📖 Aide intégrée PowerShell
 
-- Mettre à jour tous les fichiers d’aide :
+### `Get-Help`
+
+```powershell
+Get-Help Get-Service
+Get-Help Get-Service -Full
+Get-Help Get-Service -Examples
+Get-Help Get-Service -ShowWindow
+```
+
+- `-Full` → toutes les sections
+- `-ShowWindow` → aide dans une fenêtre avec champ de recherche
+- `-Online` → vers docs Microsoft
+
+### Sections générales
+
+```powershell
+Get-Help about_*    # aide sur les concepts (about_Arrays, about_If, etc.)
+```
+
+### Mise à jour de l’aide
 
 ```powershell
 Update-Help
-```
-
-- Source locale ou distante :
-
-```powershell
 Update-Help -SourcePath D:\PowerShell -UICulture en-US
 ```
 
-> ⚠️ Requiert **droits administrateur**
+> ❗ Requiert une console **administrateur**
 
 ---
 
-## 🔒 Exécution des scripts et politiques de sécurité
+## 🔐 Exécution des scripts
 
-- Vérifier la politique actuelle :
+### Politique de sécurité (Execution Policy)
 
 ```powershell
 Get-ExecutionPolicy
+Set-ExecutionPolicy Unrestricted   # ⚠️ nécessite droits admin
 ```
 
-- Modifier la politique (ex : pour tests) :
+Niveaux disponibles :
 
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted
-```
+- Restricted (par défaut)
+- AllSigned
+- RemoteSigned
+- Unrestricted
+- Bypass, Default, Undefined
 
-> ⚠️ Ne jamais laisser sur "Unrestricted" en production !
+> ⚠️ Modifier ce paramètre impacte la sécurité du système
 
 ---
 
-## 📦 Modules PowerShell
+## 📦 Gestion des modules PowerShell
 
-- Liste des modules disponibles :
+### Qu’est-ce qu’un module ?
 
-```powershell
-Get-Module -ListAvailable
-```
+- Ensemble de Cmdlets (fichier .psm1)
 
-- Importer un module :
+### Commandes utiles
 
 ```powershell
-Import-Module AWS.Tools.S3
+Get-Module
+$env:PSModulePath                # répertoires des modules autorisés
+Import-Module AWSPowershell      # importer un module
+Get-Command -Module AWSPowershell
 ```
 
-- Afficher les commandes d’un module :
-
-```powershell
-Get-Command -Module AWS.Tools.S3
-```
-
-- Chemin des modules disponibles :
-
-```powershell
-$env:PSModulePath
-```
+> Exemple : le module AWS PowerShell ajoute près de 8000 Cmdlets
 
 ---
 
 ## 🎨 Personnalisation de la console
 
-- Modifier l’apparence via clic droit → Propriétés
-- Créer un **profil utilisateur** exécuté à chaque ouverture :
+### Interface utilisateur
+
+- Clic droit sur la barre → Propriétés
+- Modifier la police, les couleurs, etc.
+
+### Script de profil utilisateur
 
 ```powershell
-New-Item -Path $PROFILE -Type File -Force
+New-Item -Path $Profile -Type File -Force
 ```
 
-- Contenu possible : couleur, alias, bandeau de bienvenue…
+- Ce fichier `.ps1` s’exécute à chaque ouverture de la console PowerShell
+- Il peut afficher un message de bienvenue, personnaliser le prompt, charger des modules, etc.
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- PowerShell est un shell orienté objets, multiplateforme avec Core
-- Toutes les commandes suivent la forme **Verbe-Nom** et sont des **Cmdlets**
-- Utilise `Get-Command`, `Get-Help`, `Update-Help` pour t’orienter
-- Les modules ajoutent des fonctionnalités avancées (AWS, Azure, etc.)
-- La sécurité des scripts est gérée par `Set-ExecutionPolicy`
-- Tu peux personnaliser et étendre ta console selon ton environnement
+- PowerShell est structuré autour des Cmdlets : `Verbe-Nom` + `-Paramètres`
+- `Get-Command`, `Get-Help`, `Update-Help` permettent de s’orienter
+- L’exécution de scripts est restreinte pour des raisons de sécurité → `Set-ExecutionPolicy`
+- PowerShell Core est open source, multiplateforme et différent de la version 5.1
+- Modules et profils permettent une personnalisation avancée de l’environnement
 
 ---
 
-## 📌 Bonnes pratiques
+## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Toujours utiliser `Get-Help`|Comprendre une commande avant de l’utiliser|
-|Tester une Cmdlet avec `-WhatIf`|Éviter les actions destructrices involontaires|
-|Garder un prompt personnalisé|Gagner du temps avec des alias ou infos utiles visibles|
-|Ne pas exécuter de scripts en mode "Unrestricted" permanent|Risques de sécurité élevés|
-|Utiliser `Import-Module` proprement|Charger uniquement ce qui est nécessaire|
+- Toujours exécuter PowerShell **en tant qu’administrateur** pour les commandes système
+- Personnaliser le profil PowerShell pour gagner en productivité (alias, fonctions, chargement de modules)
+- Conserver les scripts utiles dans un répertoire versionné (Git)
+- Tester les scripts dans un environnement de **test** avant usage en production
+- Maintenir les aides à jour avec `Update-Help`
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-Command
+Get-Help -Name NomCommande [-Full|-Examples|-Online]
+Update-Help
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+Import-Module -Name NomModule
+New-Item -Path $Profile -Type File -Force
+```
+
+## Ressources complémentaires
+
+- [https://docs.microsoft.com/powershell](https://docs.microsoft.com/powershell)
+- [https://learn.microsoft.com/powershell/scripting/overview](https://learn.microsoft.com/powershell/scripting/overview)

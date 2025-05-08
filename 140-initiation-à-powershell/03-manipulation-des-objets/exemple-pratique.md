@@ -1,36 +1,31 @@
-# TP – Manipuler des objets PowerShell
+# TP – Manipuler des objets
+## 🧱 Partie 1 – Utilisateurs Active Directory (AD)
 
-## 📄 Énoncé synthétisé
-
-> **Machine utilisée :** CLI01  
-
-### Étapes principales :
-
-- Manipulation des objets `Get-ADUser`, `Get-ChildItem`, `Get-EventLog`
-- Utilisation de `Select-Object`, `Where-Object`, `Sort-Object`, `Measure-Object`
-- Export CSV/HTML et mise en forme (`Format-Table`, `Format-List`)
-- Regroupement (`GroupBy`) et propriétés calculées
-
----
-
-## ✅ Résolution structurée
-
-### 🔹 Affichage des utilisateurs avec propriétés spécifiques
+### 📋 Liste des utilisateurs avec certaines propriétés
 
 ```powershell
-Get-ADUser -Filter * -Properties * |
-Select-Object GivenName, Name, Enabled, Department, City
+Get-ADUser -Filter * | Select-Object GivenName, Name, Enabled, Department, City
 ```
 
-> Pour afficher toutes les propriétés : `-Properties *`
+### 💡 Afficher toutes les propriétés disponibles
 
-### 🔹 Les 5 premiers utilisateurs
+```powershell
+Get-ADUser -Filter * -Properties *
+```
+
+### 📘 Aide détaillée
+
+```powershell
+Get-Help Get-ADUser -ShowWindow
+```
+
+### 🔢 Afficher les 5 premiers utilisateurs
 
 ```powershell
 Get-ADUser -Filter * | Select-Object -First 5
 ```
 
-### 🔹 Tri sur City puis Department
+### 🏙️ Trier les utilisateurs par ville, puis par département
 
 ```powershell
 Get-ADUser -Filter * -Properties * |
@@ -38,16 +33,15 @@ Select Name, Enabled, Department, City |
 Sort-Object City, Department
 ```
 
-### 🔹 Ajouter une condition : nom contenant "r"
+### 🔎 Filtrer sur les noms contenant un "r"
 
 ```powershell
 Get-ADUser -Filter * -Properties * |
-Where-Object { $_.Name -match "r" } |
-Select Name, Enabled, Department, City |
-Sort-Object City, Department
+Where-Object { $_.Name -like '*r*' } |
+Sort-Object Department, City
 ```
 
-### 🔹 BONUS : Désactiver les comptes commençant par "D"
+### ❌ Désactiver les utilisateurs dont le nom commence par un D
 
 ```powershell
 Get-ADUser -Filter 'Name -like "D*"' | Disable-ADAccount
@@ -55,39 +49,50 @@ Get-ADUser -Filter 'Name -like "D*"' | Disable-ADAccount
 
 ---
 
-### 🔹 Utilisateurs actifs dont le nom commence par A ou F
+## 🧱 Partie 2 – Filtres et mesures avancées
+
+### ✅ Afficher uniquement les utilisateurs actifs
 
 ```powershell
-Get-ADUser -Filter * |
-Where-Object { $_.Enabled -eq $true -and $_.Name -match "^[AF]" } |
-Select Name, Enabled
+Get-ADUser -Filter * | Where-Object Enabled -eq $true
 ```
 
-### 🔹 Comptage utilisateurs actifs/inactifs
+### 🔤 Filtrer par initiales (A ou F)
 
 ```powershell
-Get-ADUser -Filter * | Where Enabled -eq $true | Measure-Object
-Get-ADUser -Filter * | Where Enabled -eq $false | Measure-Object
+Get-ADUser -Filter * | Where-Object { $_.Enabled -eq $true -and ($_.Name -match '^[AF]') }
+```
+
+### 📊 Compter les utilisateurs actifs/inactifs
+
+```powershell
+Get-ADUser -Filter * | Where-Object Enabled -eq $true | Measure-Object
+Get-ADUser -Filter * | Where-Object Enabled -eq $false | Measure-Object
 ```
 
 ---
 
-## 🔹 Manipulation des fichiers réseau
+## 🧱 Partie 3 – Manipulation de fichiers
 
-### Tous les fichiers du partage :
+### 📂 Lister tous les fichiers
 
 ```powershell
 Get-ChildItem \\CD01\Partage -File -Recurse
 ```
 
-### Taille moyenne, min, max :
+### 📏 Taille moyenne des fichiers
 
 ```powershell
 Get-ChildItem \\CD01\Partage -File -Recurse | Measure-Object -Property Length -Average
-Get-ChildItem \\CD01\Partage -File -Recurse | Measure-Object -Property Length -Minimum -Maximum
 ```
 
-### Fichiers de taille entre 10 Mo et 100 Mo + tri :
+### 📈 Taille min/max
+
+```powershell
+Measure-Object -Property Length -Minimum -Maximum
+```
+
+### 🔎 Fichiers entre 10 Mo et 100 Mo
 
 ```powershell
 Get-ChildItem \\CD01\Partage -File -Recurse |
@@ -98,94 +103,126 @@ Sort-Object Name -Descending
 
 ---
 
-## 🔹 Mise en forme
+## 🧱 Partie 4 – Formatage et affichage
 
-### Liste des utilisateurs sur 5 colonnes :
+### 🖼️ Affichage en colonnes (Wide)
 
 ```powershell
 Get-ADUser -Filter * | Format-Wide -Column 5
 ```
 
-### Format tableau avec filtrage :
+### 📊 Tableau d'utilisateurs actifs
 
 ```powershell
 Get-ADUser -Filter * -Properties * |
-Where Enabled -eq $true |
+Where-Object Enabled -eq $true |
 Format-Table Name, Enabled, Department, City
 ```
 
-### Groupes AD avec regroupement par type :
+### 👥 Groupes AD triés par scope
 
 ```powershell
 Get-ADGroup -Filter * -Properties * |
 Format-Table Name, Description, Created -GroupBy GroupScope
 ```
 
-### Ordinateurs AD groupés par OS :
+### 🖥️ Ordinateurs du domaine, triés par OS
 
 ```powershell
 Get-ADComputer -Filter * -Properties * |
-Format-List Name, DnsHostName, DistinguishedName, IPv4Address -GroupBy OperatingSystem
+Format-List Name, DNSHostName, DistinguishedName, IPv4Address -GroupBy OperatingSystem
 ```
 
 ---
 
-## 🔹 Journaux d’événement
+## 🧱 Partie 5 – Journal système et exportations
 
-### Affichage complet
+### 📆 Événements système formatés
+
+```powershell
+Get-EventLog System | Select TimeWritten, Index, Message
+```
+
+### Version complète avec affichage maximal
 
 ```powershell
 Get-EventLog System | Format-List TimeWritten, Index, Message
 ```
 
+### 📤 Export en CSV
+
+```powershell
+Get-ADUser -Filter * | Export-Csv \\CD01\Partage\Exports\CSV\Users.csv -Delimiter '.'
+```
+
+### 🌐 Export en HTML
+
+```powershell
+Get-ADUser -Filter * -Properties * |
+ConvertTo-Html | Out-File \\CD01\Partage\Exports\CSV\Users.html
+```
+
+### ➕ Ajouter ordinateurs au CSV existant
+
+```powershell
+Get-ADComputer -Filter * |
+Export-Csv \\CD01\Partage\Exports\CSV\Users.csv -Append -Delimiter ';'
+```
+
 ---
 
-## 🔹 Export CSV, HTML, fusion, et importation
+## 🧱 Partie 6 – Importation & Propriété personnalisée
 
-### Export utilisateurs en CSV + HTML
+### 🛠️ Modifier nom de colonne + importer
 
 ```powershell
-Get-ADUser -Filter * | Export-Csv \\CD01\Partage\Exports\CSV\Users.csv -Delimiter ';' -NoTypeInformation
-Get-ADUser -Filter * -Properties * | ConvertTo-Html | Out-File \\CD01\Partage\Exports\CSV\Users.html
+Import-Csv -Path \\CD01\Partage\Exports\CSV\Users.csv -Delimiter ';' |
+Select-Object @{Name="Name";Expression={$_.Nom}} | New-ADUser
 ```
 
-### Ajout des ordinateurs au CSV :
+### 📥 Nettoyage avant import
 
 ```powershell
-Get-ADComputer -Filter * | Export-Csv \\CD01\Partage\Exports\CSV\Users.csv -Append -Delimiter ';' -Force
+Get-ADUser -Filter * | Remove-ADUser -Confirm:$false
 ```
 
-### Import avec renommage de colonne :
+---
+
+## 🧪 Bonus – Conversion & format personnalisé
+
+### 📊 Afficher fichiers du partage avec noms traduits + taille en Go
 
 ```powershell
-Import-Csv \\CD01\Partage\Exports\CSV\Users.csv -Delimiter ';' |
-Select @{Name="Name"; Expression={$_.Nom}} | New-ADUser
-```
-
-### Alternative avec propriété calculée (sans modifier le CSV) :
-
-```powershell
-Import-Csv \\CD01\Partage\Exports\CSV\Users.csv -Delimiter ';' |
-Select @{n="Name";e={$_.Nom}} | New-ADUser
+Get-ChildItem \\CD01\Partage -File -Recurse |
+Select @{n="Nom";e={$_.Name}}, @{n="Taille";e={[math]::Round($_.Length / 1GB, 2)}} |
+Format-List
 ```
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Utilise `Select`, `Where`, `Sort`, `Measure`, `Export`, `Format`, `ConvertTo-*`
-- Chaine les cmdlets avec `|` pour manipuler les objets de bout en bout
-- Utilise des **propriétés calculées** pour adapter l’affichage ou l’import/export
-- `Export-Csv` écrase le fichier → utiliser `-Append` pour conserver les données
+- `Select-`, `Sort-`, `Where-`, `Measure-`, `Format-` sont au cœur de la manipulation
+- `Export-Csv`, `Import-Csv`, `ConvertTo-*` permettent de structurer, persister, réutiliser les données
+- Active Directory est un **fournisseur riche** à manipuler avec précaution
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Pratique|Pourquoi ?|
-|---|---|
-|Tester les filtres avant les actions|Pour éviter de désactiver ou supprimer par erreur|
-|Utiliser `Measure-Object`|Pour valider les résultats de filtrage|
-|Ne pas mélanger Format-* avec Export-*|Format-* génère du texte, Export-* attend des objets|
-|Traduire les propriétés via `@{}`|Utile pour normaliser les exports/imports|
-|Sauvegarder les exports dans des noms datés|Traçabilité des actions d’administration|
+- Tester les filtres sur un échantillon avant de les appliquer à grande échelle
+- Toujours **vérifier** les imports/exports : structure, encodage, délimiteur
+- Privilégier les formats **structurés et typés** (CSV, JSON) pour les scripts automatisés
+- Documenter les scripts par blocs : filtrage, sélection, export, logs
+
+---
+
+## 🔗 Commandes utiles
+
+```powershell
+Get-ADUser -Filter * | Select GivenName, Name, Enabled, Department, City
+Get-ChildItem \\CD01\Partage -File -Recurse | Measure-Object -Property Length -Average
+Import-Csv -Path "..." | Select @{n="Name";e={$_.Nom}} | New-ADUser
+Export-Csv -Path "..." -Append -Delimiter ';'
+```
+
