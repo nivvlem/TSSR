@@ -56,6 +56,58 @@
 </details>
 
 <details>
+<summary>🐧 Utilisation GNU/Linux</summary>
+
+- [Introduction Linux](/040-utilisation-distribution-gnulinux/01-introduction-linux/introduction-linux.md)
+- [Découverte OS Linux](/040-utilisation-distribution-gnulinux/02-découverte-os-linux/découverte-os-linux.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/02-découverte-os-linux/exemple-pratique.md)
+- [Découverte Shell](/040-utilisation-distribution-gnulinux/03-découverte-shell/découverte-shell.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/03-découverte-shell/exemple-pratique.md)
+- [Fichiers et dossiers](/040-utilisation-distribution-gnulinux/04-fichiers-et-dossiers/fichiers-et-dossiers.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/04-fichiers-et-dossiers/exemple-pratique.md)
+- [Utiliser des fichiers](/040-utilisation-distribution-gnulinux/05-utiliser-des-fichiers/utiliser-des-fichiers.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/05-utiliser-des-fichiers/exemple-pratique.md)
+- [Spécificités du shell Bash](/040-utilisation-distribution-gnulinux/06-spécificités-shell-bash/spécificités-shell-bash.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/06-spécificités-shell-bash/exemple-pratique.md)
+- [Éditer du texte](/040-utilisation-distribution-gnulinux/07-éditer-du-texte/éditer-du-texte.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/07-éditer-du-texte/exemple-pratique.md)
+- [Mécanismes avancés](/040-utilisation-distribution-gnulinux/08-mécanismes-avancés/mécanismes-avancés.md)
+    - [🛠 Exemple](/040-utilisation-distribution-gnulinux/08-mécanismes-avancés/exemple-pratique.md)
+- [🧾 Synthèse](/040-utilisation-distribution-gnulinux/synthèse/synthèse.md)
+
+</details>
+
+<details>
+<summary>🛠️ Administration GNU/Linux</summary>
+
+- [Présentation Debian GNU/Linux](/050-administration-distribution-gnulinux/01-présentation-debian-gnulinux/présentation-debian-gnulinux.md)
+- [Installation](/050-administration-distribution-gnulinux/02-installation-distribution-debian/installation-distribution-debian.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/02-installation-distribution-debian/exemple-pratique.md)
+- [Démarrage système](/050-administration-distribution-gnulinux/03-démarrage-distribution-debian/démarrage-distribution-debian.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/03-démarrage-distribution-debian/exemple-pratique.md)
+- [Mode maintenance](/050-administration-distribution-gnulinux/04-debian-mode-maintenance/debian-mode-maintenance.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/04-debian-mode-maintenance/exemple-pratique.md)
+- [Gestion réseau](/050-administration-distribution-gnulinux/05-gestion-réseau/gestion-réseau.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/05-gestion-réseau/exemple-pratique.md)
+- [Gestion des paquets](/050-administration-distribution-gnulinux/06-gestion-des-paquets-logicielles/gestion-des-paquets-logicielles.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/06-gestion-des-paquets-logicielles/exemple-pratique.md)
+- [Espaces de stockage](/050-administration-distribution-gnulinux/07-gestion-des-espaces-de-stockage/gestion-des-espaces-de-stockage.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/07-gestion-des-espaces-de-stockage/exemple-pratique.md)
+- [LVM](/050-administration-distribution-gnulinux/08-gestion-des-espaces-de-stockage-lvm/gestion-des-espaces-de-stockage-lvm.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/08-gestion-des-espaces-de-stockage-lvm/exemple-pratique.md)
+- [File system](/050-administration-distribution-gnulinux/09-gestion-des-espaces-de-stockage-file-system/gestion-des-espaces-de-stockage-file-system.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/09-gestion-des-espaces-de-stockage-file-system/exemple-pratique.md)
+- [Utilisateurs et groupes](/050-administration-distribution-gnulinux/10-gestion-des-utilisateurs-et-groupes/gestion-des-utilisateurs-et-groupes.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/10-gestion-des-utilisateurs-et-groupes/exemple-pratique.md)
+- [Droits sur les fichiers](/050-administration-distribution-gnulinux/11-droits-sur-les-fichiers-et-répertoires/droits-sur-les-fichiers-et-répertoires.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/11-droits-sur-les-fichiers-et-répertoires/exemple-pratique.md)
+- [Maintenance système](/050-administration-distribution-gnulinux/12-maintenance-système-en-production/maintenance-système-en-production.md)
+    - [🛠 Exemple](/050-administration-distribution-gnulinux/12-maintenance-système-en-production/exemple-pratique.md)
+- [🧾 Synthèse](/050-administration-distribution-gnulinux/synthèse/synthèse.md)
+
+</details>
+
+<details>
 <summary>🛠️ Services réseau Microsoft</summary>
 
 - [Administration Windows](/090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
