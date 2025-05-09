@@ -156,9 +156,7 @@ Switch ($choix) {
 ```
 
 - Accepte les actions `Break` / `Continue`
-    
 - Peut utiliser `-Regex` pour tester des motifs
-    
 
 ---
 
