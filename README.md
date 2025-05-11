@@ -74,6 +74,16 @@ Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques
   - [Savoirs & posture](060-sensibilisation-itil/08-savoir-savoir-faire-savoir-être/savoir-savoir-faire-savoir-être.md)
   - [Assistance GLPI](060-sensibilisation-itil/09-assistance-glpi/assistance-glpi.md)
 
+- [MSP Systèmes Clients](#070---mise-en-situation-professionnelle-systèmes-clients)
+  - [Analyse](070-mise-en-situation-professionnelle-systèmes-clients/01-analyse.md)
+  - [Installation systèmes](070-mise-en-situation-professionnelle-systèmes-clients/02-installation-systèmes.md)
+  - [Utilisateurs & environnement](070-mise-en-situation-professionnelle-systèmes-clients/03-utilisateurs-environnement.md)
+  - [Stockage de ressources](070-mise-en-situation-professionnelle-systèmes-clients/04-stockage-ressources.md)
+  - [Configuration avancée](070-mise-en-situation-professionnelle-systèmes-clients/05-configuration-avancee.md)
+  - [Applications](070-mise-en-situation-professionnelle-systèmes-clients/06-applications.md)
+  - [Sauvegarde & restauration](070-mise-en-situation-professionnelle-systèmes-clients/07-sauvegarde-restauration.md)
+  - [LVM](070-mise-en-situation-professionnelle-systèmes-clients/08-lvm.md)
+
 - [Services réseau Microsoft](#090---services-réseau-microsoft)
   - [Administration Windows](090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
   - [Active Directory](090-services-réseau-en-environnement-microsoft/02-active-directory/active-directory.md)

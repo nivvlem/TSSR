@@ -127,6 +127,21 @@
 </details>
 
 <details>
+<summary>🧑‍💻 MSP - Systèmes clients</summary>
+
+- [Analyse](/070-mise-en-situation-professionnelle-systèmes-clients/01-analyse.md)
+- [Installation systèmes](/070-mise-en-situation-professionnelle-systèmes-clients/02-installation-systèmes.md)
+- [Utilisateurs & environnement](/070-mise-en-situation-professionnelle-systèmes-clients/03-utilisateurs-environnement.md)
+- [Stockage de ressources](/070-mise-en-situation-professionnelle-systèmes-clients/04-stockage-ressources.md)
+- [Configuration avancée](/070-mise-en-situation-professionnelle-systèmes-clients/05-configuration-avancee.md)
+- [Applications](/070-mise-en-situation-professionnelle-systèmes-clients/06-applications.md)
+- [Sauvegarde & restauration](/070-mise-en-situation-professionnelle-systèmes-clients/07-sauvegarde-restauration.md)
+- [LVM](/070-mise-en-situation-professionnelle-systèmes-clients/08-lvm.md)
+- [🧾 Synthèse](/070-mise-en-situation-professionnelle-systèmes-clients/synthèse.md)
+
+</details>
+
+<details>
 <summary>🛠️ Services réseau Microsoft</summary>
 
 - [Administration Windows](/090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
