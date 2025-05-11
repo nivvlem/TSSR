@@ -108,6 +108,25 @@
 </details>
 
 <details>
+<summary>📘 Sensibilisation ITIL</summary>
+
+- [Présentation](/060-sensibilisation-itil/01-présentation/présentation.md)
+- [Gestion des services](/060-sensibilisation-itil/02-gestion-des-services/gestion-des-services.md)
+- [Stratégie & conception](/060-sensibilisation-itil/03-stratégie-et-conception-des-services/stratégie-et-conception-des-services.md)
+    - [🛠 Exemple](/060-sensibilisation-itil/03-stratégie-et-conception-des-services/exemple-pratique.md)
+- [Transition des services](/060-sensibilisation-itil/04-transition-des-services/transition-des-services.md)
+    - [🛠 Exemple](/060-sensibilisation-itil/04-transition-des-services/exemple-pratique.md)
+- [Découverte de GLPI](/060-sensibilisation-itil/05-découverte-glpi/découverte-glpi.md)
+- [Exploitation des services](/060-sensibilisation-itil/06-exploitation-des-services/exploitation-des-services.md)
+- [Amélioration continue](/060-sensibilisation-itil/07-amélioration-continue-des-services/amélioration-continue-des-services.md)
+- [Savoir / savoir-faire / savoir-être](/060-sensibilisation-itil/08-savoir-savoir-faire-savoir-être/savoir-savoir-faire-savoir-être.md)
+- [Assistance GLPI](/060-sensibilisation-itil/09-assistance-glpi/assistance-glpi.md)
+    - [🛠 Exemple](/060-sensibilisation-itil/09-assistance-glpi/exemple-pratique.md)
+- [🧾 Synthèse](/060-sensibilisation-itil/synthèse/synthèse.md)
+
+</details>
+
+<details>
 <summary>🛠️ Services réseau Microsoft</summary>
 
 - [Administration Windows](/090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)

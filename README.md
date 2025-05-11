@@ -63,6 +63,17 @@ Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques
   - [Droits sur fichiers](050-administration-distribution-gnulinux/11-droits-sur-les-fichiers-et-répertoires/droits-sur-les-fichiers-et-répertoires.md)
   - [Maintenance](050-administration-distribution-gnulinux/12-maintenance-système-en-production/maintenance-système-en-production.md)
 
+- [Sensibilisation ITIL](#060---sensibilisation-itil)
+  - [Présentation](060-sensibilisation-itil/01-présentation/présentation.md)
+  - [Gestion des services](060-sensibilisation-itil/02-gestion-des-services/gestion-des-services.md)
+  - [Stratégie et conception](060-sensibilisation-itil/03-stratégie-et-conception-des-services/stratégie-et-conception-des-services.md)
+  - [Transition des services](060-sensibilisation-itil/04-transition-des-services/transition-des-services.md)
+  - [Découverte GLPI](060-sensibilisation-itil/05-découverte-glpi/découverte-glpi.md)
+  - [Exploitation des services](060-sensibilisation-itil/06-exploitation-des-services/exploitation-des-services.md)
+  - [Amélioration continue](060-sensibilisation-itil/07-amélioration-continue-des-services/amélioration-continue-des-services.md)
+  - [Savoirs & posture](060-sensibilisation-itil/08-savoir-savoir-faire-savoir-être/savoir-savoir-faire-savoir-être.md)
+  - [Assistance GLPI](060-sensibilisation-itil/09-assistance-glpi/assistance-glpi.md)
+
 - [Services réseau Microsoft](#090---services-réseau-microsoft)
   - [Administration Windows](090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
   - [Active Directory](090-services-réseau-en-environnement-microsoft/02-active-directory/active-directory.md)
