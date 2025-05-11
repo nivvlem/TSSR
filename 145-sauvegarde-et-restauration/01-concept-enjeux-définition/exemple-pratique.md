@@ -1,100 +1,94 @@
-# TP – Création de l'infrastructure de sauvegarde
+# TP – Création de l’infrastructure de sauvegarde
 
-## 🧰 Prérequis
+## 🛠️ Prérequis
 
-- Disposer du rôle **Hyper-V activé** sur votre poste
-- Avoir accès au partage `\\distrib` contenant les bundles VM à importer
+- Accès au **Gestionnaire Hyper-V**
+- Accès au partage réseau `\\distrib`
 
 ---
 
-## 🗂️ Étapes détaillées
+## 🗂️ Étapes 1 à 2 – Préparation de l’environnement Hyper-V
 
-### 📁 1. Organisation du stockage
+1. Créer une **arborescence de stockage dédiée** sur `D:\` :
+    - Exemple : `D:\TP_Sauvegarde\SRV-BACKUP`, `D:\TP_Sauvegarde\SRV-NAS`, etc.
+2. Importer les machines virtuelles disponibles dans le bundle fourni :
+    - Les machines **SRV-AD1** et **SRV-FIC1** sont déjà incluses dans la VM **SRV-HyperV**
+    - À importer :
 
-1. Créer une arborescence dédiée sur le *disque D:* :
-    - D:\VMs\SRV-Backup
-    - D:\VMs\SRV-HyperV
-    - D:\VMs\SRV-NAS
-    - D:\VMs\SRV-AD1 (si nécessaire)
-    - D:\VMs\SRV-FIC1 (si nécessaire)
-    - D:\VMs\Routeur
-
-### 🖥️ 2. Importation des VMs dans Hyper-V
-
-Importer les VMs depuis le bundle fourni. L’importation doit être réalisée via **le gestionnaire Hyper-V** :
-
-|Nom de VM|Système|Domaine / Groupe de travail|Login|Mot de passe|
+|Nom VM|OS / Distribution|Domaine|Utilisateur|Mot de passe|
 |---|---|---|---|---|
-|SRV-Backup|Windows Server 2019|Mondomaine.local|Administrateur|Pa$$w0rd|
+|SRV-BACKUP|Windows Server 2019|mondomaine.local|Administrateur|Pa$$w0rd|
+|SRV-NAS|FreeBSD (TrueNAS)|mondomaine.local|admin|*|
+|SRV-ROUTEUR|FreeBSD (pfSense)|mondomaine.local|admin|*|
 |SRV-HyperV|Windows Server 2019|WORKGROUP|Administrateur|*|
-|SRV-NAS|FreeBSD / TrueNAS|Mondomaine.local|admin|*|
-|Routeur|FreeBSD / pfSense|Mondomaine.local|admin|*|
-|SRV-AD1|Windows Server 2019|Mondomaine.local|Administrateur|*|
-|SRV-FIC1|Windows Server 2019|Mondomaine.local|Administrateur|*|
-
-📝 Remarque : les VMs **SRV-AD1** et **SRV-FIC1** peuvent être déjà intégrées dans **SRV-HyperV**.
 
 ---
 
-## 🔎 3. Démarrage et vérification
+## 🧪 Étape 3 – Vérification et finalisation
 
-1. Démarrer toutes les VMs.
-2. Se connecter à toutes les machines avec :
-    - Utilisateur : `Administrateur`
-    - Mot de passe : `Pa$$w0rd`
-3. Vérifier l’état réseau de chaque VM.
+### 3.1 Démarrage et connexion aux VMs
 
-### 🔗 Connectivité à tester depuis **SRV-Backup**
+- Démarrer toutes les VMs : `SRV-BACKUP`, `SRV-NAS`, `SRV-ROUTEUR`, `SRV-AD1`, `SRV-FIC1`
+- Se connecter à chaque VM avec :
+    - `Administrateur / Pa$$w0rd`
 
-- Ping vers :
-    - SRV-AD1
-    - SRV-FIC1
-    - SRV-NAS
+### 3.2 Vérification de la connectivité
 
-🛠️ Si nécessaire, ajuster les **pare-feu Windows** pour permettre les connexions ICMP entrantes.
+- Depuis `SRV-BACKUP`, tester les connexions vers :
+    - `SRV-AD1`
+    - `SRV-FIC1`
+    - `SRV-NAS`
+- Adapter les pare-feu Windows si nécessaire pour permettre les **pings entrants/sortants**
 
 ---
 
-## 🌐 4. Préparation de l’interface NAS
+## 🔧 Étape 4 – Préparation du NAS (depuis SRV-BACKUP)
 
-1. Depuis SRV-Backup, ouvrir un navigateur
-2. Se connecter au portail **TrueNAS** : `https://192.168.30.1`
-    - Login : `admin`
-    - Mot de passe : `Pa$$w0rd`
+### 4.1 Accès au portail TrueNAS
 
-### Vérifications système :
+- Ouvrir un navigateur
+- Accéder à l’URL : `https://192.168.30.1`
+- Connexion : `admin / Pa$$w0rd`
 
-- Dans Paramètres Système > Console : exécuter :
+### 4.2 Vérification intégration AD
+
+- Aller dans **Paramètres système > Console**
+- Exécuter la commande :
 
 ```bash
 sudo wbinfo -t
 ```
 
-➡️ Ceci teste l’intégration dans le domaine AD.
+- Si le test est réussi, l’intégration à l’Active Directory est confirmée ✅
 
-### Activer le service iSCSI :
+### 4.3 Activation du service iSCSI
 
-- Aller dans le menu **Services**
-- Activer le **service iSCSI** pour les tests de stockage ultérieurs
+- Naviguer vers **Services** > activer **iSCSI**
+- Vérifier que le service démarre automatiquement
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Toujours organiser l’emplacement des VMs dans des **dossiers distincts**
-- Le **rôle Hyper-V** doit être activé pour pouvoir importer les machines
-- Tester la **connectivité réseau** et les **services** (DNS, Web, ICMP) immédiatement après démarrage
-- L’activation du **service iSCSI** sur le NAS est cruciale pour les futurs ateliers
-- La **commande `wbinfo -t`** valide l’intégration Active Directory de TrueNAS
+- Une infrastructure de test bien structurée permet de simuler un environnement de sauvegarde réaliste
+- L’intégration AD du NAS est essentielle pour les futures opérations d’authentification et de permissions
+- Chaque VM a un rôle spécifique (contrôleur AD, serveur de fichier, NAS, Hyper-V)
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Utiliser des noms de dossiers clairs|Facilite la gestion et le nettoyage de l’environnement|
-|Nommer les VMs selon leur rôle|Aide à la documentation et au repérage rapide|
-|Désactiver le pare-feu ou ajuster les règles|Garantir la communication entre les composants|
-|Centraliser les machines sur un seul hôte Hyper-V|Réduit les risques d’erreurs de configuration réseau|
-|Vérifier les services Web, DNS et ICMP|Valide le bon fonctionnement des futures sauvegardes|
+- Créer une **arborescence logique et lisible** pour les VMs
+- Documenter les **IPs, rôles, utilisateurs** de chaque VM dès la mise en place
+- Vérifier systématiquement la **connectivité inter-VM** avant tout déploiement logiciel
+- Tester l’intégration AD et la disponibilité réseau des services essentiels (NAS, DNS…)
+
+---
+
+## 🔗 Outils / composants utilisés
+
+- Hyper-V (Windows 10/11 Pro ou Windows Server)
+- TrueNAS (192.168.30.1, accès web)
+- pfSense (serveur routeur, utilisé dans les prochaines étapes)
+- Navigateur (accès portail TrueNAS)
+- Commande : `sudo wbinfo -t`

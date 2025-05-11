@@ -1,98 +1,104 @@
 # La virtualisation des serveurs
 
-## 🧱 Architecture d'une infrastructure virtualisée
+## 🖥️ La machine hôte (host)
 
-Une infrastructure de virtualisation repose sur plusieurs couches :
+Le serveur physique hôte fournit les **ressources matérielles** (CPU, RAM, stockage, réseau) nécessaires à l’hébergement de machines virtuelles.
 
-|Élément|Rôle principal|
+> Il doit être équipé de **processeurs compatibles** avec la virtualisation matérielle :
+
+### Technologies supportées :
+
+- **Intel VT-x**
+- **AMD-V**
+- **SLAT (Second Level Address Translation)** : EPT (Intel), NPT/RVI (AMD)
+
+---
+
+## 🧠 L’hyperviseur
+
+L’hyperviseur est le **logiciel de virtualisation** installé sur l’hôte. Il est chargé :
+
+- De gérer le matériel physique (accès au CPU, mémoire, disques, etc.)
+- D’héberger et de faire fonctionner plusieurs VMs de manière isolée
+
+### Exemples d’hyperviseurs :
+
+- **Hyper-V** (Microsoft)
+- **ESXi** (VMware)
+
+---
+
+## 🛠️ Outils de gestion intégrés : VMM
+
+Chaque solution d’hyperviseur possède un **Virtual Machine Manager (VMM)**, outil graphique ou en ligne de commande permettant :
+
+### Fonctions principales du VMM :
+
+- Création / suppression de VMs
+- Affectation de ressources matérielles
+- Gestion des disques, réseaux, snapshots
+- Configuration des fonctions de l’hyperviseur
+
+### Exemples de VMM :
+
+|Solution|Outil de gestion|
 |---|---|
-|**Hôte (machine physique)**|Fournit les ressources matérielles : CPU, RAM, disques, cartes réseau…|
-|**Hyperviseur**|Plateforme logicielle qui gère les VMs et accède aux ressources matérielles|
-|**VMM (Virtual Machine Manager)**|Outil d’administration : création, configuration, suivi des VMs|
-|**Machines virtuelles (VM)**|Systèmes invités simulés, exécutés sur l’hyperviseur|
+|Hyper-V (Windows)|Gestionnaire Hyper-V|
+|vSphere (VMware)|vSphere Client (Web ou App)|
 
 ---
 
-## ⚙️ Hyperviseurs serveurs (type 1)
+## 🧩 Les machines virtuelles (VM)
 
-|Solution|Éditeur|Particularités|
-|---|---|---|
-|**Hyper-V**|Microsoft|Intégré à Windows Server, s’administre avec Hyper-V Manager ou PowerShell|
-|**VMware ESXi**|VMware|Version gratuite disponible, nécessite vSphere pour gestion centralisée|
-|**KVM**|Communauté Linux|Intégré au noyau Linux, utilisé avec Proxmox, virt-manager…|
-|**XenServer**|Citrix|Moins courant, mais historique sur certains systèmes|
+Une machine virtuelle est une **instance logicielle complète** d’un système d’exploitation, hébergée sur l’hyperviseur.
 
----
+### Une VM contient :
 
-## 🧠 Processeurs et virtualisation matérielle
-
-Les hôtes doivent prendre en charge :
-
-|Technologie Intel|Technologie AMD|Rôle|
-|---|---|---|
-|Intel VT-x|AMD-V|Virtualisation bas-niveau (instructions processeur)|
-|EPT|NPT / RVI|Second Level Address Translation → meilleures performances|
-
-🎯 Vérifier ces options dans le BIOS/UEFI du serveur physique.
+- Un fichier de **configuration matérielle** (VMX, XML…)
+- Un ou plusieurs **fichiers disques** (VHD, VMDK…)
+- Des ressources **CPU, RAM** allouées
+- Une ou plusieurs **interfaces réseau virtuelles**
+- Une image de **l’état mémoire (RAM)** lors des snapshots
 
 ---
 
-## 🛠️ Composants d’une VM
+## 🗃️ Consolidation de plusieurs hyperviseurs
 
-Une VM comprend :
+Dans une infrastructure professionnelle, plusieurs hôtes peuvent être **regroupés** dans un contexte de gestion centralisé :
 
-- Un ou plusieurs **fichiers de disque** (VHDX, VMDK…)
-- Un **fichier de configuration matérielle**
-- Des ressources attribuées : CPU, RAM, interfaces réseau virtuelles
-- Une **image mémoire** en cours d’exécution
+### Exemple :
 
----
+- En environnement Microsoft : intégration des serveurs Hyper-V dans un **domaine Active Directory**
+- En environnement VMware : utilisation du **vCenter Server** pour gérer tous les ESXi
 
-## 🗃️ Outils de gestion
+### Avantage :
 
-|Environnement|Outil de gestion principal|
-|---|---|
-|Hyper-V|Gestionnaire Hyper-V, PowerShell|
-|VMware ESXi|vSphere Client / Web Client|
-
-Les VMM permettent :
-
-- La création et gestion de VMs
-- Le suivi des ressources (CPU, RAM, stockage)
-- La gestion réseau et snapshots
-
----
-
-## 🔄 Consolidation et administration centralisée
-
-Les infrastructures peuvent être **gérées individuellement** ou **regroupées** pour centralisation :
-
-- **Hyper-V** : intégration des hôtes dans un domaine Active Directory
-- **vSphere** : ajout des hôtes ESXi dans un **vCenter Server**
-
-Avantages :
-
-- Déploiement automatisé
-- Supervision unifiée
-- Haute disponibilité (vMotion, clustering)
+Permet la **mutualisation de la gestion**, la haute disponibilité (HA), la migration à chaud (vMotion/Live Migration), la supervision centralisée.
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- L’hyperviseur **type 1** est installé directement sur le serveur physique
-- **Hyper-V** (Microsoft) et **VMware ESXi** sont les plus courants en entreprise
-- Le **VMM** (Hyper-V Manager, vSphere) est essentiel à l’administration
-- Une VM repose sur des fichiers (disques, configuration, snapshots…)
+- L’hyperviseur est le **cœur logiciel** qui fait tourner les VMs sur un hôte physique
+- Les VMs sont **des fichiers**, instanciés à partir d’un stockage, avec des ressources allouées dynamiquement
+- Le VMM (console de gestion) permet une **interface utilisateur complète** pour gérer les hôtes et les VMs
+- Une infrastructure virtualisée peut regrouper plusieurs hôtes pour **simplifier l’administration et augmenter la résilience**
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Vérifier la compatibilité CPU (VT-x, AMD-V…)|Indispensable pour la prise en charge de l’hyperviseur|
-|Déployer les VMs sur du **stockage dédié performant**|Optimiser la disponibilité et les temps d’accès|
-|Nommer clairement les hôtes et VMs|Faciliter la supervision et l’automatisation|
-|Sauvegarder régulièrement les VMs|Prévention en cas de corruption ou de panne|
-|Isoler les VLANs de gestion, VM et stockage|Meilleure sécurité et performance réseau|
+- Toujours **vérifier la compatibilité matérielle** (VT-x, AMD-V, SLAT) avant d’installer un hyperviseur
+- Centraliser les VMs et les hôtes dans un outil d’administration (vCenter, SCVMM)
+- Ne jamais affecter **plus de ressources que disponible** sur l’hôte (surprovisionnement = instabilité)
+- Prévoir une **stratégie de sauvegarde et de supervision** adaptée
+- Séparer clairement les rôles : hôte ≠ VM ≠ outil de gestion
+
+---
+
+## 🔗 Outils / concepts à connaître
+
+- Hyperviseur = ESXi, Hyper-V
+- VMM = Hyper-V Manager, vSphere Client
+- VM = VHD/VMDK + config + RAM + réseau
+- Concepts : consolidation, centralisation, allocation dynamique

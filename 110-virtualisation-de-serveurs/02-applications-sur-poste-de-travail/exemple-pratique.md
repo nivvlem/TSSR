@@ -1,70 +1,65 @@
-# TP – Mise en œuvre VMware Workstation
+# TP – Mise en situation VMware Workstation
 
-## 🧩 Étapes de réalisation
+## 📝 Étapes
 
-### 1. ✅ Vérification des prérequis
+### 1. Vérification de l’environnement
 
-- OS hôte : Windows Server 2019
-- Adressage IP configuré en DHCP
-- VMware Workstation 17 est installé (vérifier via le menu Aide ou dans les applications installées)
+- Vérifier que **VMware Workstation 17** est bien installé sur la machine physique (Windows Server 2019).
+- S’assurer que **la virtualisation est activée dans le BIOS** (Intel VT-x ou AMD-V).
 
-### 2. 📁 Préparation de l’environnement
+### 2. Création d’un dossier de stockage
 
-- Créer un dossier `D:\Machines virtuelles` pour stocker les VMs
+- Créer un dossier `D:\Machines virtuelles` destiné à contenir toutes les VMs futures.
 
-### 3. 💻 Création de la machine virtuelle `SRV_2K19`
+### 3. Création de la VM `SRV_2K19`
 
-**Paramètres à configurer dans l’assistant :**
+#### Paramètres à appliquer :
 
-- Type de système : _Microsoft Windows_ > _Windows Server 2019_
-- Nom : `SRV_2K19`
-- Dossier : `D:\Machines virtuelles\SRV_2K19`
-- Processeur : 2 CPU, 1 cœur par CPU
-- RAM : 2 Go
-- Carte réseau : _Bridged_
-- Disque : 60 Go, _single file_
-- Activer la virtualisation avancée : cocher _Virtualize Intel VT-x/EPT or AMD-V/RVI_
+- **Système invité** : Windows Server 2019
+- **Nom de la VM** : `SRV_2K19`
+- **Stockage** : `D:\Machines virtuelles\SRV_2K19`
+- **CPU** : 2 processeurs / 1 cœur
+- **Mémoire RAM** : 2 Go
+- **Disque dur** : 60 Go en **single file**
+- **Carte réseau** : mode **Bridged**
+- **Option CPU** : cocher "Virtualize Intel VT-x/EPT or AMD-V/RVI"
 
-### 4. 📦 Montage du média d’installation
+### 4. Configuration du média d’installation
 
-- Aller dans les paramètres de la VM > CD/DVD
-- Choisir : _Use ISO image file_ > Naviguer vers `\\distrib\iso\os\windows\WindowsServer2019.iso`
+- Récupérer le fichier ISO de Windows Server 2019 à partir du partage réseau `\\distrib\iso\os\windows\`.
+- Ajouter ce fichier ISO comme **CD-ROM bootable** dans la VM.
 
-### 5. 🚀 Installation du système
+### 5. Installation de l’OS
 
-- Lancer la VM
-- Démarrer depuis l’image ISO
-- Choisir l’installation de **Windows Server 2019 avec Expérience utilisateur**
+- Démarrer la VM sur l’ISO.
+- Installer **Windows Server 2019** en mode **Expérience utilisateur (Desktop Experience)**.
 
-### 6. 🧰 Installation des VMware Tools
+### 6. Installation des VMware Tools
 
-- Une fois Windows installé, aller dans `VM > Install VMware Tools`
-- Suivre l’assistant d’installation dans la VM
-- Redémarrer la VM
+- Une fois l’OS installé, insérer les **VMware Tools** via `VM > Install VMware Tools`.
+- Suivre l’assistant d’installation à l’intérieur de la VM.
 
-### 7. 💾 Finalisation
+### 7. Finalisation
 
-- Nommer la VM dans Windows (ex : `SRV-2K19`)
-- Arrêter proprement la VM depuis le menu `Démarrer > Arrêter`
-- Créer un snapshot : `VM > Snapshot > Take Snapshot`, le nommer **Fin Atelier 1**
+- Éteindre proprement la VM.
+- Renommer clairement la VM.
+- Créer un **snapshot nommé “Fin Atelier 1”** :
+    - Clic droit sur la VM > Snapshots > Take Snapshot
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Toujours créer un dossier dédié pour organiser ses machines
-- Activer les options de virtualisation matérielle dans les paramètres VM
-- Le mode _bridged_ permet à la VM d’être sur le même réseau que l’hôte
-- L’installation des VMware Tools améliore la compatibilité, les performances, et l’ergonomie
-- Créer des snapshots permet de revenir en arrière rapidement
+- Toujours choisir **un emplacement personnalisé** et bien structuré pour stocker ses VMs.
+- Utiliser **l’option d’installation manuelle** pour un meilleur contrôle.
+- Le mode **bridged** permet une intégration réseau totale comme une machine physique.
+- Les **VMware Tools** sont essentiels pour les performances, la résolution graphique et l’intégration.
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Stocker les VMs sur une partition dédiée|Améliore les performances, évite la saturation du disque système|
-|Toujours utiliser des ISO depuis des sources fiables|Réduit les risques de corruption ou infection|
-|Documenter les réglages de chaque VM|Facilite le support et la reproduction de l’environnement|
-|Faire un snapshot avant chaque changement majeur|Permet un retour rapide en cas d’erreur|
+- Organiser les VMs dans des **dossiers nommés selon les projets ou systèmes**.
+- Utiliser des noms de VM **cohérents et explicites**.
+- Toujours créer un **snapshot après configuration** initiale stable.
+- Activer les options de virtualisation avancées pour compatibilité maximale avec les OS modernes.

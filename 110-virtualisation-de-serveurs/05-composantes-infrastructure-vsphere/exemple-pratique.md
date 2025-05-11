@@ -1,102 +1,97 @@
-# TP – Découverte de vSphere 
+# TP – Découverte de vSphere (VMware ESXi)
 
-## 🛠️ Prérequis
+## 📝 Étapes
 
-- VMware Workstation 17 installé
-- ISO d’ESXi 7.x (ex: `VMware-VMvisor-Installer-7.0U3…`)
-- ISO de Windows Server 2019 disponible
+### 1. Préparation dans VMware Workstation
+
+- Éteindre la VM `SRV_2K19` (non utilisée ici).
+- Créer une VM nommée `ESXi1`, type **ESXi 7**, avec stockage dans `D:\Machines virtuelles\ESXi1`
+
+#### Configuration matérielle :
+
+- 2 CPU / 1 cœur
+- 6 Go RAM
+- 1 carte réseau bridgée
+- 1 disque dur de 40 Go (SCSI)
+- 1 disque dur supplémentaire de 200 Go (SCSI)
+- Utiliser l’ISO : `VMware-VMvisor-Installer-7.0U3-18644231.x86_64` (depuis `\\distrib\iso\virtualisation`)
+
+### 2. Installation de `ESXi1`
+
+- Installer ESXi sur le disque de 40 Go
+- Choisir la langue **française**
+- Définir le mot de passe de `root` (respecter les critères de complexité)
+- Relever l’**adresse IP** attribuée à `ESXi1` à la fin de l’installation
+
+### 3. Création de `ESXi2`
+
+- Créer une seconde VM `ESXi2` avec la **même configuration** matérielle
+- Stocker la VM dans `D:\Machines virtuelles\ESXi2`
 
 ---
 
-## 🔧 Étapes de réalisation
+## 🔧 Configuration via vSphere Web Client
 
-### 1. Préparation
+Depuis l’hôte Windows :
 
-- Éteindre la VM `SRV_2K19` si elle est en cours d'exécution
+1. Ouvrir un navigateur (Chrome, Firefox, Edge)
+2. Accéder à l’adresse IP d’`ESXi1`
+3. Se connecter avec le compte `root`
+4. Accepter le certificat de sécurité non valide
 
-### 2. Création d’ESXi1 dans VMware Workstation
+### 4. Création du stockage local
 
-- Créer une VM nommée `ESXi1`
-    - Type : Autre / VMware ESXi 7
-    - Dossier : `D:\Machines virtuelles\ESXi1`
-    - Processeur : 2 CPU / 1 cœur
-    - RAM : 6 Go
-    - Réseau : carte bridgée
-    - Disques :
-        - 40 Go (principal)
-        - 200 Go SCSI (supplémentaire)
-    - Image ISO montée en CD/DVD
+- Aller dans **Stockage** > Créer une banque de données VMFS
+- Nom : `DS-Local`
+- Utiliser le disque de **200 Go** ajouté précédemment
 
-### 3. Installation d’ESXi1
+### 5. Chargement de l’image ISO
 
-- Lancer l’installation
-- Choisir le disque de 40 Go
-- Définir un mot de passe root complexe
-- Noter l’adresse IP obtenue automatiquement
+- Naviguer dans `DS-Local`
+- Charger l’ISO de **Windows Server 2019** dans le répertoire souhaité
 
-### 4. Création d’ESXi2
+### 6. Création d’une VM `SRV-1`
 
-- Répéter les étapes précédentes pour une VM `ESXi2`
-    - Dossier : `D:\Machines virtuelles\ESXi2`
-    - Configuration identique
+- Depuis `Machines virtuelles` > Nouvelle machine virtuelle
+- Nom : `SRV-1`
+- Paramètres :
+    - 1 CPU / 1 cœur
+    - 2 Go RAM
+    - Disque dur : 32 Go
+    - Image ISO : celle précédemment uploadée
 
-### 5. Accès à la console Web d’ESXi1
+### 7. Installation de l’OS invité
 
-- Depuis l’hôte Windows, ouvrir un navigateur :
-    ```
-    https://192.168.10.200                                   #IP ESXi
-    ```
-- Accepter le certificat
-- Se connecter avec le compte root
-
-### 6. Création du datastore « DS-Local »
-
-- Aller dans **Stockage** > **Créer un nouveau datastore VMFS**
-    - Nom : `DS-Local`
-    - Utiliser le disque de 200 Go ajouté à `ESXi1`
-
-### 7. Import de l’ISO Windows Server 2019
-
-- Naviguer dans le **Navigateur de banque de données** de `DS-Local`
-- Télécharger l’ISO depuis l’hôte
-
-### 8. Création d’une VM `SRV-1` sous ESXi1
-
-- Aller dans **Machines virtuelles** > **Créer une VM**
-    - Nom : `SRV-1`
-    - OS invité : Windows Server 2019
-    - CPU : 1 cœur
-    - RAM : 2 Go
-    - Disque : 32 Go (VMFS)
-    - ISO : fichier présent dans `DS-Local`
-
-### 9. Installation de Windows Server
-
-- Démarrer la VM `SRV-1`
-- Lancer l’installation depuis l’ISO
-
-### 10. Installation des VMware Tools
-
-- Depuis la console de vSphere, monter l’image des VMware Tools
-- Installer dans `SRV-1`
+- Démarrer `SRV-1`
+- Prendre la main via la **console Web**
+- Suivre l’installation de Windows Server 2019
+- Installer les **VMware Tools** une fois l’installation terminée
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- ESXi peut être installé **dans une VM** via Workstation pour des tests
-- Un **datastore VMFS** doit être créé manuellement après l’ajout d’un disque
-- Une ISO peut être stockée **dans une banque de données** pour l’installation des VMs
-- L’interface Web permet la **gestion complète** des VMs (création, déploiement, stockage)
+- Une **infrastructure vSphere** peut être simulée sous VMware Workstation à des fins pédagogiques
+- ESXi est un hyperviseur de type 1, géré via **vSphere Web Client**
+- La **banque de données (datastore)** est essentielle pour le stockage VM
+- L’ajout d’un ISO au datastore permet de déployer facilement des OS dans les VMs
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Attribuer des noms explicites aux hyperviseurs et VMs|Améliore la lisibilité et la supervision|
-|Utiliser une carte **bridgée** pour tester l’accès réseau réel|Permet la connectivité avec d'autres hôtes de test|
-|Toujours créer un **datastore** dédié pour les VMs|Séparer les fichiers système de ceux des machines virtuelles|
-|Installer les **VMware Tools** dans toutes les VMs|Meilleure compatibilité et intégration avec l’hyperviseur|
-|Sauvegarder les ISO dans les datastores|Facilité de réutilisation lors de déploiements multiples|
+- Affecter des **noms clairs et explicites** aux VMs et datastores
+- Créer un **stockage dédié** pour les VMs (second disque virtuel)
+- Vérifier l’**adéquation entre ressources VM et hôte** pour assurer de bonnes performances
+- Installer systématiquement les **VMware Tools** pour une meilleure intégration
+- Utiliser une **architecture en miroir** (ESXi1 / ESXi2) pour les tests de montée en charge ou de résilience
+
+---
+
+## 🔗 Outils et manipulations clés
+
+- ESXi 7 ISO : `VMware-VMvisor-Installer-7.0U3...`
+- vSphere Web Client (navigateur)
+- `DS-Local` (datastore)
+- Console Web VMware pour démarrage et installation des VMs
+- VMware Tools

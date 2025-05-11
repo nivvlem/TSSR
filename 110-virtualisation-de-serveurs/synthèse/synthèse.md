@@ -1,88 +1,117 @@
-# 📄 Synthèse – Virtualisation de serveurs
+# 📘 Synthèse – Virtualisation de serveurs
 
-Ce document regroupe les connaissances essentielles, bonnes pratiques, outils et commandes à connaître pour maîtriser l'administration d'une infrastructure virtualisée avec VMware Workstation, ESXi, vCenter et vSphere.
+## 🧱 Concepts fondamentaux
 
----
+- **Virtualisation** = exécution de plusieurs OS sur une même machine physique via un **hyperviseur**.
+- Elle repose sur la **mutualisation, consolidation et rationalisation** des ressources IT.
 
-## 🛠️ Fondamentaux de la virtualisation
+### Types d’hyperviseurs
 
-### Concepts clés
-
-- **Hyperviseur** : logiciel permettant de créer et exécuter des machines virtuelles (VM).
-- **ESXi** : hyperviseur de type 1 de VMware.
-- **vCenter** : serveur d'administration centralisé pour plusieurs hôtes ESXi.
-- **Datastore** : espace de stockage utilisé par les hyperviseurs.
-- **Snapshot** : sauvegarde à un instant donné de l'état d'une VM.
-
-### Types de virtualisation
-
-|Type|Description|
-|---|---|
-|**Workstation**|Virtualisation sur poste client (type 2)|
-|**ESXi**|Hyperviseur nu (type 1)|
-|**vCenter/vSphere**|Gestion centralisée d’une ferme d’ESXi|
-
----
-
-## 🌐 Réseau et stockage
-
-### Composants réseau
-
-- **vSwitch** (standard ou distribué)
-- **Port Group** (Production, Gestion, Stockage…)
-- **VMkernel** : interface réseau pour les services (vMotion, iSCSI, NFS)
-
-### Types de stockage
-
-|Protocole|Mode|Utilisation|
+|Type|Caractéristique|Exemples|
 |---|---|---|
-|**VMFS**|Bloc|Performant, ESXi|
-|**NFS**|Fichier|Partage, flexibilité|
-|**iSCSI**|Bloc|Cible + initiateur|
+|Type 1|Exécuté directement sur le matériel|VMware ESXi, Hyper-V, KVM|
+|Type 2|Installé sur un OS hôte|VirtualBox, VMware Workstation|
+
+### Autres formes
+
+- **Paravirtualisation** : OS modifié (Xen)
+- **Containers** : virtualisation d’environnement (Docker)
 
 ---
 
-## 📃 Tâches courantes & commandes utiles
+## 🔧 Infrastructures clés (VMware / Microsoft)
 
-### Connexion SSH à un ESXi
+### VMware vSphere
 
-```bash
-ssh root@ip_esxi
-```
+- **ESXi** = hyperviseur natif
+- **vCenter Server** = gestion centralisée (cluster, HA, DRS, vMotion...)
+- **vSwitchs** = réseau virtuel (Standard ou Distribué)
+- **Datastores** = stockage VMFS ou NFS
+- **Templates OVF / VMTX** = déploiement automatisé
 
-### Liste des VM sur ESXi
+### Microsoft Hyper-V
 
-```bash
-vim-cmd vmsvc/getallvms
-```
+- Intégré à Windows Server / Windows 10+
+- Console MMC : Hyper-V Manager
+- Support de snapshot, Live Migration, switch virtuel (externe, interne, privé)
 
-### Gestion DNS (SRV_2K19)
+---
 
-- Créer une zone directe
-- Ajouter des enregistrements A pour chaque élément (esxi1, esxi2, vcenter)
+## 📦 Stockage
 
-### vMotion / Storage vMotion
+- **DAS** (local), **SAN** (iSCSI/FC), **NAS** (NFS/CIFS)
+- Formats disques : VMDK (VMware), VHD/VHDX (Microsoft)
+- **VMFS** : système de fichiers utilisé pour les LUN ESXi
+- **Provisionnement** : Thin vs Thick
+- RDM = accès direct à un LUN physique (cas particuliers)
 
-- Migrer VM sans arrêt de service (CPU / RAM / Disque)
+---
+
+## 🌐 Réseau
+
+- **vSwitch** (local) vs **vSwitch Distribué** (centralisé via vCenter)
+- **Port groups** = affectation logique des flux : VM Network, Management, vMotion, iSCSI...
+- **VLANs** : standard 802.1Q, tagging par port group ou OS invité
+- **Teaming** : redondance + agrégation de bande passante
+
+---
+
+## 📊 Services avancés (vCenter)
+
+|Service|Fonction|
+|---|---|
+|**vMotion**|Migration à chaud d’une VM entre hôtes|
+|**Storage vMotion**|Déplacement à chaud du stockage|
+|**DRS**|Répartition intelligente des ressources|
+|**HA**|Redémarrage auto d’une VM sur autre hôte si crash|
+|**FT**|Redondance temps réel d’une VM (zéro perte)|
+
+> Ces services nécessitent un **vCenter actif** + licences adaptées
+
+---
+
+## 🧠 Gestion des utilisateurs
+
+- Créer des **groupes + rôles personnalisés** (principe de moindre privilège)
+- Utiliser **SSO + Active Directory** si possible
+- Appliquer les droits **le plus haut possible** dans l’arborescence (héritage activé)
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- OVF/OVA : formats d’export/import de VM
-- DNS essentiel pour les communications ESXi/vCenter
-- vMotion = déplacement à chaud de VM entre ESXi
-- Storage vMotion = déplacement à chaud de fichiers VM
-- Créer des modèles de VM pour standardiser les déploiements
+- L’hyperviseur **ESXi** est un composant clé pour une infrastructure professionnelle
+- **Hyper-V** est idéal pour les environnements Windows (intégré, facile à déployer)
+- La **gestion réseau et stockage** est aussi critique que la gestion des VMs
+- Le **vCenter Server Appliance (VCSA)** simplifie la supervision d’un datacenter
+- **Sysprep + templates** permettent un déploiement automatisé et cohérent
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Raisonnement|
-|---|---|
-|Utiliser des IPs statiques|Évite les pannes de résolution de noms|
-|Séparer réseaux (gestion, production, stockage)|Isolation, performance, sécurité|
-|Documenter chaque composant|Maintenance facilitée, audit simplifié|
-|Tester toute mise à jour ou migration|Réduire les risques sur l’environnement en production|
-|Centraliser la gestion via vCenter|Supervision, sauvegardes, planification, HA/DRS|
+- Déployer une architecture **documentée** : VM, datastores, VLAN, IPs, DNS...
+- Séparer les flux critiques (VM / gestion / stockage / sauvegarde) sur des réseaux ou VLANs dédiés
+- Sauvegarder le **vCenter** et les **configurations des hôtes**
+- Ne jamais migrer une VM avec **ISO encore monté** ou **snapshot actif**
+- Toujours vérifier **l’adressage IP + DNS + routage** avant déployer vCSA
+- Nommer clairement les objets : `DS-PROD`, `SRV-AD-01`, `GRP-VMNET`, etc.
+
+---
+
+## 🔗 Commandes et outils à connaître
+
+```powershell
+# Hyper-V
+Get-VM, New-VM, Start-VM, Export-VM, Import-VM
+
+# vSphere CLI (PowerCLI / ESXCLI)
+esxcli storage filesystem list
+esxcli network vswitch standard list
+
+# DNS (SRV_2K19)
+dnsmgmt.msc, nslookup, ping, ipconfig /all
+
+# vSphere Web Client (port 443)
+https://vcenter.domain.local
+```

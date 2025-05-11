@@ -1,74 +1,139 @@
-# Gestion du stockage
+# Gestion du stockage dans vSphere
 
 ## 🧱 Types de stockage
 
-|Type|Description|Accès|Exemple d’usage|
+### 🔹 Stockage local (DAS)
+
+- Directement connecté au serveur (SATA, SAS, SSD)
+- Dépendant de la connectique et du protocole
+- Accès rapide mais peu flexible
+
+### 🔹 NAS (Network Attached Storage)
+
+- Stockage partagé via le réseau, mode fichier
+- Protocoles : NFS, CIFS/SMB, AFP
+- Autonome, utilisé comme serveur de fichiers
+
+### 🔹 SAN (Storage Area Network)
+
+- Réseau dédié au stockage en mode bloc
+- Protocoles : Fibre Channel, iSCSI
+- Volumes présentés aux hôtes comme des disques locaux (LUN)
+
+---
+
+## 🔌 Protocoles d’accès
+
+### SCSI (mode bloc)
+
+- Protocole natif des disques virtuels (VMDK, RDM)
+- Utilisé dans SAN avec Fibre Channel ou iSCSI
+
+### iSCSI
+
+- Permet d’accéder à un stockage en mode bloc via le réseau IP
+- Composants :
+    - **Initiator** : côté hôte ESXi
+    - **Target** : côté baie de stockage
+
+### Recommandations réseau iSCSI
+
+- Réseau dédié
+- Carte réseau dédiée (VMNIC)
+- MTU 9000 (si matériel compatible)
+
+---
+
+## 📦 Composants de stockage dans vSphere
+
+### 🔹 Adaptateurs de stockage
+
+- Lient les solutions de stockage aux hôtes
+- Types :
+    - **HBA physiques** (FC, iSCSI, FCoE)
+    - **Adaptateurs logiciels** (iSCSI ou FCoE virtualisés)
+
+> Les HBA matériels sont recommandés pour de meilleures performances
+
+### 🔹 Banques de données (datastores)
+
+- Conteneurs logiques hébergeant les fichiers VMs (disques, ISO, snapshots...)
+- Formats : VMFS (mode bloc), NFS (mode fichier)
+
+---
+
+## 🧠 VMFS – Système de fichiers vSphere
+
+|Version|Max taille volume|Bloc|Format|OS supportés|
+|---|---|---|---|---|
+|VMFS3|64 To|1 Mo|MBR|vSphere 4-5|
+|VMFS5|64 To|1 Mo|GPT|vSphere 5+|
+|VMFS6|64 To|1 Mo|GPT|vSphere 6.5+|
+
+> VMFS permet l’accès **concurrent en lecture/écriture** depuis plusieurs hôtes ESXi
+
+---
+
+## 🔧 Gestion des datastores
+
+- Création & formatage initial
+- Suivi de l’espace utilisé / disponible
+- Élargissement à chaud
+- Import / export de fichiers ISO, VM, etc.
+- Suppression / démontage
+
+> Certains fichiers ne sont visibles que via SSH + `ls` (ex. fichiers de swap, snapshots masqués)
+
+---
+
+## 💾 Disques VM : VMDK vs RDM
+
+### VMDK (Virtual Machine Disk)
+
+- Format courant, simple à manipuler et sauvegarder
+- Limité à **2 To** par disque
+
+### RDM (Raw Device Mapping)
+
+- Permet un accès direct à un LUN physique
+- Utilisé dans cas spécifiques : clustering, sauvegardes SAN, etc.
+
+> Écart de performance minime entre VMDK et RDM
+
+---
+
+## ⚙️ Modes de provisionnement VMDK
+
+|Mode|Description|Avantages|Inconvénients|
 |---|---|---|---|
-|**DAS**|Stockage directement connecté à l’hôte|Mode bloc|Disque dur interne, USB|
-|**SAN**|Réseau dédié pour accès bas-niveau à des blocs via SCSI/iSCSI/FC|Mode bloc|Stockage centralisé haute perf.|
-|**NAS**|Serveur de fichiers via réseau (NFS, SMB/CIFS, AFP)|Mode fichier|Partage de fichiers pour VM|
-
----
-
-## 📦 Protocole iSCSI
-
-- iSCSI = SCSI encapsulé sur TCP/IP
-- Utilisé pour connecter des volumes à un hôte ESXi via le réseau
-- Composants clés :
-    - **iSCSI Initiator** (côté ESXi)
-    - **iSCSI Target** (côté stockage)
-
-🔧 _Recommandation : créer un réseau dédié au stockage avec MTU 9000 (jumbo frames)_
-
----
-
-## 🧠 Composants vSphere pour le stockage
-
-|Composant|Rôle|
-|---|---|
-|**Adaptateurs de stockage**|Interfaces physiques ou logicielles connectant au SAN/NAS|
-|**Banques de données (datastores)**|Conteneurs logiques pour stocker les fichiers de VM|
-
-Types de datastores :
-
-- **VMFS** : système de fichiers concurrent pour VM
-- **NFS** : protocole fichier, utile pour certains partages
-- **RDM (Raw Device Mapping)** : accès direct à un LUN physique
-
----
-
-## 📁 Formats de disque pour VM
-
-|Format|Avantages|Inconvénients|
-|---|---|---|
-|**VMDK**|Simplicité de gestion et backup|Limité à 2 To|
-|**RDM**|Accès direct utile en cluster|Plus complexe à gérer|
-
-### Provisionnement des disques
-
-|Type|Allocation|Avantages|Risques|
-|---|---|---|---|
-|**Thick**|Fixe|Performances supérieures|Occupation immédiate du volume|
-|**Thin**|À la demande|Économie d’espace, création rapide|Risque de surallocation|
+|**Thick**|Réserve tout l’espace dès création|Performances élevées|Temps de création long|
+|**Thin**|Alloue l’espace à la volée selon besoin|Gain de place / création rapide|Risque de **surallocation**|
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le **SAN** fonctionne en mode **bloc**, le **NAS** en mode **fichier**
-- Le **protocole iSCSI** permet l’accès réseau à un stockage bloc
-- **VMFS** permet un accès simultané aux fichiers depuis plusieurs hôtes ESXi
-- Il est crucial de dimensionner les besoins de stockage en amont (VM_PROD vs ISO…)
-- **Thick** = performances, **Thin** = flexibilité
+- Le stockage peut être **local (DAS)** ou **réseau (NAS/SAN)**, avec protocoles adaptés
+- **iSCSI** permet l’accès bloc via IP, mais nécessite un réseau dédié stable
+- **VMFS** est le format standard pour datastores en mode bloc sur ESXi
+- Le choix entre **VMDK et RDM** dépend des usages spécifiques
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Utiliser un réseau dédié pour le stockage|Évite la congestion réseau, améliore les performances|
-|Activer MTU 9000 (jumbo frames) pour iSCSI|Optimisation des transferts de gros volumes|
-|Préférer les adaptateurs HBA physiques au virtuels|Réduction de la charge CPU, meilleures performances|
-|Créer des datastores par usage (PROD, TEST, ISO…)|Organisation et performance|
-|Documenter les configurations de stockage|Facilite le diagnostic et les migrations|
+- Prévoir un **réseau dédié iSCSI** avec tolérance de panne (multi-path)
+- Choisir le **bon format de disque (VMDK/RDM)** en fonction des contraintes applicatives
+- Dimensionner les **datastores selon la criticité** : PROD, TEST, ISO, etc.
+- Séparer les flux réseau (gestion, stockage, VM) sur des **VMNICs distinctes**
+- Toujours monitorer les **taux d’utilisation** et **performances** des datastores
+
+---
+
+## 🔗 Outils / concepts à connaître
+
+- Adaptateurs de stockage : HBA, iSCSI Initiator
+- Datastore, VMFS, LUN
+- Disques : VMDK, RDM
+- Provisionnement : Thin / Thick
+- Commande SSH ESXi : `ls`, `du`, `esxcli storage`

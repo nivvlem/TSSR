@@ -1,74 +1,73 @@
-# TP – Gestion réseau d’une infrastructure vSphere
-## 🛠️ Prérequis
+# TP – Gestion Réseau d’une infrastructure vSphere
 
-- Deux hôtes ESXi (ESXi1 et ESXi2) opérationnels
-- VMware Workstation installé
-
----
-
-## 🔧 Étapes de réalisation
+## 📝 Étapes
 
 ### 1. Préparation dans VMware Workstation
 
-- Éteindre proprement ESXi1 et ESXi2
-- Ajouter **trois cartes réseau en mode « bridge »** à chaque hôte
-- Redémarrer ESXi1 et ESXi2
+- Éteindre proprement les VMs `ESXi1` et `ESXi2`
+- Ajouter **3 cartes réseau en mode bridge** supplémentaires à chaque VM ESXi (total : 4 vmnic)
 
-### 2. Configuration réseau sur ESXi1
+---
 
-#### a. Renommer le port group par défaut
+## 🔧 Configuration sur ESXi1
 
-- Aller dans **Mise en réseau > Groupes de ports**
-- Renommer `Management Network` en `GRP-GESTION`
+### 2. Reconfiguration du vSwitch0
 
-#### b. Créer deux nouveaux vSwitch
+- Ne conserver que le port group `Management Network`
+- Le renommer en `GRP-GESTION`
 
-|vSwitch|Port Group lié|Type de port|Fonction|VMNIC associée|
-|---|---|---|---|---|
-|vSwitch1|GRP-VMNET|Virtual Machine|Communication inter-VM|vmnic2|
-|vSwitch2|GRP-STORAGE-VMOTION|VMKernel|Stockage (iSCSI) + vMotion|vmnic3|
+### 3. Création des vSwitchs et port groups
 
-#### c. Ajouter les éléments dans l’interface Web d’ESXi1
+|vSwitch|Port Group|Type de ports|Fonction|Adresse IP VMKernel|Carte(s) réseau associée(s)|
+|---|---|---|---|---|---|
+|vSwitch1|GRP-VMNET|Machines virtuelles|Communication VM ↔ VM|-|vmnic2|
+|vSwitch2|GRP-STORAGE-VMOTION|VMKernel|iSCSI + vMotion|192.168.xx.1/24|vmnic3|
 
-1. **Ajout de vSwitch1** :
-    - Menu **Mise en réseau > Commutateurs virtuels > Ajouter**
-    - Nom : `vSwitch1` → Ajouter **vmnic2**
-2. **Ajout de vSwitch2** :
-    - Menu **Commutateurs virtuels > Ajouter**
-    - Nom : `vSwitch2` → Ajouter **vmnic3**
-3. **Création du Port Group `GRP-VMNET`**
-    - Menu **Groupes de ports > Ajouter**
-    - Nom : `GRP-VMNET` → vSwitch : `vSwitch1`
-4. **Ajout d’une interface VMkernel pour GRP-STORAGE-VMOTION**
-    - Menu **NIC VMkernel > Ajouter**
-    - Port Group : `GRP-STORAGE-VMOTION`
-    - IP statique : `192.168.10.1/24`
-5. **Modifier la VM SRV-1 pour utiliser le port group `GRP-VMNET`**
-    - Aller sur la VM `SRV-1`, modifier la vNIC → l’associer à `GRP-VMNET`
-    - Supprimer l’ancien port group `VM Network`
+> Ne pas modifier les identifiants de VLAN
 
-### 3. Répéter les étapes sur ESXi2
+### 4. Étapes détaillées dans vSphere Web Client
 
-- Même structure réseau
-- Adresse VMkernel pour `GRP-STORAGE-VMOTION` : `192.168.10.2/24`
+- Aller dans **Mise en réseau** > **Commutateurs virtuels**
+- Ajouter les vSwitchs `vSwitch1` et `vSwitch2`
+- Créer les port groups `GRP-VMNET` (sur vSwitch1) et `GRP-STORAGE-VMOTION` (sur vSwitch2)
+- Créer une **interface VMKernel** sur `GRP-STORAGE-VMOTION` avec l’IP : `192.168.xx.1/24`
+
+### 5. Modification de la VM SRV-1
+
+- Modifier sa vNIC pour la connecter à `GRP-VMNET`
+- Supprimer le port group `VM Network` une fois libéré
+
+---
+
+## 🔁 Configuration sur ESXi2
+
+- Reproduire les mêmes étapes que sur ESXi1
+- Pour l’interface VMKernel de `GRP-STORAGE-VMOTION`, utiliser l’adresse IP : `192.168.xx.2/24`
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Un **vSwitch standard** est propre à chaque hôte ESXi
-- Les **Port Groups** permettent de délimiter les usages (gestion, VM, vMotion…)
-- Les **interfaces VMkernel** sont nécessaires pour des services spécifiques (vMotion, iSCSI, NFS…)
-- L’**ajout de cartes réseau bridgées** permet une séparation logique des flux même dans un environnement de test
+- La séparation des flux réseau se fait via plusieurs **vSwitchs** et **groupements de ports**
+- Une **carte réseau physique (vmnic)** peut être dédiée à un type de trafic
+- L’ajout d’un port group de type **VMKernel** permet l’usage de services comme **vMotion** ou **iSCSI**
+- Le renommage des port groups améliore la lisibilité et l’administration réseau
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Séparer les flux (VM, stockage, gestion) sur des vSwitchs dédiés|Améliore la performance et la sécurité|
-|Nommer clairement chaque port group et vSwitch|Facilite la maintenance et la supervision|
-|Associer les VMNIC à des usages spécifiques|Permet un diagnostic réseau plus rapide|
-|Appliquer des IP fixes sur les interfaces VMkernel|Nécessaire pour des services comme vMotion ou iSCSI|
-|Documenter la topologie réseau virtuelle|Essentiel pour les environnements multi-hôtes et la scalabilité|
+- Documenter systématiquement l’affectation des vmnic aux vSwitchs et groupes de ports
+- Préférer une **carte réseau physique par usage** (gestion, VM, stockage)
+- Toujours modifier les affectations VM avant de supprimer un port group
+- Configurer les **switchs physiques en trunk** pour supporter plusieurs VLAN si nécessaire
+
+---
+
+## 🔗 Actions et composants clés
+
+- VMware Workstation (ajout de cartes réseau en bridge)
+- vSphere Web Client (ESXi)
+- Commutateurs virtuels (vSwitch0, vSwitch1, vSwitch2)
+- Groupes de ports : `GRP-GESTION`, `GRP-VMNET`, `GRP-STORAGE-VMOTION`
+- Interfaces VMKernel, IP statiques dédiées aux flux techniques

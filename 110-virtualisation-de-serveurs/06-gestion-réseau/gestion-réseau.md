@@ -1,113 +1,137 @@
-# Gestion du réseau vSphere
+# Gestion du réseau (vSphere et VLAN)
 
-## 📊 Concepts de base : VLAN
+## 🧱 Concepts fondamentaux : les VLAN
 
-### Qu'est-ce qu'un VLAN ?
+### Qu’est-ce qu’un VLAN ?
 
-- **VLAN** = Virtual LAN : réseau logique isolé dans un même réseau physique
-- Permet de séparer les flux pour :
-    - Améliorer la **sécurité**
-    - Limiter les domaines de diffusion (**performances**)
-    - Prioriser certains flux (**QoS**)
+Un **VLAN (Virtual LAN)** est un réseau local logique, isolé virtuellement sur un réseau physique.
 
-### Prise en charge : norme **802.1Q**
+### Intérêts
 
-- Ajoute un tag VLAN dans l'entête Ethernet (4 octets)
-- Identifiant VLAN : valeur de **1 à 4094**
-- Modes de configuration :
-    - **Port Access** : un seul VLAN (terminaux)
-    - **Port Trunk** : plusieurs VLAN (entre switchs)
+- Isolation des flux → sécurité
+- Réduction des domaines de broadcast → performance
+- Priorisation de flux → qualité de service (QoS)
+- Optimisation matérielle
 
-### Affectation possible :
+### Requiert :
 
-- **Niveau 1** : par port physique (switch)
-- **Niveau 2** : par adresse MAC
-- **Niveau 3** : par adresse IP
+- Matériel compatible VLAN (switchs, cartes réseau)
+- Support de la norme **802.1Q** (tag des trames VLAN)
 
 ---
 
-## 🚧 Composants réseau d'ESXi
+## 🌐 Types de VLAN (en fonction de l’OSI)
 
-### 🔌 vSwitch Standard (VSS)
+- **VLAN niveau 1** : basé sur le **port physique** (port-based)
+- **VLAN niveau 2** : basé sur l’**adresse MAC**
+- **VLAN niveau 3** : basé sur l’**adresse IP**
 
-- Créé par défaut : `vSwitch0`
-- Géré localement par chaque hôte ESXi
-- Connecté à une ou plusieurs **VMNIC** (interfaces physiques)
-- Utilisable pour :
-    - Le réseau de gestion (VMkernel)
-    - Les réseaux VM (Virtual Machine)
+> Chaque trame étiquetée contient un tag VLAN (12 bits pour l’ID, 3 bits pour la priorité, 1 bit CFI)
 
-### 🪡 vSwitch Distribué (VDS)
+### Configuration sur les switchs
 
-- Un objet commun à plusieurs hôtes ESXi (via vCenter)
-- Géré depuis l'interface vCenter
-- Assure la **continuité de service** en cas de migration de VM
-- Requiert **vSphere Enterprise Plus**
-
-### 🛋️ Groupements de ports (Port Groups)
-
-- Définissent un usage réseau
-- Types :
-    - **VM Network** : pour les VM
-    - **VMkernel** : pour les besoins d'infrastructure (vMotion, gestion, stockage)
-- Supportent la **segmentation VLAN**
-
-### 🚄 VMNIC / pNIC
-
-- Cartes réseau **physiques** de l'hôte ESXi
-- Une VMNIC peut être liée à un seul vSwitch
-- Plusieurs VMNIC peuvent être agrégées (teaming)
-
-### 🪙 vNIC
-
-- Cartes réseau **virtuelles** présentées aux VMs
-- Connectées à un port group Virtual Machine
-- Peuvent recevoir une configuration VLAN
+- **Port Access** : un seul VLAN
+- **Port Trunk** : plusieurs VLAN autorisés
+- **Marquage actif** : le tag est propagé
+- **Marquage inactif** : le tag est supprimé avant transmission
 
 ---
 
-## ⚖️ Teaming (regroupement de cartes)
+## 🧩 Réseau dans vSphere – Composants clés
 
-- Objectif :
-    - **Tolérance de pannes** (actif/passif)
-    - **Répartition de charge** (actif/actif)
-- Modes de répartition :
-    - Par VM (round-robin)
-    - Par adresse MAC source
-    - Par paquet (hash source/destination)
-- Prérequis : ≥2 VMNIC sur le même vSwitch
+### vSwitch Standard (VSS)
+
+- Créé par défaut (`vSwitch0`)
+- Gestion locale à chaque hôte ESXi
+- Utilisable pour les machines virtuelles et la gestion
+
+### vSwitch Distribué (VDS)
+
+- Partagé entre plusieurs hôtes ESXi
+- Configuration centralisée via **vCenter**
+- **Nécessite une licence Enterprise Plus**
+- Avantage : aucun impact réseau lors de migration de VM
 
 ---
 
-## 🔗 Intégration des VLAN dans vSphere
+## 🎛️ Groupements de ports (Port Groups)
 
-|Niveau de configuration|Effet|
+### Deux types :
+
+|Type|Usage principal|
 |---|---|
-|vSwitch|Affecte tous les ports par défaut|
-|Port Group|Affectation granulaire par rôle|
-|vNIC (VM)|Gestion directe depuis l'OS si compatible 802.1Q|
+|VM Network|Réseau pour les machines virtuelles|
+|VMkernel|Réseau pour les fonctions d’infrastructure (gestion, vMotion, stockage)|
 
-⚠️ Dans tous les cas, les **ports physiques doivent être en mode trunk** pour accepter les VLAN taggés.
+> La **segmentation VLAN peut être définie dans un port group** via un ID VLAN spécifique
+
+---
+
+## 🖧 Interfaces réseau dans ESXi
+
+### pNIC / VMNIC
+
+- **Cartes physiques** installées sur l’hôte ESXi
+- Associées à un **vSwitch** unique (mais un vSwitch peut regrouper plusieurs pNIC)
+
+### vNIC
+
+- **Cartes réseau virtuelles** présentées aux VMs
+- Connectées à un port group (VM Network)
+- Peuvent aussi être taguées VLAN via 802.1Q (si OS invité compatible)
+
+---
+
+## 🔁 Regroupement (Teaming) et tolérance de pannes
+
+### Objectifs du Teaming
+
+- Tolérance de panne (actif/passif)
+- Agrégation de bande passante (actif/actif)
+
+### Méthodes de répartition :
+
+- Par VM (chaque VM utilise une carte)
+- Par adresse MAC source
+- Par trame (hash source/destination)
+- Par ordonnancement simple (failover seulement)
+
+---
+
+## 📡 Cas d’usage : affectation des VMNICs
+
+- VMNIC1 : réseau VM (production)
+- VMNIC2 : gestion de l’infrastructure (VMkernel)
+- VMNIC3 : vMotion
+- VMNIC4 : stockage (iSCSI)
+
+> Le **design réseau** doit respecter l’isolement logique des flux critiques
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- `vSwitch0` est le commutateur par défaut sur chaque hôte
-- **VDS** permet une configuration réseau centralisée (via vCenter)
-- Les **VMNIC** sont les cartes physiques liées aux vSwitch
-- Les **vNIC** sont les interfaces réseau des VMs
-- Le **teaming** permet redondance et répartition de charge
-- VLAN = isolement logique, géré par norme 802.1Q
+- **802.1Q** est le standard de tagging VLAN reconnu sur tous les équipements
+- Le **vSwitch standard** est propre à chaque hôte ; le **vSwitch distribué** est géré globalement
+- Les **groupes de ports** définissent les fonctions réseau : VM, gestion, stockage…
+- Les **VMNICs physiques** doivent être soigneusement affectées pour assurer performance et résilience
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Séparer les flux : gestion, VMs, stockage, vMotion|Sécurité, performances et supervision claire|
-|Utiliser les VLANs pour isoler les rôles réseaux|Évite les interférences et simplifie les ACL|
-|Toujours documenter les correspondances VMNIC <=> usage|Maintenabilité du réseau et diagnostic facilité|
-|Exploiter le teaming actif/passif pour la résilience|Continuité de service en cas de défaillance|
-|Privilégier l'usage de VDS dans les environnements critiques|Uniformité de configuration et centralisation via vCenter|
+- Isoler les réseaux critiques (vMotion, stockage) sur des ports dédiés
+- Utiliser des VLAN distincts pour les flux de VM, de gestion, de sauvegarde…
+- Prévoir des **trunks configurés côté switch physique** si plusieurs VLAN traversent un même lien
+- Toujours vérifier la **compatibilité 802.1Q** des équipements terminaux et switchs
+- Enregistrer l’architecture réseau et le plan d’adressage de chaque hôte
+
+---
+
+## 🔗 Outils et notions clés
+
+- vSwitch Standard, vSwitch Distribué (VDS)
+- VMNIC / vNIC
+- Port Group VMkernel / VM Network
+- VLAN, 802.1Q, Port Trunk, Access
+- Teaming, Load Balancing, Failover

@@ -1,68 +1,77 @@
 # Les composantes d’une infrastructure vSphere
 
-## 🧱 Architecture d'une infrastructure vSphere
+## 🧩 Architecture vSphere : composants principaux
 
-Une solution VMware vSphere repose sur les composants suivants :
-
-|Élément|Rôle dans l’infrastructure vSphere|
+|Rôle|Élément VMware correspondant|
 |---|---|
-|**ESXi**|Hyperviseur de type 1 déployé sur les serveurs physiques|
-|**vCenter Server**|Console centralisée d’administration|
-|**VM (Machine virtuelle)**|Système invité exécuté sur un hyperviseur|
-|**vSphere Web Client**|Interface d’administration accessible via navigateur|
+|Solution de virtualisation|**vSphere**|
+|Hyperviseur|**ESXi** (ex-ESX, sans Service Console)|
+|Interface d’administration|**vSphere Web Client** (remplace client lourd)|
+|Gestion centralisée|**vCenter Server**|
 
-🆕 Depuis vSphere 6.x :
-
-- Disparition du client lourd
-- **vCenter sous forme d’appliance virtuelle** (VCSA)
-- Interface web unifiée (HTML5)
+> ⚠️ Les versions des composants doivent être **compatibles entre elles**.
 
 ---
 
-## 🔧 Fonctionnalités principales
+## 🧱 Architecture technique
 
-|Fonctionnalité|Description|
-|---|---|
-|**vMotion**|Migration à chaud d’une VM entre deux hôtes ESXi|
-|**Storage vMotion**|Migration du stockage d’une VM d’un datastore à un autre|
-|**DRS**|Répartition automatique des charges sur les hôtes disponibles|
-|**Storage DRS**|Répartition automatique des VM selon l’espace/disponibilité des datastores|
-|**DPM**|Mise en veille et réveil automatique des hôtes selon la charge|
-|**HA (High Availability)**|Redémarrage automatique des VM sur un autre hôte en cas de panne|
-|**FT (Fault Tolerance)**|Haute disponibilité sans interruption pour certaines VM critiques|
-
+- **Machines physiques** : matériel hôte
+- **ESXi** : hyperviseur installé directement sur chaque hôte
+- **VMs** : machines virtuelles hébergées sur chaque ESXi
+- **vCenter Server** : serveur de gestion centralisé des hôtes, des VMs, des ressources et services
 
 ---
 
-## 💰 Comparatif des licences (2021)
+## 🧠 Fonctionnalités clés (vSphere avancé)
 
-|Édition|Prix indicatif|Contenu principal|
+|Fonctionnalité|Utilité principale|
+|---|---|
+|**vMotion**|Migration à chaud d’une VM d’un hôte ESXi à un autre sans interruption|
+|**Storage vMotion**|Déplacement à chaud du disque d’une VM entre deux datastores|
+|**DRS**|Répartition automatique des charges entre hôtes selon les ressources|
+|**Storage DRS**|Répartition automatique des VM sur les datastores selon espace dispo/perf|
+|**DPM**|Mise en veille des hôtes inutiles et réveil selon la charge du cluster|
+|**HA**|Haute disponibilité : redémarrage auto des VMs d’un hôte défaillant sur un autre|
+|**FT**|Tolérance de panne : redondance en temps réel d’une VM sans interruption|
+
+> Certaines fonctions (vMotion, FT...) nécessitent un **vCenter actif** et des **licences adéquates**.
+
+---
+
+## 💰 Tarification (indicative, août 2021)
+
+|Édition|Prix (TTC)|Contenu principal|
 |---|---|---|
-|**ESXi seul**|0 €|Gratuit, mais sans vCenter|
-|**Essentials**|574 € TTC|6 CPU max (3 serveurs x2 CPU) + vCenter Essentials|
-|**Standard**|1262 € TTC|1 CPU + vCenter Standard, support de base des fonctionnalités|
-|**Enterprise Plus**|4326 € TTC|Toutes les fonctionnalités avancées de vSphere|
+|**ESXi seul**|0 €|Hyperviseur gratuit avec création de compte VMware|
+|**vSphere Essentials**|574,13 €|3 hôtes (2 CPU max chacun), + vCenter Essentials|
+|**vSphere Standard**|1262,14 €|1 licence CPU + vCenter Standard|
+|**vSphere Enterprise Plus**|4326,23 €|Tous services VMware sans limite|
 
-🎯 Le choix dépend du **nombre d’hôtes**, des **ressources nécessaires** et du **niveau de haute disponibilité souhaité**.
+> Les licences sont **illimitées dans le temps** et ne nécessitent plus de gestion de VRAM Pool.
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- **ESXi** est l’hyperviseur de base utilisé par vSphere
-- **vCenter Server** permet la gestion centralisée de plusieurs hôtes
-- Le **vSphere Web Client** est désormais l’interface principale
-- Les fonctionnalités comme **vMotion**, **HA**, **DRS** apportent souplesse et continuité
-- Les éditions varient fortement en **fonctionnalités et coûts**
+- vSphere regroupe **ESXi + vCenter + outils web** pour une gestion complète
+- L’**ESXi** est l’hyperviseur, **vCenter** le cœur de la gestion centralisée
+- Les fonctionnalités avancées (vMotion, FT…) nécessitent des **licences spécifiques**
+- La disparition du **Service Console** et du **client lourd** (remplacé par vSphere Web Client) simplifie le modèle
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Maintenir les versions ESXi et vCenter **alignées**|Évite les problèmes de compatibilité|
-|Déployer vCenter sous forme d’**appliance VCSA**|Plus simple à maintenir, rapide à déployer|
-|Activer les fonctionnalités **HA** et **DRS**|Augmente la disponibilité et optimise les ressources|
-|Nommer les ressources (VM, datastores, hôtes) clairement|Facilite la gestion dans un environnement multi-serveurs|
-|Prévoir un **plan de licence évolutif**|Adapter la plateforme aux besoins futurs sans tout reconfigurer|
+- Toujours vérifier la **compatibilité de version** entre vCenter, ESXi et les VM Tools
+- Adapter les licences à la **taille de l’entreprise** (Essentials pour PME, Enterprise pour grand compte)
+- Utiliser vMotion/DRS/HA dans les environnements critiques pour **garantir continuité de service**
+- Documenter les attributions de licences, hôtes et clusters dans le système d’information
+
+---
+
+## 🔗 Outils / notions clés à connaître
+
+- **ESXi**, **vCenter Server**, **vSphere Web Client**
+- **vMotion**, **DRS**, **HA**, **FT**, **Storage DRS**, **DPM**
+- **Licences Essentials, Standard, Enterprise Plus**
+- Concepts : **cluster**, **datastore**, **host**, **VM**, **appliance vCenter**

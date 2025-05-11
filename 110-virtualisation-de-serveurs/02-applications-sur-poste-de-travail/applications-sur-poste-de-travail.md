@@ -1,92 +1,95 @@
-# Virtualisation sur poste de travail (VMware Workstation)
+# Applications de virtualisation sur poste de travail
 
-## 💻 Prérequis matériels et logiciels
+## 🛠️ Outils de virtualisation utilisés
 
-| Élément     | Détail                                               |
-| ----------- | ---------------------------------------------------- |
-| Processeur  | Compatible Intel VT-x ou AMD-V (activé dans BIOS)    |
-| RAM         | Minimum 8 Go recommandé pour le confort d’usage      |
-| Disque dur  | Prévoir un volume adapté (10 à 30 Go par VM typique) |
-| OS hôte     | Windows 10/11 ou Linux                               |
-| Application | VMware Workstation 17                                |
+### VMware Workstation (v17)
 
----
+- Console de gestion centralisée des VM
+- Création, importation, modification, suppression de VMs
+- Interface graphique riche et intuitive
 
-## ⚙️ Installation et version
-
-- Préférez la **dernière version stable** compatible avec l’OS hôte
-- Une VM créée avec une version récente **n’est pas rétrocompatible**
-- Utilisez les **paramètres d’installation par défaut**
+> ⚠️ Attention à la **compatibilité entre versions** : une VM créée dans une version récente peut ne pas être compatible avec une version plus ancienne.
 
 ---
 
-## 🧱 Création d’une VM – Étapes essentielles
+## 💻 Prérequis système
 
-1. **Choisir l’option** : _I will install the operating system later_
-2. **Système cible** : définir l’OS invité (Windows, Linux…)
-3. **Nom et dossier de la VM** : éviter « Mes documents », utiliser un dossier dédié
-4. **Disque virtuel** : choisir _Store virtual disk in a single file_ pour les performances
-5. **Personnaliser le matériel** : CPU, RAM, lecteur ISO, carte réseau, USB, etc.
-
-📌 _Accès aux réglages :_ `Virtual Machine Settings`
+- Processeur **Intel VT-x** ou **AMD-V** (activé dans le BIOS/UEFI)
+- Quantité de **RAM et stockage suffisante** selon les VMs utilisées
 
 ---
 
-## 🖧 Modes de réseau disponibles
+## 📦 Étapes de création d'une machine virtuelle
+
+### Paramètres à définir :
+
+- Nom de la VM et **emplacement personnalisé** (éviter le dossier par défaut « Mes documents »)
+- Mode d'installation : **"I will install the OS later"** recommandé pour garder la main
+- Choix du système invité (Windows, Linux…)
+- Taille du disque (ex : 40 Go) et mode de stockage :
+    - **Dynamic** : allocation progressive (par défaut)
+    - **Fixed (single file)** : recommandé pour de meilleures performances
+- Personnalisation du matériel : CPU, RAM, support ISO, carte réseau, USB, etc.
+
+---
+
+## 🧩 Gestion du matériel et interactions VM ↔ hôte
+
+- Capture clavier/souris automatique par la VM
+    - `Ctrl + Alt` pour libérer la souris
+    - `Ctrl + Alt + Inser` pour simuler `Ctrl + Alt + Suppr`
+- Support des **périphériques USB, CD/DVD, disquettes**
+- Fonction **Shared Folder** : partage de dossiers entre l’hôte et la VM
+
+---
+
+## 🌐 Modes réseau disponibles
 
 |Mode|Description|
 |---|---|
-|**Bridged**|La VM est vue comme une machine physique sur le réseau|
-|**NAT**|La VM utilise l’accès réseau de l’hôte (connexion Internet partagée)|
-|**Host-only**|Communication entre l’hôte et les VM uniquement (réseau privé)|
-|**LAN Segment**|Réseau isolé, à créer manuellement dans VMware|
+|Bridged|Connexion directe au réseau physique|
+|NAT|La VM passe par l’interface réseau de l’hôte|
+|Host-only|Réseau interne entre VM et hôte uniquement|
+|LAN Segment|Réseau privé entre VM, nécessite déclaration manuelle|
 
-Services associés :
-
-- `VMware NAT Service`
-- `VMware DHCP Service`
-
-💡 Si besoin d’un adressage personnalisé, désactiver ces services.
+> Des **services VMware** (NAT & DHCP) assurent l’adressage dans les modes NAT et Host-only.
 
 ---
 
-## 🧩 Gestion du matériel et interaction
+## ⚠️ Problèmes courants & solutions
 
-- **Capture clavier/souris** : Ctrl + Alt pour relâcher
-- **Ctrl + Alt + Suppr** dans la VM : utiliser Ctrl + Alt + Inser
-- **Périphériques virtuels** : disquettes, CD/DVD, USB…
-- **Shared Folder** : partage d’un dossier de l’hôte dans la VM
-- **Ajout à chaud** possible pour disques, cartes réseau…
-
----
-
-## 🛠️ Problèmes fréquents et solutions
-
-|Problème|Solution recommandée|
+|Problème|Solution|
 |---|---|
-|Réseau instable|Désactiver / réactiver les cartes réseau de l’hôte|
-|Démarrage impossible sur CD|Appuyer sur Échap au logo VMware / modifier ordre de boot|
-|Espace disque hôte saturé|Déplacer la VM ou libérer de l’espace|
-|Espace disque VM insuffisant|Ajouter un disque virtuel ou augmenter la taille (complexe)|
+|Clavier non capturé|`Ctrl + Alt` puis redémarrer avec focus sur la VM|
+|Réseau non fonctionnel|Désactiver / réactiver les cartes réseau physiques de l’hôte|
+|Espace disque hôte insuffisant|Vérifier le dossier de la VM / déplacer ou libérer de l’espace|
+|Espace disque VM insuffisant|Ajouter un disque virtuel ou redimensionner manuellement|
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Hyperviseur **type 2** = installé sur OS, idéal pour tests
-- Le **mode bridged** connecte la VM au réseau physique directement
-- Utiliser **Shared Folder** pour échanger fichiers facilement
-- Choisir une **taille de disque suffisante dès le départ**
-- Utiliser l’installation manuelle pour un meilleur contrôle
+- VMware Workstation est un **hyperviseur de type 2**, idéal pour le test et l’apprentissage.
+- Toujours utiliser un **mode de création manuel** pour un contrôle total.
+- Les **modes réseau** influencent les capacités de communication de la VM.
+- Certains paramètres sont modifiables **à chaud**, d’autres nécessitent arrêt ou redémarrage.
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Créer un dossier dédié par VM|Meilleure organisation et maintenance|
-|Utiliser des ISO officiels|Éviter les erreurs ou versions corrompues|
-|Sauvegarder les VM importantes|Restauration rapide en cas de crash|
-|Isoler les VM en LAN segment pour les tests|Évite toute interaction réseau non désirée|
-|Documenter les paramètres VM|Permet la reproductibilité et la compréhension à long terme|
+- Prévoir une **arborescence claire** pour stocker ses VMs
+- Affecter des **noms explicites** aux VMs pour éviter les confusions
+- Définir des tailles de disque cohérentes et éviter le surprovisionnement
+- **Documenter les paramètres réseaux** de chaque VM si complexes (ex : LAN segment)
+- Faire des **snapshots réguliers** lors des phases de test
+
+---
+
+## 🔗 Outils / commandes utiles
+
+- VMware Workstation UI : onglet `Edit > Virtual Network Editor`
+- `Ctrl + Alt` : libération du curseur
+- `Ctrl + Alt + Insert` : équivalent `Ctrl + Alt + Suppr`
+- Virtual Machine Settings (clic droit sur la VM)
+- ISO boot : modifier l’ordre de démarrage dans le BIOS VM

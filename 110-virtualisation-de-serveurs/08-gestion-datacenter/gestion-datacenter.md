@@ -1,103 +1,143 @@
-# Gestion du datacenter
+# Gestion du datacenter (vSphere)
 
-## 📊 Gestion des ressources et pools
+## 🧱 Gestion des ressources
 
-|Fonction|Définition / Intérêt|
-|---|---|
-|**Sur-allocation**|Affecter plus de ressources que le physique disponible|
-|**Réservations**|Garantir des ressources pour des VM critiques|
-|**Pool de ressources**|Regroupement logique avec restrictions ou réservations|
-|**VM de production**|Prioritaires à protéger avec réservations ou priorité accrue|
+### Réservation de ressources
 
----
+- Il est possible d’allouer aux VMs **plus de ressources** que l’hôte n’en dispose physiquement.
+- Pour garantir la disponibilité :
+    - Réserver des ressources pour certaines VMs critiques
+    - Créer des **pools de ressources** avec allocation CPU/RAM priorisée
 
-## 🚀 vCenter et environnement de datacenter
+### Pools de ressources
 
-|Fonctionnalité|Détails|
-|---|---|
-|**Création d'un datacenter**|Regrouper des hôtes ESXi, définir des réseaux et stockages partagés|
-|**vMotion / Storage vMotion**|Déplacement à chaud des VM ou stockage|
-|**Clustering / HA**|Non abordé ici, mais disponible avec vCenter|
-
-### ✨ Implémentations possibles de vCenter
-
-- **VCSA (vCenter Server Appliance)** : recommandé (facile, performant)
-- **vCenter sur Windows Server** : plus rare, lourd à maintenir
-
-### ⚖️ Comparatif
-
-|Implémentation|Nb hôtes max|Nb VM max|Points forts|
-|---|---|---|---|
-|**VCSA**|1000|10 000|Simplicité, performances|
-|**vCenter Win**|5|50|À éviter si possible|
+- Objets logiques au sein de l’hôte ou du cluster
+- Permettent de :
+    - Prioriser des charges critiques
+    - Isoler des environnements (test, prod…)
 
 ---
 
-## 🛄 Gestion des utilisateurs, privilèges et rôles
+## 🏢 Contexte vCenter et datacenter
 
-|Elément|Fonction / Règle|
-|---|---|
-|**Utilisateurs locaux**|Créés sur vCenter ou ESXi, accès limité à la portée de création|
-|**Groupes / Rôles**|Regrouper utilisateurs et privilèges. Favoriser les groupes plutôt que individuels|
-|**Attribution héritée**|Affecter les privilèges au plus haut niveau souhaité (datacenter, etc.)|
-|**Principe du moindre privilège**|Toujours restreindre au strict nécessaire|
+### Apports de vCenter
+
+- Regroupe des hôtes ESXi dans un **datacenter logique**
+- Permet l’utilisation de **ressources partagées** (réseau, stockage)
+- Active des services avancés : vMotion, HA, DRS, etc.
+- Nécessite une **licence adaptée**
+
+### vCenter : implémentation
+
+|Variante|Nb max hôtes|Nb max VMs|Avantages|Inconvénients|
+|---|---|---|---|---|
+|**VCSA**|5|50|Simplicité, appliance intégrée|Capacité limitée|
+|**vCenter Std**|1000|10 000|Puissant, évolutif|Mise en œuvre plus complexe|
+
+> Accès vCenter :
+
+- Client vSphere Web : HTTPS port 443
+- Console VCSA : HTTPS port 5480
 
 ---
 
-## 🔹 Modèles de machines virtuelles (Templates)
+## 🧩 Gestion des modèles de VMs (templates)
 
-### Types :
+### Types de modèles
 
-|Format|Compatibilité / Utilisation|
-|---|---|
-|**OVF/OVA**|Standard multi-hyperviseurs (VMware, VirtualBox, XenServer...)|
-|**VMTX**|Spécifique vSphere, permet personnalisation et déploiement rapide|
+|Format|Utilisation|Compatibilité|
+|---|---|---|
+|OVF|Format standard, export/import inter-plateforme|VMware, VirtualBox, Xen, Hyper-V (via conversion)|
+|VMTX|Spécifique vSphere (datacenter)|vSphere uniquement|
 
-### Actions possibles avec un VMTX :
+### Avantages des modèles VMTX
 
-- **Convertir** une VM en template ou inversement
-- **Cloner** une VM vers un template sans modification de l'original
-- **Déployer** une nouvelle VM depuis le template
-- **Personnaliser** post-déploiement (nom, IP, SID)
+- Déploiement rapide et cohérent
+- Personnalisables (nom, IP, SID…)
+- Utilisables avec **Sysprep** pour générer un fichier de personnalisation
 
-### ⚠️ Prérequis pour personnalisation :
+### Méthodes d’utilisation
+
+- **Convert to template** / **Convert to VM**
+- **Clone to template** / **Deploy VM from this template**
+
+> Le système de personnalisation nécessite :
 
 - VMware Tools installés
-- SYSPREP disponible si Windows
+- Intégration de **Sysprep** sur vCenter si l’OS ne le fournit pas nativement
 
 ---
 
-## 🚶️ vMotion et Storage vMotion
+## 👥 Gestion des utilisateurs et privilèges
 
-|Fonction|Utilité|
-|---|---|
-|**vMotion**|Déplacer une VM entre deux hôtes ESXi sans interruption|
-|**Storage vMotion**|Déplacer le stockage d'une VM entre deux datastores à chaud|
+### Où créer les comptes ?
 
-### Prérequis techniques
+- **Dans vCenter** : accès à tous les objets gérés
+- **Dans ESXi seul** : accès uniquement aux objets locaux à l’hôte
 
-- vMotion activé sur au moins un vSwitch par hôte
-- Mêmes plages de diffusions IP entre hôtes source et destination
-- Datastores accessibles par les deux hôtes
+### Gestion centralisée via SSO
+
+- Si le vCenter est joint à un **domaine Active Directory**, il est possible d’utiliser l’authentification SSO (Single Sign-On)
+
+### Méthodologie
+
+1. Créer utilisateurs et groupes
+2. Créer rôles et leur associer des **privilèges précis**
+3. Affecter ces rôles à des objets (VM, hôte, datastore…) via des **groupes**, non des comptes individuels
+
+### Bonnes pratiques
+
+- Ne jamais affecter plus de droits que nécessaire
+- Privilégier l’attribution de droits en **haut de l’arborescence** (héritage activé)
+- Utiliser des **groupes** au lieu d’utilisateurs seuls
+
+---
+
+## 🔄 Migration de machines virtuelles
+
+### Concepts
+
+- Une VM peut migrer :
+    - Entre deux **hôtes** (vMotion)
+    - D’un **datastore** à un autre (Storage vMotion)
+
+### Prérequis
+
+- **vMotion** activé sur au moins un vSwitch source et destination
+- Adressage des hôtes dans le **même domaine de broadcast**
+- Datastores **accessibles simultanément** aux deux hôtes
+
+### Risques fréquents
+
+- ISO encore inséré dans la VM
+- Port group absent sur l’hôte cible
+- Problème de **compatibilité CPU** entre hôtes (instruction sets divergents)
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- vCenter permet la gestion **centralisée** d'une infrastructure VMware
-- Préférer **VCSA** à vCenter Windows
-- Les **templates VMTX** permettent un déploiement rapide et personnalisable
-- **vMotion / Storage vMotion** = déplacement à chaud de VM ou stockage
-- Favoriser les **groupes** + **rôles** pour la gestion des privilèges
+- Les **pools de ressources** permettent d’allouer ou restreindre CPU/RAM
+- vCenter est indispensable à la gestion centralisée de services avancés (vMotion, DRS, HA…)
+- Les **modèles de VMs** facilitent le déploiement automatisé et personnalisé
+- La gestion des privilèges doit être **granulaire et structurée par rôles**
+- La **migration à chaud (vMotion)** nécessite une architecture réseau et stockage partagée cohérente
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Documenter les pools, utilisateurs et privilèges|Assure la clarté et facilite la maintenance|
-|Toujours appliquer le **principe du moindre privilège**|Réduction du risque d'erreurs ou d'abus|
-|Utiliser des **templates VMTX** préconfigurés|Gain de temps et standardisation|
-|Activer les journaux d'audit dans vCenter|Suivi des actions critiques|
-|Mettre en place une **redondance pour vCenter**|Continuité d'activité et haute disponibilité|
+- Déployer vCenter sur une VM dédiée, sauvegardée et haute dispo
+- Documenter les rôles, privilèges et affectations d’utilisateurs
+- Vérifier que tous les hôtes ont accès aux mêmes ressources (datastore, port group…)
+- Utiliser les **modèles VMTX** avec personnalisation pour industrialiser le déploiement
+- Ne jamais migrer une VM avec ISO ou snapshot en cours (préparer la VM à la migration)
+
+---
+
+## 🔗 Outils / notions à connaître
+
+- vSphere Web Client (port 443), Console VCSA (port 5480)
+- Templates : OVF, VMTX, Sysprep
+- Rôles, groupes, privilèges, SSO
+- vMotion, Storage vMotion, Datastore, Pool de ressources

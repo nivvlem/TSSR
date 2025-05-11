@@ -1,86 +1,101 @@
-# TP – Gestion du stockage d'une infrastructure vSphere
+# TP – Gestion du stockage dans vSphere
 
-## 🧰 Pré-requis
+## 📝 Prérequis
 
-- 2 hyperviseurs **ESXi** configurés avec VMkernel réseau de stockage
-- 1 VM **SRV_2K19** (Windows Server 2019) déployée, snapshot "Fin Atelier 1"
-- Les configurations réseau issues des ateliers précédents doivent être fonctionnelles
-
----
-
-## 🧪 Partie I – Configuration iSCSI (mode bloc)
-
-### 🔧 Sur la VM **SRV_2K19**
-
-1. **Adresse IP statique** : `192.168.20.12/24` 
-2. Contrôle de connectivité :
-
-```bash
-ping 192.168.20.1
-ping 192.168.20.2
-```
-
-3. Ajout d’un **disque virtuel** de 150 Go nommé `STOCKAGE`, formaté en NTFS.
-4. Ajout du rôle **Serveur de fichiers et services de stockage** > **Cible iSCSI**.
-5. Création d’un **disque virtuel iSCSI** de 80 Go nommé `LUN1`, associé à une nouvelle cible `iSCSI`.
-6. Autoriser les IPs des hyperviseurs ESXi en tant qu’**initiators**.
-
-### 🖥️ Sur **ESXi1**
-
-1. Activer l’adaptateur logiciel iSCSI dans _Stockage > Adaptateurs_
-2. Lier l’adaptateur au **VMkernel** `GRP-STORAGE-VMOTION`
-3. Ajouter l’IP de SRV_2K19 (`192.168.20.12`) comme **cible dynamique**
-4. Lancer une **réanalyse** → détecter le périphérique `MSFT iSCSI`
-5. Créer un **datastore VMFS** :
-    - Nom : `DS-ISCSI`
-    - Disque : `LUN1`
-    - Utilisation : totale
-
-### 🖥️ Sur **ESXi2**
-
-1. Activer et configurer le même adaptateur logiciel iSCSI
-2. Vérifier l’accessibilité du **datastore DS-ISCSI**
+- VMs `ESXi1` et `ESXi2` fonctionnelles avec configuration réseau prête (Module 6 terminé)
+- VM `SRV_2K19` avec Windows Server 2019 installé (Module 1 terminé)
+- Retourner à la **snapshot Fin Atelier 1** avant de commencer
 
 ---
 
-## 🧪 Partie II – Configuration NFS (mode fichier)
+## I – Mise en œuvre du stockage iSCSI (mode bloc)
 
-### 🔧 Sur **SRV_2K19**
+### 1. Configuration réseau sur SRV_2K19
 
-1. Créer un dossier `NFS` dans `D:\STOCKAGE\DS`
-2. Ajouter le rôle **Serveur pour NFS**
-3. Créer un **partage NFS** du dossier `DS\NFS` avec options :
-    - Pas d’authentification serveur
-    - Accès des utilisateurs non mappés : activé
-    - Lecture/écriture pour ESXi1 et ESXi2 (par IP)
-    - Version NFS v3
+- Démarrer la VM
+- Passer `ethernet0` en IP statique : `192.168.100.12/24`
+- Vérifier la connectivité vers ESXi1 et ESXi2 via ping (`192.168.100.1`, `192.168.100.2`)
 
-### 🖥️ Sur **ESXi1 et ESXi2**
+### 2. Ajout d’un disque local à SRV_2K19
 
-1. Créer un **datastore de type NFS** :
-    - Nom : `DS-NFS`
-    - Hôte : `192.168.20.12`
-    - Dossier : `/DS/NFS`
-    - Droits : lecture/écriture
-2. Vérifier que le **datastore DS-NFS** est monté et accessible dans l’inventaire
+- Ajouter un **2ème disque de 150 Go** dans VMware Workstation
+- Le formater sous Windows et le nommer `STOCKAGE`
+- Créer une arborescence `STOCKAGE\DS`
+
+### 3. Mise en œuvre du service iSCSI sur SRV_2K19
+
+- Ajouter le rôle **Serveur cible iSCSI** via le Gestionnaire de serveur
+- Créer un **disque virtuel iSCSI de 80 Go** nommé `LUN1`
+- Créer une **nouvelle cible iSCSI** : autoriser les IPs de `ESXi1` et `ESXi2`
+- Lancer la création via l’assistant
+
+### 4. Configuration sur ESXi1
+
+- Activer et configurer l’**adaptateur iSCSI logiciel**
+- Associer le port group `GRP-STORAGE-VMOTION`
+- Ajouter la cible dynamique : IP `192.168.100.12`
+- Lancer une **réanalyse** de l’adaptateur iSCSI
+- Vérifier la détection du **périphérique MSFT iSCSI**
+
+### 5. Création du datastore VMFS
+
+- Créer une **banque de données nommée `DS-ISCSI`** en utilisant 100% de `LUN1`
+
+### 6. Réplication de la configuration sur ESXi2
+
+- Activer et configurer l’**adaptateur iSCSI logiciel**
+- Ajouter la même cible dynamique
+- Vérifier l’accès au **datastore `DS-ISCSI`** partagé
+
+---
+
+## II – Mise en œuvre du stockage NFS (mode fichier)
+
+### 1. Préparation sur SRV_2K19
+
+- Dans le volume `STOCKAGE`, créer un dossier `DS\NFS`
+- Ajouter le rôle **Serveur pour NFS**
+
+### 2. Création d’un partage NFS
+
+- Créer un **partage NFS** sur `DS\NFS` avec les paramètres suivants :
+    - Pas d’authentification
+    - Accès des utilisateurs non mappés
+    - Lecture/écriture autorisée aux IPs des `ESXi`
+    - Version NFSv3
+
+### 3. Montage sur ESXi1 et ESXi2
+
+- Depuis le client vSphere, créer un **datastore de type NFS** nommé `DS-NFS`
+- Chemin de montage : `\192.168.100.12\DS\NFS`
+- Vérifier que le montage apparaît dans les banques de données
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- iSCSI = stockage **bloc**, nécessite une cible + initiator
-- NFS = stockage **fichier**, accessible via partage réseau
-- **Datastores VMFS** = performants pour VM, **NFS** = flexibles
-- iSCSI doit être associé à une carte VMkernel dédiée (réseau isolé)
+- Le stockage **iSCSI** est en mode bloc, nécessite un initiator + cible + VMFS
+- Le stockage **NFS** est en mode fichier, plus simple à configurer mais moins performant
+- Le **datastore VMFS** peut être partagé entre plusieurs ESXi via un LUN iSCSI
+- Il faut un **réseau dédié** et des IP fixes pour les fonctions de stockage
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Séparer le réseau de stockage du trafic de production|Optimise la sécurité et la performance|
-|Utiliser MTU 9000 (jumbo frames) sur le réseau iSCSI|Améliore les performances de transfert|
-|Sauvegarder les configurations des cibles et partages|Facilite les restaurations et la documentation|
-|Documenter les IP, rôles, et chemins d’accès|Maintien de la cohérence dans l’infrastructure|
-|Nommer clairement les datastores et cibles|Simplifie la supervision et l’exploitation|
+- Toujours attribuer une IP statique aux serveurs de stockage
+- Séparer les flux stockage du reste (VMNICs et VLAN dédiés)
+- Vérifier que les services de rôle Windows sont installés avec les bonnes autorisations
+- Sur vSphere : surveiller l’état du périphérique iSCSI ou NFS après chaque configuration
+- Nommer les datastores et les LUNs de façon **explicite et homogène** (`DS-ISCSI`, `DS-NFS`…)
+
+---
+
+## 🔗 Composants et outils utilisés
+
+- Windows Server 2019 : services iSCSI Target et NFS Server
+- ESXi 7 : stockage VMFS via LUN + montage NFS
+- VMware Workstation (disques supplémentaires)
+- vSphere Web Client
+- Datastore : `DS-ISCSI`, `DS-NFS`
+- Réseaux : `GRP-STORAGE-VMOTION`, IP statiques `192.168.100.x`

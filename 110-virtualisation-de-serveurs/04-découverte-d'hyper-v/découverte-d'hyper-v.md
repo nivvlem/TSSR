@@ -1,93 +1,127 @@
 # Découverte d’Hyper-V
 
-## 💡 Qu’est-ce qu’Hyper-V ?
+## 🧱 Présentation d’Hyper-V
 
-Hyper-V est l’hyperviseur de type 1 développé par **Microsoft**, intégré en tant que **rôle serveur** dans Windows Server et **fonctionnalité facultative** dans les éditions Windows Pro/Enterprise (à partir de Windows 8).
+### Versions
 
----
+- Hyper-V v2 : Windows Server 2008 R2
+- Hyper-V v3 : Windows 8 / Windows Server 2012 et suivants
 
-## 📦 Prérequis
-
-### Matériels :
-
-- Processeur 64 bits compatible **Intel VT-x** ou **AMD-V**
-- **SLAT** (Second Level Address Translation) requis pour les versions client
-- Quantité de RAM et stockage suffisants
-
-### Logiciels :
-
-- OS serveur : **Windows Server 2008 et +**
-- OS client : **Windows 8 Pro/Enterprise 64 bits** ou supérieur
-
-🔄 **Deux redémarrages** sont nécessaires lors de l’ajout du rôle sur un serveur
+> Intégré en tant que **rôle serveur** (via le gestionnaire de serveur) ou **fonctionnalité client** à activer (Windows 8 Pro 64 bits et +)
 
 ---
 
-## 🧩 Spécificités d’Hyper-V
+## 🧰 Prérequis d’installation
 
-- Affichage multi-console (chaque VM dans une fenêtre dédiée)
-- Intégration via services (compatibilité dépendante de l’OS invité)
-- Redirection limitée de périphériques (USB notamment sur les anciennes versions)
-- Clavier spécial pour "Ctrl + Alt + Suppr" : **Ctrl + Alt + Fin**
+### Matériel
+
+- Processeur **64 bits** avec prise en charge **Intel VT-x** ou **AMD-V**
+- **SLAT** requis pour l’édition client :
+    - EPT (Intel)
+    - NPT/RVI (AMD)
+- RAM et espace disque adaptés
+
+### Logiciel
+
+- Windows Server 2008 (ou supérieur)
+- Windows 8 Pro 64 bits minimum (client)
+
+> ⚠️ Nécessite **2 redémarrages** à l’installation pour passer en mode natif (type 1)
 
 ---
 
-## 🖧 Paramétrage réseau Hyper-V
+## 🖥️ Fonctionnalités & interactions
 
-### Types de réseaux virtuels :
+### Interaction avec l’hôte
+
+- Hyper-V est un **hyperviseur de type 1** : l’OS hôte devient client de l’hyperviseur
+- Les **médias USB** ne sont pas pris en charge en v2
+
+### Contrôles clavier spécifiques
+
+- `Ctrl + Alt + Gauche` : libérer la souris
+- `Ctrl + Alt + Fin` : équivalent `Ctrl + Alt + Suppr` dans la VM
+
+### Services d’intégration
+
+- Permettent une meilleure intégration OS invité ↔ hôte (horloge, souris, shutdown propre…)
+
+### Fonctions avancées
+
+- Console dédiée pour chaque VM
+- Paramètres matériels poussés (BIOS, RAM dynamique, etc.)
+- Snapshots, import/export
+
+---
+
+## 🌐 Réseaux virtuels Hyper-V
+
+### Types de réseaux
 
 |Type|Description|
 |---|---|
-|**Privé**|Communication uniquement entre VMs invitées|
-|**Interne**|Communication entre hôte et VMs|
-|**Externe**|Accès au réseau physique via une carte réseau physique|
-|**Externe dédié**|L’interface réseau est réservée exclusivement à Hyper-V|
+|Privé|Communication uniquement entre VMs|
+|Interne|Communication entre VMs et hôte uniquement|
+|Externe|Connexion directe au réseau physique|
+|Externe dédié|Carte réseau dédiée à Hyper-V, exclusive|
 
-📌 Chaque carte réseau physique peut n’être utilisée que pour **un réseau externe Hyper-V**.
+> Hyper-V **s’approprie la carte physique** : une seule carte externe par NIC physique
 
-🔧 Configuration via le **Gestionnaire de Réseau Virtuel** dans la console Hyper-V
+### Configuration
 
----
-
-## ⚙️ Création et gestion des VM
-
-- Assistant _Nouveau > Ordinateur virtuel_
-- Choix de l’emplacement de stockage et des paramètres (RAM, CPU, disque, ISO…)
-- Pour les VMs **génération 1**, le disque système doit être sur une **interface IDE**
-- Console de gestion Hyper-V permet la supervision et le paramétrage
+- Utilisation du **Gestionnaire de Réseau Virtuel** (console Hyper-V)
+- VLAN taggés possibles
 
 ---
 
-## 🔁 Exportation et importation
+## 🧩 Création d’une VM Hyper-V
 
-> Attention : les manipulations sont sensibles, surtout avec Hyper-V v3 (2012+)
+- Assistant : clic droit > Nouveau > Ordinateur virtuel
+- Définir emplacement, nom, génération (1 ou 2)
+- Le **disque de boot de génération 1** doit obligatoirement être connecté via **IDE**
+- Affecter ISO, réseau, RAM, disques…
 
-### Procédure recommandée :
+---
 
-1. **Exporter** la VM depuis la console Hyper-V
-2. Copier le répertoire sur l’emplacement cible
-3. **Importer** la VM en choisissant ou non de dupliquer les fichiers
+## 📤 Exportation / Importation de VM
 
-🛑 Si l’option « Dupliquer tous les fichiers » est cochée, les disques **sont copiés** dans un nouvel emplacement
+### Contraintes spécifiques
+
+- Une **VM doit être exportée** pour être réutilisable ailleurs
+- Sans exportation préalable, import impossible
+- Deux options lors de l’importation :
+    - **Créer une copie** : pour dupliquer la VM (mais le VHD est copié dans un même emplacement)
+    - **Enregistrer tel quel** : ne pas dupliquer
+
+### Exemple de procédure
+
+1. Exporter dans un dossier propre
+2. Copier le dossier où désiré
+3. Importer en **choisissant la méthode adaptée**
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Hyper-V est un **hyperviseur de type 1** intégré dans Windows
-- L'installation nécessite des **redémarrages et prérequis CPU** (VT-x / AMD-V / SLAT)
-- Une **console dédiée** est disponible pour chaque VM
-- L'import/export nécessite une attention sur les chemins et fichiers utilisés
-- **Ctrl + Alt + Fin** remplace Ctrl + Alt + Suppr dans une VM Hyper-V
+- Hyper-V est un hyperviseur **intégré à Windows**, type 1
+- La configuration réseau doit être **définie manuellement**
+- Les types de réseau (privé, interne, externe) sont **exclusifs**
+- Les manipulations (export/import) doivent être maîtrisées pour le clonage ou la mobilité
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-|Bonne pratique|Pourquoi ?|
-|---|---|
-|Toujours créer les réseaux virtuels **en amont**|Évite les conflits ou l’isolation non voulue des VMs|
-|Bien nommer les interfaces réseau|Clarté dans la supervision et les diagnostics|
-|Exporter systématiquement avant déplacement|Assure l'intégrité des fichiers et la portabilité|
-|Dédié une interface réseau physique à Hyper-V|Garantit un meilleur débit et une isolation réseau|
-|Installer les services d’intégration|Optimise les performances et fonctionnalités entre hôte et invité|
+- Toujours créer un **réseau externe dédié** dans les tests d’intégration
+- Utiliser la **génération adaptée** à l’OS invité (UEFI = Gen 2)
+- Ne jamais déplacer manuellement une VM sans exportation
+- Conserver une **arborescence logique** de stockage VMs
+- Documenter les réseaux et les VLAN utilisés
+
+---
+
+## 🔗 Commandes / outils à connaître
+
+- `Get-VM`, `New-VM`, `Start-VM`, `Export-VM`, `Import-VM`
+- Console Hyper-V (MMC)
+- Gestionnaire de Réseau Virtuel
