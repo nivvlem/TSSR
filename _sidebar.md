@@ -142,6 +142,25 @@
 </details>
 
 <details>
+<summary>📡 Réseaux & téléphonie IP</summary>
+
+- [Introduction](/080-réseaux-et-téléphonie-ip/01-introduction/introduction.md)
+- [Réseaux](/080-réseaux-et-téléphonie-ip/02-réseaux/réseaux.md)
+- [Commutateur](/080-réseaux-et-téléphonie-ip/03-commutateur/commutateur.md)
+    - [🛠 Exemple](/080-réseaux-et-téléphonie-ip/03-commutateur/exemple-pratique.md)
+- [Routeur](/080-réseaux-et-téléphonie-ip/04-routeur/routeur.md)
+    - [🛠 Exemple](/080-réseaux-et-téléphonie-ip/04-routeur/exemple-pratique.md)
+- [Sécurité](/080-réseaux-et-téléphonie-ip/05-sécurité/sécurité.md)
+    - [🛠 Exemple](/080-réseaux-et-téléphonie-ip/05-sécurité/exemple-pratique.md)
+- [Cybersécurité - bases](/080-réseaux-et-téléphonie-ip/06-cybersécurité-bases/cybersécurité-bases.md)
+- [Cybersécurité - règles & hygiène](/080-réseaux-et-téléphonie-ip/07-cybersécurité-règles-hygiène/cybersécurité-règles-hygiène.md)
+- [TOIP](/080-réseaux-et-téléphonie-ip/08-toip/toip.md)
+    - [🛠 Exemple](/080-réseaux-et-téléphonie-ip/08-toip/exemple-pratique.md)
+- [🧾 Synthèse](/080-réseaux-et-téléphonie-ip/synthèse/synthèse.md)
+
+</details>
+
+<details>
 <summary>🛠️ Services réseau Microsoft</summary>
 
 - [Administration Windows](/090-services-réseau-en-environnement-microsoft/01-administration-windows/administration-windows.md)
