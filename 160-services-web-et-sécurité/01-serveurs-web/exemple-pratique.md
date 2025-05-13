@@ -31,14 +31,14 @@ Installer et configurer une **infrastructure réseau complète simulée en envir
 
 ## 🧱 Machines virtuelles à déployer
 
-|Nom|OS|Rôle|Interface VMNet|IP statique|
-|---|---|---|---|---|
-|**CD-DNS**|Windows Server 2019|Contrôleur de domaine + DNS|VMNet10|`192.168.159.121`|
-|**SRV-IIS**|Windows Server 2019|Serveur web IIS|VMNet10|`192.168.159.125`|
-|**DEB-SRV**|Debian 11 sans GUI|Serveur Apache web|VMNet12|`192.168.159.233`|
-|**CLIENT-DEB**|Debian avec GUI|Client Linux|VMNet11|`192.168.157.129`|
-|**CLIENT-WIN**|Windows 10|Client Windows|VMNet11|`192.168.157.130`|
-|**pfSense**|pfSense Firewall|Routage/NAT/VLAN|VMNet10/11/12 + Bridged (WAN)|Interfaces multiples|
+| Nom            | OS                  | Rôle                        | Interface VMNet               | IP statique          |
+| -------------- | ------------------- | --------------------------- | ----------------------------- | -------------------- |
+| **CD-DNS**     | Windows Server 2019 | Contrôleur de domaine + DNS | VMNet10                       | `192.168.159.121`    |
+| **SRV-IIS**    | Windows Server 2019 | Serveur web IIS             | VMNet10                       | `192.168.159.125`    |
+| **DEB-SRV**    | Debian 12 sans GUI  | Serveur Apache web          | VMNet12                       | `192.168.159.233`    |
+| **CLIENT-DEB** | Debian avec GUI     | Client Linux                | VMNet11                       | `192.168.157.129`    |
+| **CLIENT-WIN** | Windows 10          | Client Windows              | VMNet11                       | `192.168.157.130`    |
+| **pfSense**    | pfSense Firewall    | Routage/NAT/VLAN            | VMNet10/11/12 + Bridged (WAN) | Interfaces multiples |
 
 ---
 

@@ -311,3 +311,34 @@
 - [🧾 Synthèse](/160-services-web-et-sécurité/synthèse/synthèse.md)
 
 </details>
+
+<details>
+<summary>📎 Fiches références</summary>
+
+- [Active Directory](/fiches-références/active-directory.md)
+- [Apache](/fiches-références/apache.md)
+- [Bash](/fiches-références/bash.md)
+- [Bash scripting](/fiches-références/bash-scripting.md)
+- [CLI IOS](/fiches-références/cli-ios.md)
+- [CMD](/fiches-références/cmd.md)
+- [conf Apache](/fiches-références/conf-apache.md)
+- [DHCP](/fiches-références/dhcp.md)
+- [DNS](/fiches-références/dns.md)
+- [GPO](/fiches-références/gpo.md)
+- [Hosts](/fiches-références/hosts.md)
+- [IIS](/fiches-références/iis.md)
+- [IPTables](/fiches-références/iptables.md)
+- [OpenSSL](/fiches-références/openssl.md)
+- [pfSense](/fiches-références/pfsense.md)
+- [PowerShell](/fiches-références/powershell.md)
+- [PowerShell Scripting](/fiches-références/powershell-scripting.md)
+- [SQL](/fiches-références/sql.md)
+- [SVI](/fiches-références/svi.md)
+- [TrueNAS](/fiches-références/truenas.md)
+- [UFW](/fiches-références/ufw.md)
+- [Vim / Vi](/fiches-références/vim-vi.md)
+- [VPN](/fiches-références/vpn.md)
+- [vSphere](/fiches-références/vsphere.md)
+- [XiVO](/fiches-références/xivo.md)
+
+</details>
