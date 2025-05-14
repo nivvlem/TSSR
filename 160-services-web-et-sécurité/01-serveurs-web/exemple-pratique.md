@@ -55,7 +55,7 @@ Installer et configurer une **infrastructure réseau complète simulée en envir
 
 - Lancer le **Gestionnaire de serveur** → Ajouter rôle **AD DS + DNS Server**
 - Promouvoir en **contrôleur de domaine** :
-    - Nom de domaine : `nivvlem.local` (adapté à votre prénom/nom)
+    - Nom de domaine : `nivvlem.local`
     - Mot de passe DSRM sécurisé
 - Vérifier la zone DNS créée automatiquement
 - Ajouter une **entrée A** pour SRV-IIS (`srv-iis.nivvlem.local`)
