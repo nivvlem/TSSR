@@ -1,120 +1,169 @@
-# TP – Installation de l'infrastructure Web (Windows/Linux)
+# TP – Installation de l’infrastructure
 
-## 🧠 Objectif
-
-Installer et configurer une **infrastructure réseau complète simulée en environnement virtuel**, composée de :
-
-- Plusieurs réseaux isolés : **Utilisateurs**, **Serveurs**, **DMZ**
-- Machines Windows et Linux : **clients**, **serveurs web**, **contrôleur de domaine**, **pare-feu pfSense**
-- Services actifs : **AD, DNS, IIS, Apache2**, résolution DNS et routage inter-réseaux
+> **Objectif :** Mettre en place l’infrastructure de maquettage pour les TP de la semaine.
 
 ---
 
-## 🧾 Réseaux et découpage IP
+## 🔧 Objectifs
 
-### Base réseau : `192.168.128.0/17`
+- Définir le sous-réseau de maquettage
+- Découper les sous-réseaux pour chaque zone (Utilisateurs, Serveurs, DMZ)
+- Définir l’adressage IP pour chaque machine
+- Installer et configurer les VMs nécessaires
+- Déployer un contrôleur de domaine avec le rôle ADDS
 
-- Découpée en 32 sous-réseaux en /22 (2048 adresses utilisables par sous-réseau)
-- **8e sous-réseau sélectionné** : `192.168.156.0/22`
+---
 
-### Sous-réseaux affectés
+## 🧼 Étape 1 : Calcul du sous-réseau principal
 
-|Réseau|Plage d’IP utilisables|Usage|
+- Réseau attribué : `192.168.128.0/17`
+- On divise en 32 sous-réseaux → besoin de **5 bits supplémentaires** (`/22`)
+- Huitième sous-réseau : valeur binaire `00111` = **28**
+- → Adresse du sous-réseau : **`192.168.156.0/22`**
+
+---
+
+## 🗽 Étape 2 : Sous-réseaux dédiés à l'infrastructure
+
+|Zone|Sous-réseau|Taille|
 |---|---|---|
-|`192.168.157.128/26`|.129 à .190|Réseau Utilisateurs (VMNet11)|
-|`192.168.159.120/29`|.121 à .126|Réseau Serveurs (VMNet10)|
-|`192.168.159.232/29`|.233 à .238|Réseau DMZ (VMNet12)|
-
-> Remarque : choisir des IP fixes cohérentes dans chaque plage et réserver les adresses les plus hautes aux passerelles pfSense.
+|Utilisateurs|`192.168.157.128/26`|64 IPs|
+|Serveurs|`192.168.159.120/29`|8 IPs|
+|DMZ|`192.168.159.232/29`|8 IPs|
 
 ---
 
-## 🧱 Machines virtuelles à déployer
+## 🧑‍💻 Étape 3 : Plan d'adressage IP
 
-| Nom            | OS                  | Rôle                        | Interface VMNet               | IP statique          |
-| -------------- | ------------------- | --------------------------- | ----------------------------- | -------------------- |
-| **CD-DNS**     | Windows Server 2019 | Contrôleur de domaine + DNS | VMNet10                       | `192.168.159.121`    |
-| **SRV-IIS**    | Windows Server 2019 | Serveur web IIS             | VMNet10                       | `192.168.159.125`    |
-| **DEB-SRV**    | Debian 12 sans GUI  | Serveur Apache web          | VMNet12                       | `192.168.159.233`    |
-| **CLIENT-DEB** | Debian avec GUI     | Client Linux                | VMNet11                       | `192.168.157.129`    |
-| **CLIENT-WIN** | Windows 10          | Client Windows              | VMNet11                       | `192.168.157.130`    |
-| **pfSense**    | pfSense Firewall    | Routage/NAT/VLAN            | VMNet10/11/12 + Bridged (WAN) | Interfaces multiples |
+### Réseau Utilisateurs (`192.168.157.128/26`)
+
+|Machine|IP|
+|---|---|
+|Client Debian|`192.168.157.129`|
+|Client Windows|`192.168.157.130`|
+|Routeur (pfSense)|`192.168.157.190`|
+|Broadcast|`192.168.157.191`|
+
+### Réseau Serveurs (`192.168.159.120/29`)
+
+|Machine|IP|
+|---|---|
+|Contrôleur de domaine (CD-DNS)|`192.168.159.120`|
+|Serveur Web IIS|`192.168.159.125`|
+|Routeur (pfSense)|`192.168.159.126`|
+|Broadcast|`192.168.159.127`|
+
+### Réseau DMZ (`192.168.159.232/29`)
+
+|Machine|IP|
+|---|---|
+|Serveur Apache|`192.168.159.233`|
+|Routeur (pfSense)|`192.168.159.238`|
+|Broadcast|`192.168.159.239`|
 
 ---
 
-## ⚙️ Étapes de mise en œuvre
+## 💻 Étape 4 : Configuration des VMs
 
-### 1. Création et configuration des VM
+|VM|OS|Rôle|Réseau (VMnet)|
+|---|---|---|---|
+|CD-DNS|Windows Server 2019|Contrôleur de domaine|LAN_Srv (VMNet10)|
+|SRV-IIS|Windows Server 2019|Serveur IIS|LAN_Srv (VMNet10)|
+|DEB-SRV|Debian (CLI)|Serveur Apache|DMZ (VMNet12)|
+|Debian Client|Debian (GUI)|Client utilisateur|LAN_Users (VMNet11)|
+|Windows Client|Windows 10|Client utilisateur|LAN_Users (VMNet11)|
+|pfSense|pfSense|Firewall/Routeur|WAN (Bridged), +3 OPTs|
 
-- Créer chaque VM dans VMware Workstation/VirtualBox
-- Attribuer la bonne interface VMNet à chaque carte réseau
-- Installer les OS depuis ISO (Windows Eval + Debian Netinstall)
-- Définir les IP statiques dans `/etc/network/interfaces` (Linux) ou dans les paramètres réseau Windows
+- **pfSense WAN** : DHCP / Bridged
+- **pfSense LAN_Srv** : VMNet10
+- **pfSense LAN_Users** : VMNet11
+- **pfSense DMZ** : VMNet12
 
-### 2. Installation du contrôleur de domaine (CD-DNS)
+---
 
-- Lancer le **Gestionnaire de serveur** → Ajouter rôle **AD DS + DNS Server**
-- Promouvoir en **contrôleur de domaine** :
-    - Nom de domaine : `nivvlem.local`
-    - Mot de passe DSRM sécurisé
-- Vérifier la zone DNS créée automatiquement
-- Ajouter une **entrée A** pour SRV-IIS (`srv-iis.nivvlem.local`)
+## 🧱 Étape 5 : Installation et configuration du rôle ADDS
 
-### 3. Installation d’IIS (SRV-IIS)
+### 1. Configuration du nom d'hôte
 
-- Dans **Server Manager** > Gérer les rôles > Ajouter rôle : IIS
-- Accéder au site de test via navigateur : `http://localhost`
-- Vérifier l’accès depuis les clients par IP et FQDN :
-    - `http://192.168.159.125`
-    - `http://srv-iis.nivvlem.local`
+Sur la VM `CD-DNS`, nommer la machine :
 
-### 4. Intégration CLIENT-WIN au domaine
-
-- Modifier DNS : `192.168.159.121`
-- Nommer le poste : `ClientWin1`
-- Intégrer au domaine : `nivvlem.local`
-- Reboot et connexion avec un compte domaine : `nivvlem\utilisateur`
-
-### 5. Installation Apache (DEB-SRV)
-
-```bash
-apt update
-apt install apache2 -y
-systemctl enable apache2
-systemctl start apache2
+```
+Nom : CD-DNS
 ```
 
-- Tester depuis CLIENT-DEB : `http://192.168.159.233`
+### 2. Attribuer une IP statique
 
-### 6. Configuration pfSense
+```
+IP : 192.168.159.120
+Masque : 255.255.255.248
+Passerelle : 192.168.159.126
+DNS : 127.0.0.1
+```
 
-- Interfaces attribuées :
-    - WAN : Bridged (DHCP, accès internet)
-    - LAN : `VMNet10`, IP : `192.168.159.126`
-    - OPT1 : `VMNet11`, IP : `192.168.157.190`
-    - OPT2 : `VMNet12`, IP : `192.168.159.238`
-- Configuration via WebGUI `https://192.168.159.126`
-- Créer **règles NAT et firewall** pour permettre :
-    - L’accès HTTP/HTTPS depuis Utilisateurs vers Serveurs
-    - L’accès Internet depuis Utilisateurs
+### 3. Installer le rôle ADDS
+
+```powershell
+Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+```
+
+### 4. Promotion en tant que DC
+
+Utiliser l'assistant graphique pour :
+
+- Créer une nouvelle forêt
+- Nom du domaine : **nivvlem.md**
+
+### 5. Redémarrer et valider l'intégration du domaine
 
 ---
 
-## ✅ À retenir pour les révisions
+## 🌐 Étape 6 : Configuration initiale de pfSense
 
-- Les **zones réseau** (LAN, DMZ, utilisateurs) doivent être strictement isolées
-- Le **contrôleur de domaine** simplifie la gestion centralisée
-- IIS et Apache doivent répondre aux tests locaux ET distants
-- pfSense joue un rôle essentiel de **routage, filtrage, NAT**
-- La **résolution DNS** doit être cohérente (client → DNS local du domaine)
+### Interfaces réseau
+
+Depuis la console :
+
+- `WAN` → interface bridged (DHCP)
+- `LAN` → VMNet10 (LAN_Srv)
+- `OPT1` → VMNet11 (LAN_Users)
+- `OPT2` → VMNet12 (DMZ)
+
+### Attribution des IP
+
+- `LAN (LAN_Srv)` : `192.168.159.126`
+- `OPT1 (LAN_Users)` : `192.168.157.190`
+- `OPT2 (DMZ)` : `192.168.159.238`
+
+### Activer le NAT
+
+- Par défaut, le NAT est activé en mode automatique (recommended).
+- Vérifier via : **Firewall > NAT > Outbound**
+
+### DNS Resolver
+
+- Aller dans **Services > DNS Resolver**
+- Activer l’écoute sur toutes les interfaces (All).
+- S’assurer que les clients obtiennent le DNS de pfSense dans leur configuration IP.
+
+### DHCP (optionnel)
+
+- Peut être activé uniquement sur les interfaces clients (ex : LAN_Users) si besoin de simplifier.
+- Déconseillé sur le LAN_Srv : préférer les IP fixes côté serveur.
 
 ---
 
-## 📌 Bonnes pratiques professionnelles
+## ✅ Bonnes pratiques à retenir
 
-- Réserver les adresses hautes aux **passerelles/firewalls**
-- Isoler les **services exposés (Apache)** en **DMZ**, protégés par règles firewall
-- Tenir un **plan d’adressage clair** (tableau IPs, rôles, VLANs)
-- **Sauvegarder les snapshots** de chaque VM à chaque jalon
-- **Documenter** l’intégralité des étapes, configurations, et erreurs rencontrées
-- Valider chaque étape par un **test de connectivité** (ping, nslookup, navigateur)
+- Toujours réserver les premières et dernières adresses pour les routeurs et services critiques
+- Attribuer des noms explicites aux VMs
+- Documenter rigoureusement votre plan d’adressage
+- Isoler la DMZ sur un réseau dédié avec un accès restreint via pfSense
+- Tester chaque communication inter-réseau une fois l’infrastructure déployée
+
+---
+
+## ⚠️ Pièges à éviter
+
+- Oublier de définir des IP statiques avant l'intégration au domaine
+- Configurer les mauvaises interfaces dans pfSense (attention à l'ordre des cartes)
+- Ne pas installer les outils RSAT après l’installation d’ADDS
