@@ -46,12 +46,12 @@
 
 ### Réseau Serveurs (`192.168.159.120/29`)
 
-|Machine|IP|
-|---|---|
-|Contrôleur de domaine (CD-DNS)|`192.168.159.120`|
-|Serveur Web IIS|`192.168.159.125`|
-|Routeur (pfSense)|`192.168.159.126`|
-|Broadcast|`192.168.159.127`|
+| Machine                        | IP                |
+| ------------------------------ | ----------------- |
+| Contrôleur de domaine (CD-DNS) | `192.168.159.120` |
+| Serveur Web IIS                | `192.168.159.125` |
+| Routeur (pfSense)              | `192.168.159.126` |
+| Broadcast                      | `192.168.159.127` |
 
 ### Réseau DMZ (`192.168.159.232/29`)
 
