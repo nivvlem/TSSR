@@ -26,7 +26,7 @@
 <details>
 <summary>🪟 Systèmes clients Microsoft</summary>
 
-- [Systèmes d’exploitation](/030-systèmes-clients-microsoft/01-systèmes-d’exploitation/systèmes-d’exploitation.md)
+- [Systèmes d'exploitation](/030-systèmes-clients-microsoft/01-systèmes-d'exploitation/systèmes-d'exploitation.md)
 - [Installation](/030-systèmes-clients-microsoft/02-installation/installation.md)
     - [🛠 Exemple](/030-systèmes-clients-microsoft/02-installation/exemple-pratique.md)
 - [Interagir avec Windows](/030-systèmes-clients-microsoft/03-interagir-avec-windows/interagir-avec-windows.md)
@@ -47,7 +47,7 @@
     - [🛠 Exemple](/030-systèmes-clients-microsoft/10-maintenance-système/exemple-pratique.md)
 - [Plus loin avec PowerShell](/030-systèmes-clients-microsoft/11-plus-loin-avec-powershell/plus-loin-avec-powershell.md)
     - [🛠 Exemple](/030-systèmes-clients-microsoft/11-plus-loin-avec-powershell/exemple-pratique.md)
-- [Capture et déploiement d’image](/030-systèmes-clients-microsoft/12-introduction-capture-et-déploiement-d’image/introduction-capture-et-déploiement-d’image.md)
+- [Capture et déploiement d'image](/030-systèmes-clients-microsoft/12-introduction-capture-et-déploiement-d'image/introduction-capture-et-déploiement-d'image.md)
     - [🛠 Exemple](/030-systèmes-clients-microsoft/12-introduction-capture-et-déploiement-d’image/exemple-pratique.md)
 - [Stratégies groupe local](/030-systèmes-clients-microsoft/13-stratégies-groupe-local/stratégies-groupe-local.md)
     - [🛠 Exemple](/030-systèmes-clients-microsoft/13-stratégies-groupe-local/exemple-pratique.md)
