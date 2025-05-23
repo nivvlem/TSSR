@@ -8,13 +8,13 @@ Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques
 
 ## 📚 Accéder aux modules
 
-Consulte la section [Modules de cours](modules.md) pour accéder à chaque thème organisé par numéro et domaine.
+Consulter la section [Modules de cours](modules.md) pour accéder à chaque thème organisé par numéro et domaine.
 
 ---
 
 ## 📎 Accéder aux fiches de référence
 
-Pour un accès rapide aux commandes, protocoles, outils et configurations spécifiques, va directement dans [Fiches Références](fiches-références/README.md).
+Pour un accès rapide aux commandes, protocoles, outils et configurations spécifiques, aller directement dans [Fiches Références](fiches-références/README.md).
 
 ---
 
