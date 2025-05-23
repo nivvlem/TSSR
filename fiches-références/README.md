@@ -1,39 +1,41 @@
-# 📎 Fiches de référence
+# 📎 Fiches Références
 
-Ce répertoire regroupe toutes les fiches synthétiques concernant les outils, services, protocoles et commandes utilisées en TSSR/ASR.
+## 🎯 Objectif
+
+Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, services, commandes et protocoles rencontrés en TSSR/ASR.
 
 ---
 
-## 🖥️ Systèmes et services
+## 🔧 Systèmes et services Windows
 
 - [Active Directory](active-directory.md)
 - [GPO](gpo.md)
 - [PowerShell](powershell.md)
 - [PowerShell Scripting](powershell-scripting.md)
+- [CMD](cmd.md)
+- [IIS](iis.md)
+- [Hosts](hosts.md)
 
-## 🐧 Linux / Sécurité / Réseau
+## 🐧 Linux & Réseau
 
 - [Bash](bash.md)
 - [Bash Scripting](bash-scripting.md)
-- [iptables](iptables.md)
-- [OpenSSL](openssl.md)
-- [UFW](ufw.md)
-- [VPN](vpn.md)
+- [Vim / Vi](vim-vi.md)
 - [pfSense](pfsense.md)
 - [TrueNAS](truenas.md)
+- [iptables](iptables.md)
+- [UFW](ufw.md)
 - [DNS](dns.md)
 - [DHCP](dhcp.md)
 
-## ⚙️ Outils et environnements
+## 🌐 Web, sécurité & outils
 
 - [Apache](apache.md)
 - [conf Apache](conf-apache.md)
-- [IIS](iis.md)
-- [CMD](cmd.md)
-- [CLI IOS](cli-ios.md)
+- [OpenSSL](openssl.md)
+- [VPN](vpn.md)
 - [SQL](sql.md)
 - [SVI](svi.md)
 - [vSphere](vsphere.md)
 - [XiVO](xivo.md)
-- [Vim / Vi](vim-vi.md)
-- [Hosts](hosts.md)
+- [CLI IOS](cli-ios.md)

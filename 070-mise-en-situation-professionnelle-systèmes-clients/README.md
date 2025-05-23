@@ -1,8 +1,8 @@
-# 📘 MSP : Systèmes clients
+# 🧑‍💻 MSP : Systèmes clients
 
 ## 🎯 Objectif du module
 
-Mettre en œuvre les compétences acquises sur les systèmes clients Windows et Linux dans un scénario réaliste en autonomie.
+Réaliser une mise en œuvre complète de configuration et d’administration de postes clients en environnement professionnel, à partir d’un cahier des charges.
 
 ---
 
@@ -19,11 +19,15 @@ Mettre en œuvre les compétences acquises sur les systèmes clients Windows et 
 
 ---
 
+🧾 [Fiche synthèse](../../070-mise-en-situation-professionnelle-systèmes-clients/synthèse/synthèse.md)
+
+---
+
 ## 📌 Compétences abordées
 
-- Réaliser un déploiement poste client dans un environnement mixte
-- Gérer des partages, utilisateurs et sauvegardes
-- Automatiser la configuration avec des scripts ou outils système
+- Déployer des postes clients Windows et Linux dans un environnement simulé
+- Configurer les utilisateurs, les ressources partagées, les scripts de maintenance
+- Mettre en place des sauvegardes locales et centralisées
 
 ---
 
