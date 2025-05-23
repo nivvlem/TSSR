@@ -1,23 +1,12 @@
 # TP – Administration Microsoft 365 : utilisateurs, groupes et synchronisation AD
-
-## 🧠 Objectif de la fiche
-
-Maîtriser la création, la gestion et la synchronisation des **utilisateurs**, **groupes** et **rôles** dans Microsoft 365, en combinant administration graphique et **PowerShell**, et en connectant un Active Directory local à Azure AD via **Azure AD Connect**.
-
----
-
 ## 🧾 TP 1 – Gestion des utilisateurs et groupes M365 (console + PowerShell)
 
 ### 1. Création des utilisateurs (console graphique)
 
 - Zachary Ramablag – Formateur – Pédagogie – Canada – Login : Zachary
-    
 - Vishnou Lapaix – Formateur – Pédagogie – USA – Login : Vishnou
-    
 - Oussama Lairbon – Cuisinier – Restauration – France – Login : Oussama
-    
 - Mot de passe temporaire à noter pour chacun
-    
 
 ### 2. Création en PowerShell
 

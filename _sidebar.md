@@ -313,6 +313,21 @@
 </details>
 
 <details>
+<summary>☁️ Cloud & Microsoft 365</summary>
+
+- [Composantes](/180-cloud-et-microsoft365/01-composantes/composantes.md)
+    - [🛠 Exemple](/180-cloud-et-microsoft365/01-composantes/exemple-pratique.md)
+- [Administration](/180-cloud-et-microsoft365/02-administration/administration.md)
+    - [🛠 Exemple](/180-cloud-et-microsoft365/02-administration/exemple-pratique.md)
+- [Sécurité & conformité](/180-cloud-et-microsoft365/03-sécurité-et-conformité/sécurité-et-conformité.md)
+    - [🛠 Exemple](/180-cloud-et-microsoft365/03-sécurité-et-conformité/exemple-pratique.md)
+- [Services complémentaires](/180-cloud-et-microsoft365/04-services-complémentaires/services-complémentaires.md)
+    - [🛠 Exemple](/180-cloud-et-microsoft365/04-services-complémentaires/exemple-pratique.md)
+- [🧾 Synthèse](/180-cloud-et-microsoft365/synthèse/synthèse.md)
+
+</details>
+
+<details>
 <summary>📎 Fiches références</summary>
 
 - [Active Directory](/fiches-références/active-directory.md)

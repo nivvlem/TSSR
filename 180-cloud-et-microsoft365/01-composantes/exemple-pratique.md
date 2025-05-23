@@ -2,10 +2,6 @@
 
 ## 🧾 TP 1 – Adapter une réponse à des contraintes métiers
 
-### 🎯 Objectif
-
-Analyser différents contextes métiers et proposer une solution adaptée entre **Cloud public**, **Cloud privé**, **Cloud hybride** ou **On-Premise**.
-
 ### 🔍 Contexte 1 : Entreprise étrangère exigeante
 
 #### Données du contexte :

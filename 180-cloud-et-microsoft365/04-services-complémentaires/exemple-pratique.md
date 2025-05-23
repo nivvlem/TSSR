@@ -81,9 +81,9 @@ gpupdate /force
 ### 2. Création de groupes AGDLP synchronisés
 
 - Dans l’AD local :
-    - Créer les groupes dans une OU dédiée : `GDL_SP_Fichiers_RW`, `GDL_SP_Fichiers_RO`
+    - Créer les groupes dans une OU dédiée : `DL_SP_Fichiers_RW`, `DL_SP_Fichiers_RO`
     - Créer groupes globaux correspondants (GG_ServiceIT...)
-    - Ajouter les membres aux groupes globaux, puis les groupes globaux aux GDL
+    - Ajouter les membres aux groupes globaux, puis les groupes globaux aux DL
 - Lancer une synchronisation Azure AD Connect
 
 ### 3. Attribution des droits sur le site
