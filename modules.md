@@ -17,5 +17,6 @@
 | 130    | Scripting Bash             | [📘 Voir](/130-initiation-au-scripting-bash/README.md)                       |
 | 140    | PowerShell                 | [📘 Voir](/140-initiation-à-powershell/README.md)                            |
 | 145    | Sauvegarde & restauration  | [📘 Voir](/145-sauvegarde-et-restauration/README.md)                         |
+| 150    | Supervision & exploitation | [📘 Voir](/150-exploitation-et-supervision-d'une-infrastructure/README.md)   |
 | 160    | Services Web & sécurité    | [📘 Voir](/160-services-web-et-sécurité/README.md)                           |
 | 180    | Cloud & Microsoft 365      | [📘 Voir](/180-cloud-et-microsoft365/README.md)                              |

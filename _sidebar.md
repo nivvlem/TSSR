@@ -259,6 +259,20 @@
     - [🛠 Exemple](/180-cloud-et-microsoft365/04-services-complémentaires/exemple-pratique.md)
   - [🧾 Synthèse](/180-cloud-et-microsoft365/synthèse/synthèse.md)
 
+- 📡 Supervision & exploitation d’infra
+  - [Supervision](150-exploitation-et-supervision-d'une-infrastructure/01-supervision/supervision.md)
+  - [Protocoles SNMP et NRPE](150-exploitation-et-supervision-d'une-infrastructure/02-protocoles-snmp-et-nrpe/protocoles-snmp-et-nrpe.md)
+    - [🛠 Exemple](150-exploitation-et-supervision-d'une-infrastructure/02-protocoles-snmp-et-nrpe/exemple-pratique.md)
+  - [Centreon](150-exploitation-et-supervision-d'une-infrastructure/03-centreon/centreon.md)
+  - [Commandes de supervision](150-exploitation-et-supervision-d'une-infrastructure/04-commandes-de-supervision/commandes-de-supervision.md)
+    - [🛠 Exemple](150-exploitation-et-supervision-d'une-infrastructure/04-commandes-de-supervision/exemple-pratique.md)
+  - [Configuration Centreon](150-exploitation-et-supervision-d'une-infrastructure/05-configuration-centreon/configuration-centreon.md)
+  - [Notifications & actions d’exploitation](150-exploitation-et-supervision-d'une-infrastructure/06-notifications-et-actions-d'exploitation/notifications-et-actions-d'exploitation.md)
+    - [🛠 Exemple](150-exploitation-et-supervision-d'une-infrastructure/06-notifications-et-actions-d'exploitation/exemple-pratique.md)
+  - [Supervision distribuée](150-exploitation-et-supervision-d'une-infrastructure/07-supervision-distribuée/supervision-distribuée.md)
+    - [🛠 Exemple](150-exploitation-et-supervision-d'une-infrastructure/07-supervision-distribuée/exemple-pratique.md)
+  - [🧾 Synthèse](150-exploitation-et-supervision-d'une-infrastructure/synthèse/synthèse.md)
+
 - 📎 Fiches Références
   - [Active Directory](/fiches-références/active-directory.md)
   - [Apache](/fiches-références/apache.md)
