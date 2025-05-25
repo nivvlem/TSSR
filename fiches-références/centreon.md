@@ -30,6 +30,7 @@ C’est un outil incontournable dans les métiers de supervision, d’exploitati
 
 ## 🧰 Tâches courantes
 ### ➕ Ajouter un hôte
+
 1. Configuration > Hôtes > Ajouter
 2. Définir : nom, adresse IP, groupe, modèle (template)
 
