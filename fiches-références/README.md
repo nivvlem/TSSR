@@ -32,6 +32,8 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 
 - [Apache](apache.md)
 - [conf Apache](conf-apache.md)
+- [Centreon](centreon.md)
+- [Centreon - Plugin](centreon-plugin.md)
 - [OpenSSL](openssl.md)
 - [VPN](vpn.md)
 - [SQL](sql.md)

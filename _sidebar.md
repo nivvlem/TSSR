@@ -278,6 +278,8 @@
   - [Apache](/fiches-références/apache.md)
   - [Bash](/fiches-références/bash.md)
   - [Bash scripting](/fiches-références/bash-scripting.md)
+  - [Centreon](/fiches-références/centreon.md)
+  - [Centreon - Plugin](/fiches-références/centreon-plugin.md)
   - [CLI IOS](/fiches-références/cli-ios.md)
   - [CMD](/fiches-références/cmd.md)
   - [conf Apache](/fiches-références/conf-apache.md)
