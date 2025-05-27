@@ -259,7 +259,7 @@
     - [🛠 Exemple](/180-cloud-et-microsoft365/04-services-complémentaires/exemple-pratique.md)
   - [🧾 Synthèse](/180-cloud-et-microsoft365/synthèse/synthèse.md)
 
-- 📡 Supervision & exploitation d’infra
+- 📡 Supervision & exploitation d’infrastructure
   - [Supervision](/150-exploitation-et-supervision-d'une-infrastructure/01-supervision/supervision.md)
   - [Protocoles SNMP et NRPE](/150-exploitation-et-supervision-d'une-infrastructure/02-protocoles-snmp-et-nrpe/protocoles-snmp-et-nrpe.md)
     - [🛠 Exemple](/150-exploitation-et-supervision-d'une-infrastructure/02-protocoles-snmp-et-nrpe/exemple-pratique.md)
@@ -284,6 +284,7 @@
   - [CMD](/fiches-références/cmd.md)
   - [conf Apache](/fiches-références/conf-apache.md)
   - [DHCP](/fiches-références/dhcp.md)
+  - [DMZ](/fiches-références/dmz.md)
   - [DNS](/fiches-références/dns.md)
   - [GPO](/fiches-références/gpo.md)
   - [Hosts](/fiches-références/hosts.md)
@@ -291,13 +292,16 @@
   - [IPTables](/fiches-références/iptables.md)
   - [OpenSSL](/fiches-références/openssl.md)
   - [pfSense](/fiches-références/pfsense.md)
+  - [pfSense - Plugin](/fiches-références/pfsense-plugin.md)
   - [PowerShell](/fiches-références/powershell.md)
   - [PowerShell Scripting](/fiches-références/powershell-scripting.md)
   - [SQL](/fiches-références/sql.md)
+  - [Squid](/fiches-références/squid.md)
   - [SVI](/fiches-références/svi.md)
   - [TrueNAS](/fiches-références/truenas.md)
   - [UFW](/fiches-références/ufw.md)
   - [Vim / Vi](/fiches-références/vim-vi.md)
   - [VPN](/fiches-références/vpn.md)
   - [vSphere](/fiches-références/vsphere.md)
+  - [Wireshark](/fiches-références/wireshark.md)
   - [XiVO](/fiches-références/xivo.md)

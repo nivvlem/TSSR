@@ -22,10 +22,12 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [Bash Scripting](bash-scripting.md)
 - [Vim / Vi](vim-vi.md)
 - [pfSense](pfsense.md)
+- [pfSense - Plugin](pfsense-plugin.md)
 - [TrueNAS](truenas.md)
 - [iptables](iptables.md)
 - [UFW](ufw.md)
 - [DNS](dns.md)
+- [DMZ](dmz.md)
 - [DHCP](dhcp.md)
 
 ## 🌐 Web, sécurité & outils
@@ -37,7 +39,9 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [OpenSSL](openssl.md)
 - [VPN](vpn.md)
 - [SQL](sql.md)
+- [Squid](squid.md)
 - [SVI](svi.md)
 - [vSphere](vsphere.md)
+- [Wireshark](wireshark.md)
 - [XiVO](xivo.md)
 - [CLI IOS](cli-ios.md)
