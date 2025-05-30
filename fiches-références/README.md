@@ -27,7 +27,7 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [iptables](iptables.md)
 - [UFW](ufw.md)
 - [DNS](dns.md)
-- [DMZ](dmz.md)
+- [DMZ](TSSR/fiches-références/dmz.md)
 - [DHCP](dhcp.md)
 
 ## 🌐 Web, sécurité & outils
