@@ -20,4 +20,5 @@
 | 150    | Supervision & exploitation | [📘 Voir](/150-exploitation-et-supervision-d'une-infrastructure/README.md)   |
 | 160    | Services Web & sécurité    | [📘 Voir](/160-services-web-et-sécurité/README.md)                           |
 | 165    | Réseaux & sécurité         | [📘 Voir](/165-réseaux-et-sécurité/README.md)                                |
+| 170    | GLPI                       | [📘 Voir](/170-glpi/README.md)                                               |
 | 180    | Cloud & Microsoft 365      | [📘 Voir](/180-cloud-et-microsoft365/README.md)                              |

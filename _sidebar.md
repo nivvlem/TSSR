@@ -267,6 +267,21 @@
     - [🛠 Exemple](/165-réseaux-et-sécurité/08-connexion-des-collaborateurs-entre-sites/exemple-pratique.md)
   - [🧾 Synthèse](/165-réseaux-et-sécurité/synthèse/synthèse.md)
 
+- 🖥️ GLPI
+  - [Présentation et installation](/170-glpi/01-présentation-et-installation/présentation-et-installation.md)
+    - [🛠 Exemple](/170-glpi/01-présentation-et-installation/exemple-pratique.md)
+  - [Authentification AD & habilitations](/170-glpi/02-authentification-ad-habilitations/authentification-ad-habilitations.md)
+    - [🛠 Exemple](/170-glpi/02-authentification-ad-habilitations/exemple-pratique.md)
+  - [Gestion de parc & inventaire informatique](/170-glpi/03-gestion-de-parc-inventaire-informatique/gestion-de-parc-inventaire-informatique.md)
+    - [🛠 Exemple](/170-glpi/03-gestion-de-parc-inventaire-informatique/exemple-pratique.md)
+  - [Assistance & traitements automatisés des tickets](/170-glpi/04-assistance-traitements-automatisés-des-tickets/assistance-traitements-automatisés-des-tickets.md)
+    - [🛠 Exemple](/170-glpi/04-assistance-traitements-automatisés-des-tickets/exemple-pratique.md)
+  - [Bases MySQL & MariaDB](/170-glpi/05-bases-mysql-et-mariadb/bases-mysql-et-mariadb.md)
+    - [🛠 Exemple](/170-glpi/05-bases-mysql-et-mariadb/exemple-pratique.md)
+  - [Plugins d'inventaire avec FusionInventory](/170-glpi/06-plugins-inventaire-avec-fusioninventory/plugins-inventaire-avec-fusioninventory.md)
+    - [🛠 Exemple](/170-glpi/06-plugins-inventaire-avec-fusioninventory/exemple-pratique.md)
+  - [🧾 Synthèse](/170-glpi/synthèse/synthèse.md)
+
 - ☁️ Cloud & Microsoft 365
   - [Composantes](/180-cloud-et-microsoft365/01-composantes/composantes.md)
     - [🛠 Exemple](/180-cloud-et-microsoft365/01-composantes/exemple-pratique.md)
