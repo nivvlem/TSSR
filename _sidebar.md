@@ -307,6 +307,20 @@
     - [🛠 Exemple](/150-exploitation-et-supervision-d'une-infrastructure/07-supervision-distribuée/exemple-pratique.md)
   - [🧾 Synthèse](/150-exploitation-et-supervision-d'une-infrastructure/synthèse/synthèse.md)
 
+- 🖥️ Services transverses Microsoft
+  - [Mise en place](/200-services-transverses-microsoft/01-mise-en-place/mise-en-place.md)
+    - [🛠 Exemple](/200-services-transverses-microsoft/01-mise-en-place/exemple-pratique.md)
+  - [Remote Desktop Services - Bureaux distants](/200-services-transverses-microsoft/02-remote-desktop-services-bureaux-distants/remote-desktop-services-bureaux-distants.md)
+    - [🛠 Exemple](/200-services-transverses-microsoft/02-remote-desktop-services-bureaux-distants/exemple-pratique.md)
+  - [Remote Desktop Services - Applications](/200-services-transverses-microsoft/03-remote-desktop-services-applications/remote-desktop-services-applications.md)
+    - [🛠 Exemple](/200-services-transverses-microsoft/03-remote-desktop-services-applications/exemple-pratique.md)
+  - [Déploiement d'OS](/200-services-transverses-microsoft/04-déploiement-os/déploiement-os.md)
+  - [Windows Deployment Services](/200-services-transverses-microsoft/05-windows-deployment-services/windows-deployment-services.md)
+    - [🛠 Exemple](/200-services-transverses-microsoft/05-windows-deployment-services/exemple-pratique.md)
+  - [Microsoft Deployment Toolkit](/200-services-transverses-microsoft/06-microsoft-deployment-toolkit/microsoft-deployment-toolkit.md)
+    - [🛠 Exemple](/200-services-transverses-microsoft/06-microsoft-deployment-toolkit/exemple-pratique.md)
+  - [🧾 Synthèse](/200-services-transverses-microsoft/synthèse/synthèse.md)
+
 - 📎 Fiches Références
   - [Active Directory](/fiches-références/active-directory.md)
   - [Apache](/fiches-références/apache.md)
