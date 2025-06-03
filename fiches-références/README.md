@@ -15,6 +15,8 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [CMD](cmd.md)
 - [IIS](iis.md)
 - [Hosts](hosts.md)
+- [WDS](wds.md)
+- [MDT](mdt.md)
 
 ## 🐧 Linux & Réseau
 

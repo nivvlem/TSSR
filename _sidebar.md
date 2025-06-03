@@ -338,6 +338,7 @@
   - [Hosts](/fiches-références/hosts.md)
   - [IIS](/fiches-références/iis.md)
   - [IPTables](/fiches-références/iptables.md)
+  - [MDT](/fiches-références/mdt.md)
   - [OpenSSL](/fiches-références/openssl.md)
   - [pfSense](/fiches-références/pfsense.md)
   - [pfSense - Plugin](/fiches-références/pfsense-plugin.md)
@@ -352,4 +353,5 @@
   - [VPN](/fiches-références/vpn.md)
   - [vSphere](/fiches-références/vsphere.md)
   - [Wireshark](/fiches-références/wireshark.md)
+  - [WDS](/fiches-références/wds.md)
   - [XiVO](/fiches-références/xivo.md)
