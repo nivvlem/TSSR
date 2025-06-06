@@ -180,13 +180,39 @@
 
 ---
 
+## 🚦 Flux critiques à sécuriser en entreprise
+
+|Flux|Mesure de sécurité recommandée|
+|---|---|
+|Administrations systèmes (SSH, RDP)|Limiter par IP, VPN, MFA|
+|Services Web internes/exposés (HTTP/HTTPS)|Certificats valides, durcissement des serveurs|
+|Accès base de données|Segmenter les réseaux, ACL strictes|
+|Interconnexions inter-sites|VPN IPsec avec restrictions de flux|
+|Flux LDAP/LDAPS|Chiffrement LDAPS uniquement|
+|Accès Wi-Fi|Portail captif, segmentation VLAN|
+
+---
+
+## 🛠️ Audit basique de la sécurité réseau
+
+1. Vérification des politiques de firewall → deny all par défaut
+2. Revue des NAT et redirections de ports → limiter la surface d’exposition
+3. Vérification des VPN (actifs, utilisateurs, logs)
+4. Contrôle de l’expiration des certificats
+5. Analyse des logs IDS/IPS → détection des comportements anormaux
+6. Vérification de la segmentation des flux (DMZ, LAN, VPN)
+
+---
+
 ## ✅ À retenir pour les révisions
 
 - **Politiques de filtrage** : deny all par défaut, ouverture justifiée
-- **Segmentation réseau** : LAN / DMZ / WAN
+- **Segmentation réseau** : LAN / DMZ / WAN / VPN
 - **Proxy** : sécurisation de la navigation, conformité légale
 - **Certificats** : élément central de la confiance numérique
 - **VPN** : indispensable pour le télétravail et la communication inter-sites
+- **Flux critiques** : bien les identifier et les surveiller en continu
+- **Audit régulier** : indispensable pour maintenir le niveau de sécurité
 
 ---
 
@@ -197,6 +223,8 @@
 - **Superviser activement** : IDS/IPS, logs VPN, logs proxy
 - **Automatiser** les tâches récurrentes (renouvellement de certificats, génération de clés)
 - Sensibiliser les utilisateurs à la sécurité (phishing, politique mot de passe, bonnes pratiques VPN)
+- Tester régulièrement le plan de réponse à incident
+- Maintenir à jour le pare-feu, les IDS/IPS, les composants VPN et proxy
 
 ---
 
@@ -220,4 +248,13 @@ cat /var/squid/logs/access.log
 
 # Vérification du VPN WireGuard
 wg show
+
+# Vérification des connexions OpenVPN
+cat /var/log/openvpn.log
+
+# Vérification IDS (ex Suricata)
+cat /var/log/suricata/fast.log
+
+# Liste des états de connexion firewall (pfSense)
+pfctl -ss
 ```

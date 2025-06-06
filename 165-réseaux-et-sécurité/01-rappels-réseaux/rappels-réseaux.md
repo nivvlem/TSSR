@@ -1,124 +1,190 @@
 # Rappels de notions sur le réseau
-## 🧩 Modèle OSI et couches réseau
+## 📚 Modèle OSI
 
-|Couche|Nom|Exemples|
+Le modèle **OSI (Open Systems Interconnection)** est un modèle théorique en 7 couches qui sert à représenter et standardiser les communications entre systèmes en réseau. Il est proposé par l'**ISO** (_International Organization for Standardization_).
+
+### Les 7 couches OSI
+
+|Couches|Rôle principal|Protocoles / Matériels associés|
 |---|---|---|
-|7|Application|HTTP, FTP, SMTP|
-|6|Présentation|SSL/TLS, compression|
-|5|Session|API, RPC|
-|4|Transport|TCP, UDP|
-|3|Réseau|IP, ICMP|
-|2|Liaison de données|Ethernet, VLAN|
-|1|Physique|Câbles, Wi-Fi, fibre|
+|**Application**|Point d'accès au réseau. Communication entre applications / utilisateur.|FTP, HTTP, HTTPS, SMTP, SSH, IMAP, LDAP, RDP, DNS, DHCP, SNMP|
+|**Présentation**|Traduction, (dé)chiffrement, (dé)compression.|-|
+|**Session**|Authentification, synchronisation, création de points de contrôle.|-|
+|**Transport**|Communication de bout en bout entre applications. Contrôle de flux, segmentation.|TCP, UDP|
+|**Réseau**|Routage, adressage logique (IPv4 / IPv6).|Protocoles IP, routeurs|
+|**Liaison**|Communication entre nœuds adjacents. Contrôle d'erreurs. Adressage physique (MAC).|Switchs|
+|**Physique**|Transmission du signal. Conversion en bits.|Câbles, fibres optiques, hubs|
 
-### Utilité du modèle OSI
+### Protocol Data Unit (PDU)
 
-- Comprendre où se situe un problème réseau
-- Séparer les responsabilités : matériel, configuration, applicatif
-
----
-
-## 📡 Adressage et protocoles
-
-### Adresse MAC
-
-- Identifiant unique d’une interface physique
-- Niveau 2 (couche liaison)
-
-### Adresse IP
-
-- Identifiant logique d’un équipement réseau
-- IPv4 : 4 octets, format **x.x.x.x**
-- IPv6 : 128 bits
-
-### Port
-
-- Point d’entrée logique d’un service (niveau Transport)
-- Port TCP 80 → HTTP, Port 443 → HTTPS
+- Une **PDU** est une unité de données échangées sur un réseau.
+- Elle contient :
+    - **PCI** (Protocol Control Information)
+    - **SDU** (Service Data Unit)
 
 ---
 
-## 🔐 Notions de flux
+## 🛠️ Rappel de commandes utiles
 
-### Qu’est-ce qu’un flux ?
+### Windows (netstat, tracert, telnet)
 
-- Une **communication entre deux entités réseau**
-- Défini par :
-    - Adresse IP source + port source
-    - Adresse IP destination + port destination
-    - Protocole utilisé (TCP, UDP, ICMP)
+#### `netstat`
 
-### Types de flux
-
-|Type|Exemple|
+|Commande|Description|
 |---|---|
-|Flux sortant|Client → Internet (ex: HTTP vers un site)|
-|Flux entrant|Internet → serveur (ex: HTTPS sur serveur web)|
-|Flux interne|Entre deux machines du réseau local|
+|`netstat -a`|Connexions TCP actives + ports en écoute|
+|`netstat -b`|Connexions avec processus associés|
+|`netstat -p proto`|Connexions d'un protocole spécifique|
+|`netstat -E`|Statistiques Ethernet|
+|`netstat -r`|Table de routage|
+|`netstat -s`|Statistiques par protocole|
 
----
+#### `tracert`
 
-## 🚦 Notions de filtrage
-
-### Pourquoi filtrer ?
-
-- Contrôler les accès autorisés
-- **Limiter la surface d’attaque**
-- Optimiser l’usage de la bande passante
-
-### Où filtrer ?
-
-|Équipement|Exemple|
+|Commande|Description|
 |---|---|
-|Pare-feu matériel|pfSense, Fortinet|
-|Pare-feu logiciel|iptables, Windows Defender Firewall|
-|Commutateur (niveau 2)|ACL VLAN|
+|`tracert <IP/nom>`|Trace le chemin des paquets|
+|`tracert -4 <IP/nom>`|Force l'utilisation d'IPv4|
 
-### Critères de filtrage
+#### `telnet`
 
-- **IP source/destination**
-- **Port source/destination**
-- **Protocole**
+|Commande|Description|
+|---|---|
+|`telnet <IP/nom> <port>`|Tester la connectivité sur un port|
+|Exemples : `telnet www.exemple.com 80`||
 
-### Politique par défaut (best practice)
+### Linux (ss, traceroute, telnet, nmap)
 
-- Politique **restrictive** par défaut : _deny all_
-- Ouverture uniquement des flux nécessaires
+#### `ss` (remplaçant de netstat)
+
+|Commande|Description|
+|---|---|
+|`ss -ut`|Connexions TCP et UDP actives|
+|`ss -a`|Toutes les connexions en écoute et établies|
+|`ss -n`|Adresses IP et ports numériques|
+|`ss -p`|Processus liés aux connexions|
+|`ss -l`|Sockets en écoute uniquement|
+
+#### `traceroute`
+
+|Commande|Description|
+|---|---|
+|`traceroute <IP/nom>`|Trace le chemin des paquets|
+|`traceroute -4 <IP/nom>`|Force IPv4|
+
+#### `nmap`
+
+|Commande|Description|
+|---|---|
+|`nmap <IP>`|Scan de base|
+|`nmap -p 80,443 <IP>`|Scan de ports spécifiques|
+|`nmap -p- <IP>`|Scan de tous les ports|
+|`nmap -O <IP>`|Détection de l'OS|
 
 ---
 
-## 🏢 Application en entreprise
+## 🌐 Notions de flux réseau
 
-### Analyse des besoins
+### Définition d'un flux
 
-- Identifier les services nécessaires : web, mail, DNS, VoIP, VPN…
-- Catégoriser les flux : sortants, entrants, internes
-- Analyser les risques associés à chaque flux
+Un **flux** est un ensemble de trafic réseau partageant des caractéristiques communes :
 
-### Exemple de flux typique
+- Source
+- Destination
+- Protocole
+- Port
 
-|Service|Port/protocole|Sens|
-|---|---|---|
-|Navigation web|TCP 80/443|Sortant|
-|Messagerie|TCP 25, 587, 993|Sortant / entrant|
-|DNS|UDP 53|Sortant|
-|Accès VPN|UDP 1194|Entrant|
+### Exemple de socket TCP/IP
+
+|Client|Serveur|
+|---|---|
+|IP source : 192.168.5.55Port : 52519 (dynamique)|IP destination : 185.42.28.200Port : 443 (HTTPS)|
+
+### Matrice de flux (bonnes pratiques ANSSI)
+
+- Segmenter le réseau en zones de confiance.
+- Utiliser une DMZ pour les services exposés.
+- Filtrer les flux interzones avec des pare-feux.
+- Documenter les flux dans une **matrice de flux**.
+- Appliquer le principe du moindre privilège.
+- Chiffrer les flux sensibles.
+- Surveiller et analyser les logs.
+- Maintenir à jour les équipements réseau.
+
+### Ressource complémentaire
+
+[**SecNumAcademie - MOOC ANSSI**](https://secnumacademie.gouv.fr/auth/register/fr) : formation gratuite en cybersécurité.
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le modèle **OSI** permet de localiser les problèmes réseau
-- Un **flux** est défini par IP + port + protocole
-- Le **filtrage** réseau protège l’infrastructure et doit être restrictif par défaut
-- Une bonne analyse des besoins est essentielle pour définir les flux autorisés
+- Le modèle **OSI** décompose la communication réseau en **7 couches** distinctes
+- Les **adresses IP** identifient logiquement les machines, les **adresses MAC** identifient physiquement les interfaces réseau
+- Un **flux réseau** est défini par la combinaison **IP source/destination + protocole + ports**
+- La **matrice de flux** sert à documenter les communications autorisées entre les zones du réseau
+- Les commandes essentielles pour diagnostiquer un réseau :
+    - `netstat` et `ss` (visualisation des connexions)
+    - `traceroute` / `tracert` (chemin emprunté par les paquets)
+    - `telnet` / `nmap` (test de connectivité et scan de ports)
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-- Toujours **documenter les flux ouverts**
-- Appliquer une **politique de moindre privilège** (seulement les flux nécessaires)
-- Réaliser des **revues régulières des règles de filtrage**
-- **Tracer et journaliser** les flux pour pouvoir enquêter en cas d’incident
-- Prévoir un **plan de bascule** en cas de coupure réseau (redondance DNS, VPN de secours…)
+- Toujours documenter les flux (**matrice de flux**).
+- Appliquer le **moindre privilège** sur les flux réseau.
+- Mettre en place une **DMZ** pour les services exposés.
+- Chiffrer les flux sensibles (HTTPS, VPN).
+- Maintenir à jour les équipements réseau et surveiller les logs.
+
+---
+
+## ⚠️ Pièges à éviter
+
+- Confondre **adresse IP** et **adresse MAC**.
+- Oublier de documenter les flux lors de la mise en place de nouvelles règles.
+- Laisser des **ports ouverts** inutilement.
+- Mal configurer les pare-feux interzones.
+
+---
+
+## ✅ Commandes utiles
+
+### Sous Windows
+
+```powershell
+# Affiche les connexions TCP actives + ports en écoute
+netstat -a
+
+# Affiche les connexions avec les processus associés
+netstat -b
+
+# Affiche la table de routage
+netstat -r
+
+# Trace le chemin réseau en IPv4
+tracert -4 www.google.fr
+
+# Teste la connectivité sur le port 80
+telnet www.example.com 80
+```
+
+### Sous Linux
+
+```bash
+# Affiche les connexions TCP et UDP actives
+ss -ut
+
+# Affiche toutes les connexions en écoute et établies
+ss -a
+
+# Affiche les adresses IP et ports en format numérique
+ss -n
+
+# Trace le chemin réseau en IPv4
+traceroute -4 www.google.fr
+
+# Détecte l'OS de la cible
+nmap -O 192.168.100.100
+```

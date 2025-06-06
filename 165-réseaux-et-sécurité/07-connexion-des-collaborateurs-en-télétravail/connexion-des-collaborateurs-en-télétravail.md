@@ -1,186 +1,178 @@
-# Connexion des collaborateurs pour le télétravail
-## 🧩 Introduction aux VPN (Virtual Private Network)
+# Connecter les collaborateurs pour le télétravail
+## 📃 Introduction au VPN
 
-### Définition
+Le **VPN** (_Virtual Private Network_) est une technologie permettant de créer une connexion **sécurisée** entre deux points sur un réseau public, le plus souvent **Internet**.
 
-Un **VPN** permet de créer un **tunnel sécurisé** sur Internet entre un utilisateur distant et le réseau de l’entreprise.
+### Rôles principaux :
 
-### Fonctionnement général
+- Créer un **tunnel sécurisé** pour les données
+- **Chiffrer** les communications
+- **Authentifier** les utilisateurs
 
-- Chiffrement du trafic réseau
-- Authentification des utilisateurs
-- Attribution d’une adresse IP interne à distance
-- Possibilité d’accéder aux **ressources internes** de manière sécurisée
+---
 
-### Types de VPN
+## 🔢 Utilité des VPN
 
-|Type|Usage|
+- 🔒 **Sécurité** : Protège contre les interceptions et les attaques
+- 📡 **Confidentialité** : Masque l'adresse IP et chiffre les données
+- 🌐 **Accès à distance** : Permet le télétravail et l'accès aux ressources internes
+
+---
+
+## 🔄 Fonctionnement des VPN
+
+### 1. Tunnelisation
+
+- Création d'un **tunnel chiffré** entre client et serveur
+
+### 2. Chiffrement
+
+- Les données sont **chiffrées** avant envoi et **déchiffrées** à la réception
+
+### 3. Authentification
+
+- L'utilisateur doit **s'authentifier** pour accéder au VPN
+
+---
+
+## 🔄 Avantages des VPN
+
+- 🔒 **Sécurité des données** (contre "man-in-the-middle")
+- 📡 **Confidentialité en ligne**
+- 🌐 **Accès aux ressources** internes de l'entreprise
+
+---
+
+## 🔢 Types de VPN
+
+|Type|Description|
 |---|---|
-|VPN site à site|Relier 2 sites distants de manière permanente|
-|VPN d’accès distant|Connexion ponctuelle d’un utilisateur en télétravail|
-
-### Avantages
-
-- **Confidentialité** des données échangées (chiffrement)
-- **Authentification** des utilisateurs
-- Accès **depuis n’importe où**
-- **Adresse IP interne** héritée pour un fonctionnement transparent
+|VPN d'accès à distance|Pour les particuliers/employés à distance|
+|VPN site-à-site|Pour connecter deux réseaux distants|
 
 ---
 
-## 🔄 Protocoles VPN courants
+## 🔧 Protocoles et solutions VPN
 
-|Protocole|Caractéristiques|
-|---|---|
-|**OpenVPN**|Open-source, flexible, basé sur SSL/TLS, recommandé|
-|**WireGuard**|Moderne, léger, très performant, basé sur UDP|
-|**IKEv2/IPsec**|Bon support de la mobilité, compatible multi-plateforme|
-|**SSTP**|Intégration forte avec Windows|
-|**L2TP/IPsec**|Sécurité correcte mais un peu datée|
-|**PPTP**|Obsolète et non sécurisé, à éviter|
+### PPTP
 
----
+- Facile à configurer mais **obsolète**
 
-## ⚙️ Configuration d’OpenVPN sur pfSense
+### L2TP/IPSec
 
-### 1️⃣ Préparation
+- Sécurité renforcée, performances moyennes
 
-- **Installer le package** : `OpenVPN Client Export` sur pfSense
+### IKEv2/IPSec
 
-### 2️⃣ Création de la PKI interne
+- Rapide et résilient (adapté aux mobiles)
 
-- **System > Cert Manager**
-- Créer une **CA interne** : `CA-OpenVPN`
-- Créer un **certificat serveur** signé par la CA : `cert-OpenVPN`
+### SSTP
 
-### 3️⃣ Configuration de l’authentification LDAP (optionnelle)
+- Intégré à Windows, passe les pare-feux
 
-- Ajouter un **serveur LDAP** dans **System > User Manager > Authentication Servers**
-- Utiliser l’AD interne pour authentifier les utilisateurs VPN
+### OpenVPN
 
-### 4️⃣ Assistant OpenVPN
+- **Open source**, sécurité robuste, très flexible
+- Intégration native dans **pfSense**
 
-- **VPN > OpenVPN > Wizards**
+### WireGuard
 
-- Sélectionner :
-    - Authentification : LDAP ou local
-    - CA : `CA-OpenVPN`
-    - Certificat : `cert-OpenVPN`
-    - Protocole : UDP / IPv4 / port 1194 (modifiable)
-    - Tunnel network : `172.30.200.0/24`
-    - Nombre de connexions max : ex: 100
-    - DNS : serveur DNS interne (SRV-CD)
-
-### 5️⃣ Règles de pare-feu
-
-- **WAN** : ouvrir UDP 1194 vers pfSense (adresse WAN)
-- **OpenVPN** : ouvrir les flux nécessaires vers LAN / DMZ
-
-### 6️⃣ Export client
-
-- **VPN > OpenVPN > Client Export**
-- Exporter un **installeur complet** pour les clients Windows (fichier `.exe` ou `.ovpn`)
-- Options :
-    - `Microsoft Certificate Storage`
-    - `Password Protect Certificate`
-    - Option : `auth-nocache`
-
-### 7️⃣ Installation côté client Windows
-
-- Installer le package exporté
-- Lancer OpenVPN GUI → **Connecter** → Saisir les identifiants LDAP (ou locaux)
-- Vérifier la connexion (cadenas vert)
-- Commande de vérification :
-
-```bash
-ipconfig /all
-```
+- **Protocole moderne**, rapide et léger
+- Intégration dans pfSense
 
 ---
 
-## ⚙️ Configuration de WireGuard sur pfSense
+## 🔧 Configuration OpenVPN sur pfSense
 
-### 1️⃣ Installation
+- OpenVPN préinstallé sur pfSense
+- Utilisation du package `openvpn-client-export`
+- Nécessite un **certificat de confiance** (CA existant ou création)
+- Possibilité d'ajouter **authentification LDAP** (comptes AD)
+- Assistant pour générer les fichiers de configuration clients
 
-- Installer le package `WireGuard`
+### Règles de pare-feu
 
-### 2️⃣ Création du tunnel WireGuard
+- Ouverture automatique des règles nécessaires sur WAN et OpenVPN
 
-- **VPN > WireGuard**
-- Créer un **Tunnel** : `Tunnel_TP8`
-    - Générer les clés (clé privée/clé publique)
-    - Tunnel network : `172.40.200.0/24`
+### Coté client
 
-### 3️⃣ Configuration des peers (clients)
+- Installation du client OpenVPN + fichiers de configuration
 
-- Ajouter un **peer** par client distant
-    - Associer la clé publique du client
-    - Définir la plage IP du tunnel attribuée au client (ex: `172.40.200.2/32`)
+---
 
-### 4️⃣ Côté client Linux (CLT-NAT)
+## 🔧 Configuration WireGuard sur pfSense
 
-- Installer `wireguard-tools`
-- Générer :
+- Protocole moderne **très performant**
+- Configuration des **clés privées/publiques**
+- Association des pairs (**Peers**)
+- Création des règles de pare-feu adaptées
 
-```bash
-wg genkey > privatekey
-wg pubkey < privatekey > publickey
-```
+### Coté client Linux
 
-- Créer le fichier `/etc/wireguard/wg0.conf` :
-
-```text
-[Interface]
-PrivateKey = ...
-Address = 172.40.200.2/32
-
-[Peer]
-PublicKey = ...
-Endpoint = [WAN_IP_pfSense]:51820
-AllowedIPs = 0.0.0.0/0
-PersistentKeepalive = 25
-```
-
-### 5️⃣ Vérification
-
-- Activer le tunnel :
-
-```bash
-wg-quick up wg0
-```
-
-- Vérifier :
-
-```bash
-wg show
-ip a
-```
-
-- Tester la connexion : SSH sur SRV-WEB dans la DMZ
-
-### 6️⃣ Règles de pare-feu
-
-- **WAN** : ouvrir UDP 51820
-- Créer un onglet WireGuard dans Firewall si nécessaire
+- Clés privée/publique stockées dans `/etc/WireGuard/`
+- Configuration via `wg0.conf`
+- Service : `wg-quick@wg0`
+- Interface virtuelle `wg0` avec l'adresse IP du tunnel
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le VPN permet un **télétravail sécurisé** en chiffrant les flux
-- **OpenVPN** et **WireGuard** sont les solutions les plus adaptées actuellement
-- La **PKI interne** permet d’assurer l’identité des serveurs
-- Le VPN d’accès distant doit être correctement **filtré** et **contrôlé**
-- Il faut toujours **vérifier les logs** et surveiller les connexions VPN actives
+- Un **VPN d’accès à distance** permet aux employés de se connecter de manière sécurisée au réseau de l’entreprise
+- Le **VPN** crée un **tunnel chiffré** → garantit **confidentialité**, **intégrité** et **authenticité** des échanges
+- Protocoles recommandés pour le télétravail :
+    - **OpenVPN** (robuste, flexible, open-source)
+    - **WireGuard** (moderne, très performant)
+- **pfSense** permet de déployer facilement un serveur OpenVPN ou WireGuard
+- Pour OpenVPN :
+    - Utilisation du package `openvpn-client-export` pour simplifier le déploiement sur les postes clients
+    - Authentification possible via **LDAP / Active Directory**
+- La configuration du VPN doit être accompagnée de :
+    - **Règles firewall adaptées**
+    - **Supervision** des connexions VPN
+    - **Journalisation** des accès
+- L’usage de **PPTP** est à proscrire (protocole obsolète et non sécurisé)
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-- Limiter le nombre d’utilisateurs autorisés à utiliser le VPN
-- Appliquer une politique de **mot de passe fort**
-- Désactiver les comptes inactifs
-- Utiliser des **protocoles récents** (TLS 1.3 pour OpenVPN, WireGuard pour les clients modernes)
-- Automatiser la **revocation** des certificats si un poste est perdu ou compromis
-- **Tracer** toutes les connexions VPN (logs horodatés)
-- Réaliser des **tests de connectivité réguliers** pour s’assurer que le service VPN fonctionne correctement
+- **Privilégier OpenVPN ou WireGuard** pour les connexions modernes
+- Utiliser **authentification forte** (certificats, LDAP, 2FA)
+- Sécuriser les configurations (règles de pare-feu, journaux, segmentation)
+- Documenter les paramètres de tunnel VPN
+- Garder les logiciels et protocoles à jour (abandon de PPTP)
+
+---
+
+## ⚠️ Pièges à éviter
+
+- Utiliser des protocoles obsolètes (**PPTP**) ou non chiffrés
+- Mauvaise gestion des clés privées / certificats
+- Configurer le VPN sans restriction d'accès aux réseaux internes
+- Oublier de superviser les connexions VPN
+- Laisser des ports inutilisés ouverts
+
+---
+
+## ✅ Commandes utiles (diagnostic VPN)
+
+### OpenVPN (côté pfSense)
+
+```bash
+# Vérification des logs OpenVPN
+cat /var/log/openvpn.log
+
+# Vérification de l'état des connexions
+pfctl -ss | grep openvpn
+```
+
+### WireGuard (côté client Linux)
+
+```bash
+# Vérifier l'état de WireGuard
+sudo wg show
+
+# Lister l'interface virtuelle
+ip a show wg0
+```

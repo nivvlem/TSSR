@@ -1,145 +1,190 @@
 # Le pare-feu
-## 🧩 Rôle et fonctionnement d’un pare-feu
+## 📃 Introduction au pare-feu
 
-### Définition
+Un **pare-feu** (ou _firewall_) est un système de sécurité informatique qui contrôle et filtre le trafic réseau **entrant** et **sortant** selon des règles de sécurité prédéfinies.
 
-Un **pare-feu** est un dispositif de sécurité réseau (matériel ou logiciel) qui **filtre le trafic** entre plusieurs zones de confiance (ex: LAN, DMZ, WAN).
+Le pare-feu agit comme une barrière entre un réseau de confiance (interne) et un réseau non fiable (externe, typiquement Internet).
 
-Il permet :
+**Objectifs :**
 
-- De **contrôler les flux autorisés**
-- De **bloquer les flux indésirables**
-- De segmenter le réseau pour **réduire la surface d’attaque**
-
-### Exemple typique
-
-|Flux|Action|
-|---|---|
-|HTTP (TCP/80) → internet|Permit|
-|ICMP → vers serveur|Reject|
-|SSH (TCP/22) depuis DMZ|Permit limité|
+- Protéger le réseau interne contre les attaques extérieures
+- Contrôler les flux de données selon la politique de sécurité
+- Appliquer le principe du **moindre privilège**
 
 ---
 
-## ⚙️ Étapes de mise en place d’un pare-feu
+## 🔢 Avant de définir les règles de pare-feu
 
-### 1️⃣ Analyse des besoins
+### 🔢 1. Analyser l'infrastructure réseau
 
-- Inventaire des équipements
-- Cartographie des services (web, mail, DNS, applicatif...)
-- Identification des flux nécessaires (vers internet, entre VLANs, etc.)
+- Cartographier la topologie du réseau existant
+- Identifier les différents segments et zones de sécurité (LAN, DMZ, WAN, VLAN, etc.)
 
-### 2️⃣ Schématisation
+### 🔢 2. Schématiser
 
-- Création de diagrammes de flux
-- Identification des **zones critiques** (LAN, DMZ, WAN)
+- Créer un diagramme visuel de l'architecture réseau
+- Représenter les flux de données critiques (applications sensibles, services exposés)
 
-### 3️⃣ Politique de sécurité
+### 🔢 3. Établir le contexte technique
 
-- Collaboration avec les responsables métiers (DSI, Direction...)
-- Définition de règles de filtrage cohérentes avec les besoins
-- Politique par défaut : **deny all** + ouvertures ciblées
+- Inventorier les systèmes, applications et services utilisés
+- Identifier les protocoles et ports requis
 
-### 4️⃣ Documentation
+### 🔢 4. Définir la politique de sécurité
 
-- Rédaction des règles de sécurité
-- Documentation versionnée et régulièrement mise à jour
+- Déterminer les **objectifs de sécurité** de l'entreprise
+- Établir les règles d'accès et de restriction
 
-### 5️⃣ Mise en place technique
+### 🔢 5. Préparer la documentation
 
-- Configuration des règles sur le pare-feu (pfSense, iptables, etc.)
-- Test et validation des flux
+- Rédiger un document de stratégie de sécurité
+- Créer des modèles de documentation pour les règles
 
 ---
 
-## 🔑 Critères d’application des règles de pare-feu
+## 🔧 Actions des règles de pare-feu
 
-### Ordre des règles
+Chaque règle de pare-feu définit une **action** appliquée sur le trafic ciblé :
 
-- L’ordre est **prioritaire** : les règles sont lues de haut en bas.
-- Une règle **deny** en haut annule les autorisations en dessous.
+- **Permit (Allow)** : Laisse passer le trafic
+- **Block (Drop)** : Bloque silencieusement le trafic
+- **Reject** : Bloque le trafic et envoie un message de rejet à l'expéditeur
 
-### Actions possibles
-
-|Action|Description|
-|---|---|
-|Permit (pass)|Autoriser le flux|
-|Block|Bloquer le flux sans réponse|
-|Reject|Bloquer le flux avec message d’erreur|
+**Attention** : l'ordre des règles est essentiel, elles sont évaluées **de haut en bas**.
 
 ---
 
-## 🏢 Séparation des flux et segmentation réseau
+## 🔖 Pare-feu intégré aux OS
 
-### Pourquoi ?
+### Windows
 
-- Limiter la propagation en cas d’attaque
-- Appliquer des politiques de sécurité adaptées à chaque zone
+- Pare-feu Windows : fonctionnalité native
+- Gestion via **GUI** ou **PowerShell** / **netsh**
 
-### Typiquement
+### Linux
 
-|Zone|Exemple de flux|
-|---|---|
-|LAN → WAN|Navigation web autorisée|
-|DMZ → WAN|Restreint (mise à jour OS, services publics)|
-|WAN → DMZ|Entrants autorisés (site web public)|
-|WAN → LAN|Strictement interdit sauf exceptions contrôlées|
+- **iptables / nftables** : intégrés au noyau Linux (puissant mais complexe)
+- **firewalld** : par défaut sur RedHat/CentOS
+- **ufw** : par défaut sur Ubuntu, simplifié
 
 ---
 
-## 🚀 Fonctionnalités avancées de pfSense
+## 📂 Fonctionnalités avancées des pare-feu (exemple pfSense)
 
-### Les alias
+### 📌 Alias
 
-- Groupes d’adresses IP ou de ports
-- Simplifie la lecture et la maintenance des règles
-- Exemples :
-    - Alias `SRVDMZ` → IP 172.20.150.200
-    - Alias `Ports-LDAP` → ports 389, 636
+- Groupes d'objets (IP, ports, URL)
+- Simplifie la gestion et la lisibilité des règles
 
-### Les IP virtuelles
+### 📌 IPs virtuelles
 
-- Permet d’attribuer plusieurs adresses IP à une interface
-- Exemple : haute disponibilité (CARP), multi-hébergement web
+- Ajouter plusieurs adresses IP sur une interface
 
-### Planning horaire (schedules)
+**Types :**
 
-- Active des règles à certaines heures (ex: VPN activé en heures ouvrées)
+- IP Alias : IPs additionnelles
+- CARP : haute disponibilité (failover)
+- Proxy ARP : pour IPs non directement résolues
 
-### QoS (Quality of Service)
+### 📌 NAT (Network Address Translation)
 
-- Priorisation de la bande passante selon les services ou les clients
+- Masque les adresses internes
+- Redirige les flux vers des services internes
 
-### Services intégrés
+### 📌 Plannings
 
-|Service|Exemple d’usage|
+- Activation / désactivation automatique des règles selon un calendrier
+
+### 📌 Règles
+
+- Filtres granulaires (IP, port, protocole)
+- Spécifiques par interface
+- Prise en compte de l'état des connexions
+- Journalisation (logs)
+
+### 📌 Régulateur de flux (QoS)
+
+- Priorisation du trafic critique
+- Gestion de la bande passante
+
+---
+
+## 📃 Services complémentaires du pare-feu (exemple pfSense)
+
+|Service|Description|
 |---|---|
-|DNS Resolver / Forwarder|Fournir la résolution DNS interne|
-|NTP Server|Synchronisation horaire des clients|
-|Captive portal|Gestion des accès invités (ex: Wi-Fi public)|
-
-### Paramétrages système
-
-- Nom d’hôte personnalisé
-- DNS interne cohérent
-- Passerelle correctement définie
+|**DNS dynamique**|Mise à jour automatique DNS pour IPs dynamiques|
+|**DNS Forwarder**|Relai DNS vers serveurs externes|
+|**NTP**|Synchronisation de l'heure|
+|**Portail Captif**|Authentification avant accès au réseau|
+|**Proxy IGMP**|Gestion du multicast|
+|**Relais DHCP/DHCPv6**|Transmission entre sous-réseaux|
+|**DNS Resolver**|Serveur DNS local avec cache|
+|**Sauvegarde**|Sauvegarde de la configuration|
+|**Serveur DHCP**|Attribution automatique d'adresses IP|
+|**SNMP**|Supervision à distance|
+|**UPnP & NAT-PMP**|Ouverture automatique de ports|
+|**Wake-on-LAN**|Réveil à distance des postes|
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le **pare-feu** est un composant essentiel de la sécurité réseau
-- La politique de filtrage doit être **documentée** et fondée sur les besoins métiers
-- La **séparation des flux** réduit la surface d’attaque
-- Les fonctionnalités de pfSense (alias, QoS, IP virtuelles, planning) facilitent l’administration
+- Un **pare-feu** filtre le trafic **entrant et sortant** en appliquant des **règles**
+- Les **règles de pare-feu** sont lues de **haut en bas** → l’ordre est essentiel
+- Actions possibles : **Permit (Allow)**, **Block (Drop)**, **Reject**
+- La configuration doit être basée sur une **analyse préalable des flux** et de la **politique de sécurité**
+- Sur Linux : outils natifs → `iptables`, `nftables`, `ufw`
+- Sur Windows : **Pare-feu Windows Defender** configurable via `netsh` ou interface graphique
+- Sur pfSense : utilisation des fonctionnalités avancées → **alias**, **IPs virtuelles**, **NAT**, **plannings**, **QoS**
+- Toujours vérifier les **logs** pour s’assurer du bon fonctionnement des règles appliquées
 
 ---
 
-## 📌 Bonnes pratiques professionnelles
+### 📌 Bonnes pratiques professionnelles
 
-- Toujours commencer par un **deny all** par défaut
-- **Documenter** chaque flux autorisé
-- **Segmenter** le réseau en zones cohérentes
-- Utiliser les **alias** pour simplifier la maintenance
-- **Tester** systématiquement après modification des règles
-- Réaliser des **revues régulières de la politique de filtrage**
+- Toujours **cartographier** le réseau avant de configurer le pare-feu
+- Utiliser des **alias** pour maintenir des règles lisibles et évolutives
+- Appliquer le principe du **moindre privilège** : bloquer par défaut, autoriser uniquement ce qui est nécessaire
+- Documenter toutes les règles et flux
+- Surveiller les logs pour détecter les comportements suspects
+- Mettre en place des **plannings** pour les règles temporaires
+
+---
+
+### ⚠️ Pièges à éviter
+
+- Ne pas oublier de définir l'ordre des règles : une règle permissive mal placée annule les suivantes
+- Laisser des ports ouverts par oubli
+- Ne pas tester les flux après modification des règles
+- Mal utiliser les IPs virtuelles sans comprendre leur impact sur la redondance ou la publication de services
+
+---
+
+## ✅ Commandes utiles (exemples)
+
+### Sous Windows
+
+```powershell
+# Ouvre l'interface graphique du pare-feu
+wf.msc
+
+# Liste les règles de pare-feu
+netsh advfirewall firewall show rule name=all
+```
+
+### Sous Linux (exemple Ubuntu avec UFW)
+
+```bash
+# Activer le pare-feu
+sudo ufw enable
+
+# Lister les règles
+sudo ufw status numbered
+
+# Autoriser un port (exemple SSH)
+sudo ufw allow 22/tcp
+
+# Supprimer une règle
+sudo ufw delete NUMERO
+```

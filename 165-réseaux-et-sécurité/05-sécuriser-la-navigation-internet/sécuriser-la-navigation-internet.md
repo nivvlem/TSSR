@@ -1,193 +1,159 @@
-# Sécurisation de la navigation internet
-## 🧩 Rôle et fonctionnement d’un proxy
+# Sécuriser la navigation internet
+## 📃 Introduction : Le proxy
 
-### Qu’est-ce qu’un proxy ?
+Le **proxy** est un composant intermédiaire entre les clients internes et Internet.
 
-- Intermédiaire entre les utilisateurs et Internet
-- Filtre les requêtes **sortantes** (ex: HTTP/HTTPS)
-- Applique des **règles de filtrage**
-- Permet la **traçabilité** des accès (conservation des logs)
-- Peut accélérer la navigation grâce à un **cache**
+### Rôles principaux :
 
-### Fonctionnement
+- **Filtrer l'accès** aux sites dangereux ou indésirables (blacklists)
+- **Ajouter une couche de sécurité** contre les menaces externes et les usages malveillants en interne
+- **Optimiser la bande passante** par la mise en cache
+- **Enregistrer l'activité des utilisateurs** (logs)
 
-```text
-Client → Proxy → Internet
-```
+### Obligations légales en France :
 
-Le proxy contrôle si l’URL demandée est autorisée :
-
-- Si oui → transmet la requête
-- Si non → bloque l’accès et affiche un message
-
-### Types de proxy
-
-|Type|Fonctionnement|
-|---|---|
-|Transparent|L’utilisateur n’a pas à configurer le proxy (redirection automatique)|
-|Manuel|Le proxy est configuré dans le navigateur (IP + port)|
-
-### Obligations légales
-
-- **Article L34-1 du Code des postes et communications électroniques** :
-    - Conservation des **logs de navigation pendant 1 an**
-    - Doit permettre d’identifier **qui a accédé à quoi et quand**
+- Conservation des **logs d'accès pendant 1 an**
+- Article **L34-1 du Code des postes et des communications électroniques**
+- Article 9 de la **LCEN** (Loi pour la Confiance dans l'Économie Numérique) du 21 juin 2004
 
 ---
 
-## ⚙️ Configuration de Squid Proxy sur pfSense
+## 🔢 Fonctionnement du proxy
 
-### Installation
-
-- **System > Package Manager > Available Packages**
-- Installer `squid`
-- Installer `squidGuard` (pour le filtrage avancé)
-
-### Configuration de Squid
-
-**Services > Squid Proxy Server**
-
-#### Onglet General
-
-- `Enable Squid Proxy` : coché
-- Interface : `LANCLIENT`
-- Port : `3128`
-- Transparent HTTP Proxy : activé (si besoin)
-
-#### Onglet Local Cache
-
-- Hard Disk Cache Size : 1024 Mo (ou plus)
-
-#### Onglet ACLs
-
-- Ajouter :
-    - Réseau client autorisé
-    - Domaines interdits (ex: `facebook.com`)
-
-#### Certificat CA
-
-- Importer le certificat CA sur les postes clients (HTTPS interception)
-
-#### Règle de redirection HTTP
-
-**Firewall > Rules > LAN**
-
-- Action : Pass
-- Source : LAN Net
-- Destination port : HTTP → redirection vers `127.0.0.1:3128`
+- **Mise en cache** des ressources demandées pour accélérer les accès futurs
+- **Transparence** pour les utilisateurs
+- Contrôle et journalisation par les administrateurs réseau
 
 ---
 
-## 🛠️ Configuration de SquidGuard
+## 🛠️ Squid Proxy
 
-### Fonctionnement
+**Squid** est un serveur **proxy** et **reverse proxy** open-source.
 
-- Extension de Squid
-- Filtrage par **catégories de sites** (blacklists)
-- Application de **règles de contrôle d’accès**
+### Fonctionnalités :
 
-### Installation
+- Gère les protocoles **FTP, HTTP, HTTPS, Gopher**
+- Moteur performant en **I/O asynchrone**
+- Mise en **cache des contenus web**
+- Peut agir comme intermédiaire entre clients et serveurs internes
+- Large communauté, configurations multiples (filtrage, authentification, etc.)
 
-**Services > Proxy Filter > SquidGuard**
+### Configuration typique sous pfSense :
 
-### Onglet General Settings
-
-- Enable : coché
-- Logs activés
-
-### Téléchargement des blacklists
-
-- Source recommandée : [https://dsi.ut-capitole.fr/blacklists/download/](https://dsi.ut-capitole.fr/blacklists/download/)
-- Intégration : `wget` ou directement dans l’interface pfSense
-
-### Configuration des ACLs
-
-**Proxy Filter > SquidGuard > Common ACL**
-
-- Règle pour **bloquer les sites adultes, gaming, astrology**
-- Création d’une blacklist personnalisée `MyfirstBlackList`
-
-### Mesures complémentaires
-
-- **Do Not Allow IP Address in URL**
-- **Use Safe Search Engine**
-
-### Intégration avec Squid
-
-**Services > Squid Proxy Server > General**
-
-- Redirect Program : `/usr/local/bin/squidGuard`
-
-### Vérification
-
-**Status > Proxy Filter**
-
-- Vérifier l’application des règles
-- Consulter les logs
+- **Taille du cache disque** : ex. 1 Go (1024 Mo)
+- **Interface écoutée** : LANCLIENT
+- **Port par défaut** : 3128
+- **Filtrage SSL/TLS** sur port 3129
+- **Logging activé**
 
 ---
 
-## 🌐 Portail captif (bonus)
+## 🔧 SquidGuard Proxy
 
-### Qu’est-ce qu’un portail captif ?
+**SquidGuard** est un module de **filtrage d'URL** pour Squid.
 
-- Page d’accueil obligatoire avant accès à Internet (ex: Wi-Fi public)
-- Permet :
-    - D’afficher des **conditions d’utilisation**
-    - De demander une **authentification**
-    - D’enregistrer les traces de connexion
+### Fonctionnalités :
 
-### Configuration
+- Utilisation de **blacklists** catégorisées (sites indésirables)
+- Exemples : pornographie, jeux d'argent, réseaux sociaux
+- Filtrage sur **adresses IP en URL**
+- Activation de **SafeSearch** sur les moteurs de recherche
+- Création de blacklists personnalisées
+- Application de **règles par catégorie** (Allow / Deny)
 
-**Services > Captive Portal**
+### Blacklist recommandée :
 
-#### Étape 1 : Activation
+- [https://dsi.ut-capitole.fr/blacklists/download/](https://dsi.ut-capitole.fr/blacklists/download/)
 
-- Add → Zone : `LAN_Portal`
-- Enable Captive Portal : coché
-- Interface : LAN
+---
 
-#### Étape 2 : Paramétrage
+## 🛏️ Portail Captif
 
-- Durée de session : 60 min
-- Reauthentification : toutes les 1 min
-- Idle timeout : 15 min
-- Enable logout popup
+### Définition :
 
-#### Étape 3 : Page personnalisée
+Un **portail captif** est une page d'authentification obligatoire avant d'accéder au réseau.
 
-- HTML de la page d’accueil : logo, message d’accueil
+### Fonctionnement :
 
-#### Étape 4 : Authentification
+1. Connexion à un réseau Wi-Fi
+2. Redirection vers la page du portail captif
+3. Interaction utilisateur (acceptation, authentification)
+4. Accès accordé au réseau
 
-- Méthode : Local User Manager
-- Création des utilisateurs dans **System > User Manager**
+### Cas d'usage :
 
-#### Étape 5 : Firewall
+- **Hôtels**
+- **Cafés**
+- **Écoles / universités**
+- **Entreprises** (pour les **invités**, le **proxy** reste préférable pour les employés)
 
-- Vérifier les règles permettant l’accès au portail
+### Remarque :
 
-#### Étape 6 : Tests
-
-- Depuis un client, vérifier l’apparition du portail captif
-- Tester l’accès après authentification
+- Pas de démonstration dans le cours → à faire en **bonus**.
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le proxy permet de **filtrer les accès web** et de respecter la **réglementation**
-- Squid + SquidGuard offrent un **contrôle avancé** des contenus accessibles
-- Les logs doivent être **activés et conservés** 1 an
-- Le portail captif est idéal pour contrôler les accès sur réseaux Wi-Fi publics
+- Un **proxy** agit comme **intermédiaire** entre les clients et Internet
+- Il permet de :
+    - **Filtrer** l’accès aux sites web (via **blacklists**)
+    - **Journaliser** les activités des utilisateurs
+    - **Optimiser la bande passante** par la mise en cache
+- En France, la **conservation des logs** d’accès Internet est **obligatoire pendant 1 an**
+- **Squid** est un proxy open-source couramment utilisé, intégrable dans pfSense
+- **SquidGuard** permet de **filtrer les URL** par catégories (pornographie, réseaux sociaux, etc.)
+- Un **portail captif** permet de contrôler l’accès au réseau (souvent utilisé pour les visiteurs)
+- Le filtrage HTTPS nécessite une **inspection SSL** correctement paramétrée pour éviter de casser les sites sécurisés
+- La configuration des **logs**, des **blacklists** et des **droits d’accès** doit être soigneusement maintenue
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-- **Centraliser** les listes de filtrage et les maintenir à jour
-- Toujours **documenter** les ACLs mises en place
-- **Vérifier régulièrement les logs** pour détecter des tentatives suspectes
-- **Informer les utilisateurs** des règles de navigation
-- Appliquer une politique **progressive et adaptée au contexte métier**
-- Automatiser le déploiement du proxy sur les postes clients (GPO, script...)
+- **Activer les logs** et respecter les obligations de conservation
+- **Filtrer par catégorie** les accès web
+- **Mettre à jour régulièrement** les blacklists
+- **Limiter les risques SSL** avec l'inspection contrôlée
+- Différencier les usages : proxy pour les employés, portail captif pour les visiteurs
+- Bien configurer les **droits d'accès**
+
+---
+
+### ⚠️ Pièges à éviter
+
+- Ne pas conserver les logs (risque juridique)
+- Mal configurer le filtrage SSL (risque de casse HTTPS)
+- Filtrage trop permissif (blacklists incomplètes)
+- Exposer un portail captif sans authentification / supervision
+
+---
+
+### ✅ Commandes utiles (diagnostic proxy / filtrage)
+
+#### Sur pfSense / Squid
+
+```bash
+# Vérification de l'état de Squid
+ps aux | grep squid
+
+# Vérification des logs Squid
+cat /var/squid/logs/access.log
+
+# Vérification des logs SquidGuard
+cat /var/squidGuard/log/squidGuard.log
+
+# Test de connexion via proxy
+curl -x http://ip_proxy:3128 http://www.example.com
+```
+
+#### Depuis un poste client
+
+```bash
+# Test de navigation HTTP/HTTPS via proxy
+curl -I http://site_test
+curl -I https://site_test
+
+# Analyse du filtrage
+nmap -p 3128,3129 ip_proxy
+```

@@ -1,152 +1,133 @@
-# Le NAT (Network Address Translation)
-## 🧩 Qu’est-ce que le NAT ?
+# Le NAT
+## 📃 Introduction au NAT
 
-### Définition
+Le **NAT** (_Network Address Translation_ ou _Translation d'adresses IP_) est une technique réseau permettant de modifier les adresses IP contenues dans les en-têtes des paquets transitant entre différents réseaux.
 
-Le **NAT** (Network Address Translation) est une technique permettant de **faire correspondre des adresses IP privées internes avec des adresses IP publiques** pour permettre la communication entre un réseau privé et Internet.
+### Objectifs principaux :
 
-Utilisé pour :
+- **Masquer les adresses IP privées** des réseaux internes
+- **Réduire la consommation d'adresses IPv4 publiques**
+- **Renforcer la sécurité** en limitant l'exposition des hôtes internes
 
-- **Masquer les adresses internes**
-- Permettre l’accès à Internet depuis des adresses privées (RFC1918)
-- **Économiser des adresses IPv4 publiques**
-- Protéger l’architecture interne
+### Fonctionnement
 
-### Adresses privées IPv4 (RFC1918)
+- S'opère au niveau de la **couche Réseau** (couche 3) du modèle OSI
+- Traduit les adresses IP **source et/ou destination** des paquets
 
-|Classe|Plage d’adresses|CIDR|
-|---|---|---|
-|A|10.0.0.0 – 10.255.255.255|/8|
-|B|172.16.0.0 – 172.31.255.255|/12|
-|C|192.168.0.0 – 192.168.255.255|/16|
+### Avantages
 
----
-
-## 🔄 Types de NAT
-
-### 1️⃣ NAT statique
-
-- **Association fixe** entre une adresse IP publique et une adresse privée
-- Exemple :
-
-```text
-WAN IP 92.66.31.250:443 → LAN SRV-WEB:443
-```
-
-- Utilisé pour **exposer un service précis** à l’extérieur (Web, RDP, Mail…)
-
-### 2️⃣ NAT dynamique
-
-- Association temporaire d’une adresse privée à une adresse publique
-- Plusieurs IP privées peuvent partager une même IP publique
-
-### 3️⃣ PAT (Port Address Translation)
-
-- Variante de NAT dynamique
-- Traduction de l’adresse ET des **ports** :
-
-```text
-LAN IP 192.168.1.10:55555 → WAN IP 92.66.31.250:12345
-```
-
-- Permet à plusieurs machines internes d’utiliser **la même IP publique**
+- Résolution de la pénurie d'adresses IPv4
+- Amélioration de la sécurité (masquage de l'architecture interne)
+- Simplification de la gestion des changements de FAI / plages d'IP publiques
 
 ---
 
-## 🚦 Fonctionnement du NAT
+## 📊 Rappel : RFC 1918 et RFC 4291
 
-### Flux sortant (NAT source)
+### RFC 1918 : Adresses privées IPv4 (non routables sur Internet)
 
-- La machine interne envoie une requête → translation par le routeur pfSense → Internet
-- Au retour, pfSense redirige la réponse vers la bonne machine privée
-
-### Flux entrant (Port forwarding)
-
-- Requête Internet (ex: HTTPS) reçue sur pfSense → redirection vers le serveur privé concerné
-
-### NAT WAN-WAN
-
-- Association directe : IP publique → IP interne, sans changer les ports
-- Sert pour du **multi-IP** ou du **multi-service** sur des IP distinctes
-
-### NAT sortant
-
-- Par défaut **automatique** sur pfSense : tout le LAN sort avec l’IP WAN
-- Peut être personnalisé (hybride ou manuel)
-
----
-
-## 🛠️ Configuration du NAT sur pfSense
-
-### Interface
-
-**Firewall > NAT**
-
-### Transfert de port (Port Forward)
-
-1. Interface : généralement WAN
-2. Protocole : TCP, UDP, ou les deux
-3. Destination : Adresse WAN
-4. Redirection vers IP privée (SRV interne) + port
-
-### Exemple : Redirection RDP (TP)
-
-|Paramètre|Valeur|
+|Type|Plage|
 |---|---|
-|Interface|WAN|
-|Protocole|TCP|
-|Port externe|3389|
-|IP interne|SRV-MBR (alias)|
-|Port interne|3389|
+|A|10.0.0.0 → 10.255.255.255|
+|B|172.16.0.0 → 172.31.255.255|
+|C|192.168.0.0 → 192.168.255.255|
 
-### Alias pfSense
+### RFC 4291 : Adresses locales uniques IPv6 (ULA)
 
-- Groupes d’IP, de ports ou de réseaux utilisés pour simplifier les règles NAT et Firewall
-- Exemple : `Alias_SRV-MBR` → IP du serveur SRV-MBR
+- **fc00::/7** (non routables sur Internet)
 
-### NAT WAN-WAN
+**Remarque :**
 
-**Firewall > NAT > 1:1 NAT**
-
-- Permet de mapper directement IP publique → IP privée
-
-### NAT sortant
-
-**Firewall > NAT > Outbound**
-
-- Mode automatique (défaut)
-- Mode hybride → permet d’ajouter des règles manuelles en plus de l’automatique
-- Mode manuel → gestion 100% manuelle des règles NAT sortant
+- Le NAT est **moins nécessaire en IPv6** grâce à la très grande disponibilité d'adresses.
 
 ---
-### Commandes utiles (Linux)
 
-```bash
-# Test connectivité NAT sortant
-traceroute 8.8.8.8
+## 🔢 Types de NAT
 
-# Vérification port ouvert (depuis client externe)
-nmap -p 3389 [WAN IP]
-```
+### 📌 NAPT statique (_Destination NAT_ ou _DNAT_)
+
+- Redirige les requêtes arrivant sur une IP publique vers un hôte interne spécifique (port et adresse).
+
+**Exemple d'usage :** publication d'un serveur Web interne.
+
+### 📌 NAPT dynamique (_Source NAT_ ou _SNAT_)
+
+- Modifie les adresses IP et/ou les ports **source** pour permettre aux hôtes internes d'accéder à Internet en utilisant une adresse publique partagée.
+
+**Exemple d'usage :** navigation Web des postes clients.
+
+---
+
+## 🛏️ NAT sur pfSense
+
+### 📌 Port forwarding (redirection de port)
+
+- Redirige le trafic entrant sur un **port spécifique** vers un serveur interne.
+- Utilisé pour exposer des services internes (ex : serveur Web, serveur FTP).
+
+### 📌 NAT 1:1
+
+- Associe une **IP publique** à une **IP privée unique**.
+- Permet de rendre totalement accessible un hôte interne via une IP publique.
+
+### 📌 NAT sortant (Outbound NAT)
+
+- Contrôle la façon dont le trafic sortant est traduit.
+- Permet par exemple d'utiliser différentes adresses publiques selon les VLANs.
 
 ---
 
 ## ✅ À retenir pour les révisions
 
-- Le NAT permet de **connecter des réseaux privés au WAN** tout en contrôlant les flux
-- Le **NAT statique** sert à exposer des services spécifiques
-- Le **PAT** optimise l’usage des IP publiques
-- **pfSense** simplifie grandement la gestion des NAT : Port Forward, NAT 1:1, NAT sortant
-- Bien **documenter les redirections** est essentiel pour le maintien de la sécurité
+- Le **NAT (Network Address Translation)** modifie les adresses IP dans les paquets réseau
+- Il fonctionne en **couche 3** (réseau) du modèle OSI
+- Objectifs :
+    - Masquer les **adresses IP privées**
+    - Économiser les **adresses IPv4 publiques**
+    - Renforcer la **sécurité** du réseau interne
+- **RFC 1918** → plages d’adresses IPv4 privées
+- Deux types principaux :
+    - **SNAT (Source NAT)** : pour l’accès **sortant** des clients internes (navigation Internet)
+    - **DNAT (Destination NAT)** ou **Port forwarding** : pour publier un service interne vers l’extérieur
+- Sur pfSense : 3 types de NAT → **Port forwarding**, **NAT 1:1**, **NAT sortant**
+- Les **règles NAT** doivent être documentées et testées → attention à la **cohérence avec les règles de pare-feu**
 
 ---
 
 ## 📌 Bonnes pratiques professionnelles
 
-- Toujours commencer par un **schéma réseau clair**
-- Utiliser des **alias** pour simplifier la maintenance
-- Ne rediriger que les **ports et services nécessaires**
-- **Limiter les IP sources autorisées** sur les redirections WAN
-- Tester systématiquement après chaque modification (interne + externe)
-- **Documenter** toute règle de NAT et de FW en parallèle pour cohérence
-- Prévoir une **revue régulière des NAT configurés** pour éviter les configurations obsolètes ou inutiles
+- Toujours documenter les règles NAT mises en place.
+- Restreindre le NAT aux flux nécessaires.
+- Contrôler et limiter les redirections de ports pour minimiser la surface d'attaque.
+- Tester systématiquement les règles de NAT après déploiement.
+- Éviter de dépendre inutilement du NAT en IPv6.
+
+---
+
+## ⚠️ Pièges à éviter
+
+- Créer des redirections trop larges ("any-any")
+- Oublier de mettre à jour les règles NAT lors de modifications du réseau interne.
+- Mal comprendre le comportement de NAT sortant automatique vs manuel.
+- Ne pas vérifier les **retours de flux** (asymétrie de routage).
+
+---
+
+## ✅ Commandes utiles (diagnostic NAT)
+
+### Sous pfSense (menu Web / Diagnostics)
+
+- **Diagnostic → States** : Visualiser les connexions NATées.
+- **Diagnostic → Packet Capture** : Analyser le trafic NATé.
+- **Diagnostics → NAT Table** : Voir les translations actives.
+
+### En ligne de commande (exemple Linux)
+
+```bash
+# Afficher les connexions NAT (iptables)
+sudo iptables -t nat -L -v -n
+
+# Sur un pfSense (console root)
+pfctl -sn    # Affiche les règles NAT
+pfctl -si    # Statistiques NAT
+```
