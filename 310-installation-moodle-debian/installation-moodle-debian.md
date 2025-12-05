@@ -264,35 +264,3 @@ Solution : utiliser `/var/moodledata` avec propriétaire `www-data` et permissi
 Survient si une extension n’est pas installée.
 
 Solution : s’assurer de l’installation complète des paquets PHP recommandés.
-
----
-
-## 13. Sécurisation
-
-### HTTPS obligatoire
-
-L’usage d’un certificat TLS est recommandé. Installation possible via Certbot :
-
-```bash
-sudo apt install certbot python3-certbot-apache
-sudo certbot --apache -d exemple.com
-```
-
-### Renforcement MariaDB
-
-- Désactiver l’accès distant pour `root`.
-- Utiliser un mot de passe robuste.
-- Limiter les privilèges de l’utilisateur Moodle à sa base.
-
-### Permissions renforcées
-
-- Dirroot : fichiers en `640`, répertoires en `750`.
-- Dataroot : accessible uniquement à `www-data`.
-
-### Sauvegardes
-
-Mettre en place une rotation des sauvegardes de :
-
-- la base de données,
-- `moodledata`,
-- `config.php`.
