@@ -491,3 +491,6 @@ vim install_moodle51.sh
 chmod +x install_moodle51.sh
 sudo ./install_moodle51.sh
 ```
+
+Script disponible dans le dépôt :
+[`scripts/install_moodle51.sh`](https://github.com/nivvlem/TSSR/blob/main/scripts/install_moodle51.sh)
