@@ -321,6 +321,9 @@
     - [🛠 Exemple](/200-services-transverses-microsoft/06-microsoft-deployment-toolkit/exemple-pratique.md)
   - [🧾 Synthèse](/200-services-transverses-microsoft/synthèse/synthèse.md)
 
+- 🌐 Installation Moodle sur Debian
+  - [Installation Moodle](/310-installation-moodle-debian/installation-moodle-debian.md)
+
 - 📎 Fiches Références
   - [Active Directory](/fiches-références/active-directory.md)
   - [Apache](/fiches-références/apache.md)
