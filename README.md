@@ -1,6 +1,6 @@
-# 💻 TSSR — Notes de cours et fiches pratiques
+# 💻 Systèmes et Réseaux - Notes et fiches pratiques
 
-Bienvenue sur mon espace personnel de travail, de révision et de documentation dans le cadre de ma formation **TSSR – Technicien Supérieur Systèmes et Réseaux**.
+Bienvenue sur mon espace personnel de travail, de révision et de documentation dans le cadre de mon expérience en **Systèmes et Réseaux**.
 
 Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques**, **commandes utiles** et **exemples de mise en situation professionnelle**, organisés par module.
 
@@ -14,7 +14,7 @@ Consulter la section [Modules de cours](modules.md) pour accéder à chaque thè
 
 ## 📎 Accéder aux fiches de référence
 
-Pour un accès rapide aux commandes, protocoles, outils et configurations spécifiques, aller directement dans [Fiches Références](fiches-références/README.md).
+Pour un accès rapide aux commandes, procédures, outils et configurations spécifiques, aller directement dans [Fiches Références](fiches-références/README.md).
 
 ---
 
