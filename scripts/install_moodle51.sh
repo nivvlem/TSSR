@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-#################################
+##############################
 ### 0. Contrôles préalables
-#################################
+##############################
 
 if [[ "$EUID" -ne 0 ]]; then
   echo "Ce script doit être exécuté en root (sudo)."
@@ -16,9 +16,9 @@ if ! command -v wget >/dev/null 2>&1; then
   apt install -y wget
 fi
 
-#################################
+##############################
 ### 1. Saisie des variables
-#################################
+##############################
 
 read -rp "Nom de la base MariaDB (défaut : moodle) : " DB_NAME
 DB_NAME=${DB_NAME:-moodle}
@@ -32,29 +32,28 @@ if [[ -z "$DB_PASS" ]]; then
   exit 1
 fi
 
-read -rp "IP ou nom d'hôte à utiliser dans l'URL (ex : 192.168.1.173) : " MOODLE_HOST
+read -rp "IP ou nom d'hôte à utiliser dans l'URL : " MOODLE_HOST
 if [[ -z "$MOODLE_HOST" ]]; then
   echo "Valeur obligatoire."
   exit 1
 fi
 
-#################################
+##############################
 ### 2. Mise à jour système + outils de base
-#################################
+##############################
 
 echo "Mise à jour du système et installation des outils de base..."
 apt update
 apt full-upgrade -y
 apt install -y vim curl wget unzip htop
 
-#################################
+##############################
 ### 3. Installation Apache, MariaDB, PHP
-#################################
+##############################
 
 echo "Installation d'Apache, MariaDB et PHP..."
 apt install -y apache2 mariadb-server
 
-# PHP 8.2 + extensions nécessaires pour Moodle 5.1
 apt install -y \
   php php-cli libapache2-mod-php \
   php-intl php-xml php-soap php-mysql php-zip \
@@ -63,9 +62,9 @@ apt install -y \
 systemctl enable --now apache2
 systemctl enable --now mariadb
 
-#################################
-### 4. Configuration MariaDB (base + utilisateur)
-#################################
+##############################
+### 4. Création base + utilisateur MariaDB
+##############################
 
 echo "Création de la base et de l'utilisateur MariaDB..."
 
@@ -76,18 +75,46 @@ GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'localhost';
 FLUSH PRIVILEGES;
 SQL
 
-#################################
-### 5. Répertoire de données Moodle (dataroot)
-#################################
+##############################
+### 5. Durcissement MariaDB (optionnel)
+##############################
+
+SECURE_BIN=""
+if command -v mysql_secure_installation >/dev/null 2>&1; then
+  SECURE_BIN="mysql_secure_installation"
+elif command -v mariadb-secure-installation >/dev/null 2>&1; then
+  SECURE_BIN="mariadb-secure-installation"
+fi
+
+if [[ -n "$SECURE_BIN" ]]; then
+  echo
+  echo "Un assistant de sécurisation MariaDB est disponible : $SECURE_BIN"
+  echo "Il permet de configurer le compte root, supprimer les utilisateurs anonymes,"
+  echo "désactiver le login root distant et supprimer la base de test."
+  read -rp "Souhait d'exécuter cet assistant maintenant ? [o/N] : " RUN_SECURE
+  RUN_SECURE=${RUN_SECURE:-N}
+  if [[ "$RUN_SECURE" =~ ^[oOyY]$ ]]; then
+    "$SECURE_BIN"
+  else
+    echo "Étape de sécurisation MariaDB ignorée à la demande de l'administrateur."
+  fi
+else
+  echo "Aucun script mysql_secure_installation / mariadb-secure-installation trouvé."
+  echo "Durcissement MariaDB éventuel à effectuer manuellement."
+fi
+
+##############################
+### 6. Répertoire de données Moodle (dataroot)
+##############################
 
 echo "Création du dataroot /var/moodledata..."
 mkdir -p /var/moodledata
 chown -R www-data:www-data /var/moodledata
 chmod 770 /var/moodledata
 
-#################################
-### 6. Téléchargement et installation de Moodle 5.1
-#################################
+##############################
+### 7. Téléchargement et installation de Moodle 5.1
+##############################
 
 echo "Téléchargement de Moodle 5.1..."
 cd /tmp
@@ -104,9 +131,8 @@ fi
 echo "Extraction de l'archive..."
 tar -xzf moodle-latest-501.tgz
 
-# Sauvegarde éventuelle d'un ancien répertoire
 if [[ -d /var/www/moodle ]]; then
-  echo "Un répertoire /var/www/moodle existe déjà. Sauvegarde sous /var/www/moodle.old.\$(date +%Y%m%d%H%M%S)"
+  echo "Un répertoire /var/www/moodle existe déjà. Sauvegarde sous /var/www/moodle.old.$(date +%Y%m%d%H%M%S)"
   mv /var/www/moodle /var/www/moodle.old.$(date +%Y%m%d%H%M%S)
 fi
 
@@ -118,18 +144,16 @@ find /var/www/moodle -type d -exec chmod 750 {} \;
 find /var/www/moodle -type f -exec chmod 640 {} \;
 
 ##############################
-### 7. Configuration PHP spécifique Moodle
+### 8. Configuration PHP spécifique Moodle
 ##############################
 
 echo "Création du fichier de configuration PHP pour Moodle..."
 
-# Détection automatique de la version courte de PHP (8.2, 8.3, ...)
+# Détection automatique de la version courte de PHP (ex : 8.2, 8.3, 8.4)
 PHP_SHORT_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
-
 PHP_SAPI_DIR="/etc/php/${PHP_SHORT_VERSION}/apache2"
 MOODLE_PHP_CONF="${PHP_SAPI_DIR}/conf.d/90-moodle.ini"
 
-# S'assure que le dossier existe (au cas où)
 mkdir -p "${PHP_SAPI_DIR}/conf.d"
 
 cat > "$MOODLE_PHP_CONF" <<'EOF'
@@ -147,9 +171,9 @@ EOF
 
 systemctl restart apache2
 
-#################################
-### 8. VirtualHost Apache pour Moodle 5.1
-#################################
+##############################
+### 9. VirtualHost Apache pour Moodle 5.1
+##############################
 
 echo "Configuration du VirtualHost Apache..."
 
@@ -159,6 +183,7 @@ cat > "$MOODLE_VHOST" <<EOF
 <VirtualHost *:80>
     ServerName $MOODLE_HOST
 
+    # À partir de Moodle 5.1, les requêtes HTTP doivent pointer vers le sous-dossier public/
     DocumentRoot /var/www/moodle/public
 
     <Directory /var/www/moodle/public>
@@ -177,9 +202,9 @@ a2dissite 000-default.conf || true
 a2enmod rewrite
 systemctl reload apache2
 
-#################################
-### 9. Cron Moodle (optionnel)
-#################################
+##############################
+### 10. Cron Moodle
+##############################
 
 echo
 echo "Souhait d'ajouter le cron Moodle dans la crontab de www-data ?"
@@ -190,7 +215,6 @@ ADD_CRON=${ADD_CRON:-N}
 
 if [[ "$ADD_CRON" =~ ^[oOyY]$ ]]; then
   TMP_CRON=$(mktemp)
-  # On récupère la crontab existante (s'il y en a une)
   (crontab -u www-data -l 2>/dev/null || true) > "$TMP_CRON"
   if ! grep -q "moodle/admin/cli/cron.php" "$TMP_CRON"; then
     echo "*/5 * * * * /usr/bin/php /var/www/moodle/admin/cli/cron.php >/dev/null 2>&1" >> "$TMP_CRON"
@@ -202,9 +226,9 @@ else
   echo "Cron Moodle à ajouter manuellement si nécessaire."
 fi
 
-#################################
-### 10. Synthèse
-#################################
+##############################
+### 11. Synthèse
+##############################
 
 echo
 echo "Installation terminée (partie système)."
