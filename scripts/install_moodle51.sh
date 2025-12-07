@@ -117,12 +117,20 @@ echo "Application des permissions sur le code Moodle..."
 find /var/www/moodle -type d -exec chmod 750 {} \;
 find /var/www/moodle -type f -exec chmod 640 {} \;
 
-#################################
+##############################
 ### 7. Configuration PHP spécifique Moodle
-#################################
+##############################
 
 echo "Création du fichier de configuration PHP pour Moodle..."
-MOODLE_PHP_CONF="/etc/php/8.2/apache2/conf.d/90-moodle.ini"
+
+# Détection automatique de la version courte de PHP (8.2, 8.3, ...)
+PHP_SHORT_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
+
+PHP_SAPI_DIR="/etc/php/${PHP_SHORT_VERSION}/apache2"
+MOODLE_PHP_CONF="${PHP_SAPI_DIR}/conf.d/90-moodle.ini"
+
+# S'assure que le dossier existe (au cas où)
+mkdir -p "${PHP_SAPI_DIR}/conf.d"
 
 cat > "$MOODLE_PHP_CONF" <<'EOF'
 ; Paramètres recommandés pour Moodle 5.1
