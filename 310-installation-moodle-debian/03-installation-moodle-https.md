@@ -467,6 +467,16 @@ echo "  -> https://$MOODLE_HOST/"
 echo
 echo "L'installation doit maintenant être terminée via le navigateur (choix de la langue, paramètres du site, création du compte administrateur, etc.)."
 ```
+Script disponible dans le dépôt :
+[`scripts/install_moodle51_https.sh`](https://github.com/nivvlem/TSSR/blob/main/scripts/install_moodle51_https.sh)
+
+### Téléchargement direct
+
+```bash
+wget https://raw.githubusercontent.com/nivvlem/TSSR/main/scripts/install_moodle51_https.sh -O install_moodle51_https.sh
+chmod +x install_moodle51_https.sh
+sudo ./install_moodle51_https.sh
+```
 
 ---
 
@@ -788,4 +798,15 @@ fi
 
 echo
 echo "L'installation doit maintenant être terminée via le navigateur (choix de la langue, paramètres du site, création du compte administrateur, etc.)."
+```
+
+Script disponible dans le dépôt :
+[`scripts/install_moodle51_https_http.sh`](https://github.com/nivvlem/TSSR/blob/main/scripts/install_moodle51_https_http.sh)
+
+### Téléchargement direct
+
+```bash
+wget https://raw.githubusercontent.com/nivvlem/TSSR/main/scripts/install_moodle51_https_http.sh -O install_moodle51_https_http.sh
+chmod +x install_moodle51_https_http.sh
+sudo ./install_moodle51_https_http.sh
 ```
