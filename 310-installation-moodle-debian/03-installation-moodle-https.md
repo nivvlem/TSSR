@@ -330,18 +330,41 @@ if [[ -d /var/www/moodle ]]; then
 fi
 
 mv /tmp/moodle /var/www/moodle
-chown -R www-data:www-data /var/www/moodle
+
+##############################
+### 8. Gestion automatique du répertoire vendor (Composer)
+##############################
+
+echo "Vérification de la présence du répertoire vendor de Moodle..."
+
+if [[ ! -d /var/www/moodle/vendor ]]; then
+  echo "Répertoire vendor absent. Installation des dépendances PHP via Composer..."
+
+  if ! command -v composer >/dev/null 2>&1; then
+    echo "Composer n'est pas installé. Installation..."
+    apt install -y composer
+  fi
+
+  cd /var/www/moodle
+  composer install --no-dev --optimize-autoloader --classmap-authoritative
+else
+  echo "Répertoire vendor déjà présent, étape Composer non nécessaire."
+fi
+
+cd /
 
 echo "Application des permissions sur le code Moodle..."
+chown -R www-data:www-data /var/www/moodle
 find /var/www/moodle -type d -exec chmod 750 {} \;
 find /var/www/moodle -type f -exec chmod 640 {} \;
 
 ##############################
-### 8. Configuration PHP spécifique Moodle
+### 9. Configuration PHP spécifique Moodle
 ##############################
 
 echo "Création du fichier de configuration PHP pour Moodle..."
 
+# Détection automatique de la version courte de PHP (ex : 8.2, 8.3, 8.4)
 PHP_SHORT_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
 PHP_SAPI_DIR="/etc/php/${PHP_SHORT_VERSION}/apache2"
 MOODLE_PHP_CONF="${PHP_SAPI_DIR}/conf.d/90-moodle.ini"
@@ -364,7 +387,7 @@ EOF
 systemctl restart apache2
 
 ##############################
-### 9. Génération du certificat SSL auto-signé
+### 10. Génération du certificat SSL auto-signé
 ##############################
 
 echo "Création du certificat SSL auto-signé pour $MOODLE_HOST..."
@@ -374,10 +397,10 @@ mkdir -p /etc/apache2/ssl
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/apache2/ssl/moodle.key \
   -out /etc/apache2/ssl/moodle.crt \
-  -subj "/C=FR/ST=Lab/L=Local/O=SR/OU=Test/CN=$MOODLE_HOST"
+  -subj "/C=FR/ST=Lab/L=Local/O=TSSR/OU=ENI/CN=$MOODLE_HOST"
 
 ##############################
-### 10. VirtualHost Apache HTTP + HTTPS pour Moodle 5.1
+### 11. VirtualHost Apache HTTP + HTTPS pour Moodle 5.1
 ##############################
 
 echo "Configuration des VirtualHost Apache (HTTP + HTTPS)..."
@@ -396,6 +419,7 @@ cat > "$MOODLE_VHOST_SSL" <<EOF
 <VirtualHost *:443>
     ServerName $MOODLE_HOST
 
+    # À partir de Moodle 5.1, les requêtes HTTP(S) doivent pointer vers le sous-dossier public/
     DocumentRoot /var/www/moodle/public
 
     <Directory /var/www/moodle/public>
@@ -426,7 +450,7 @@ apachectl configtest
 systemctl reload apache2
 
 ##############################
-### 11. Cron Moodle
+### 12. Cron Moodle
 ##############################
 
 echo
@@ -450,7 +474,7 @@ else
 fi
 
 ##############################
-### 12. Synthèse
+### 13. Synthèse
 ##############################
 
 echo
@@ -466,6 +490,7 @@ echo "Accès à l'installateur Web :"
 echo "  -> https://$MOODLE_HOST/"
 echo
 echo "L'installation doit maintenant être terminée via le navigateur (choix de la langue, paramètres du site, création du compte administrateur, etc.)."
+
 ```
 Script disponible dans le dépôt :
 [`scripts/install_moodle51_https.sh`](https://github.com/nivvlem/TSSR/blob/main/scripts/install_moodle51_https.sh)
@@ -634,18 +659,41 @@ if [[ -d /var/www/moodle ]]; then
 fi
 
 mv /tmp/moodle /var/www/moodle
-chown -R www-data:www-data /var/www/moodle
+
+##############################
+### 8. Gestion automatique du répertoire vendor (Composer)
+##############################
+
+echo "Vérification de la présence du répertoire vendor de Moodle..."
+
+if [[ ! -d /var/www/moodle/vendor ]]; then
+  echo "Répertoire vendor absent. Installation des dépendances PHP via Composer..."
+
+  if ! command -v composer >/dev/null 2>&1; then
+    echo "Composer n'est pas installé. Installation..."
+    apt install -y composer
+  fi
+
+  cd /var/www/moodle
+  composer install --no-dev --optimize-autoloader --classmap-authoritative
+else
+  echo "Répertoire vendor déjà présent, étape Composer non nécessaire."
+fi
+
+cd /
 
 echo "Application des permissions sur le code Moodle..."
+chown -R www-data:www-data /var/www/moodle
 find /var/www/moodle -type d -exec chmod 750 {} \;
 find /var/www/moodle -type f -exec chmod 640 {} \;
 
 ##############################
-### 8. Configuration PHP spécifique Moodle
+### 9. Configuration PHP spécifique Moodle
 ##############################
 
 echo "Création du fichier de configuration PHP pour Moodle..."
 
+# Détection automatique de la version courte de PHP (ex : 8.2, 8.3, 8.4)
 PHP_SHORT_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
 PHP_SAPI_DIR="/etc/php/${PHP_SHORT_VERSION}/apache2"
 MOODLE_PHP_CONF="${PHP_SAPI_DIR}/conf.d/90-moodle.ini"
@@ -668,7 +716,7 @@ EOF
 systemctl restart apache2
 
 ##############################
-### 9. VirtualHost Apache (HTTP / HTTPS)
+### 10. VirtualHost Apache (HTTP / HTTPS)
 ##############################
 
 echo "Configuration des VirtualHost Apache..."
@@ -684,7 +732,7 @@ if [[ "$USE_SSL" = true ]]; then
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/apache2/ssl/moodle.key \
     -out /etc/apache2/ssl/moodle.crt \
-    -subj "/C=FR/ST=Lab/L=Local/O=SR/OU=Test/CN=$MOODLE_HOST"
+    -subj "/C=FR/ST=Lab/L=Local/O=TSSR/OU=ENI/CN=$MOODLE_HOST"
 
   cat > "$MOODLE_VHOST_HTTP" <<EOF
 <VirtualHost *:80>
@@ -729,6 +777,7 @@ else
 <VirtualHost *:80>
     ServerName $MOODLE_HOST
 
+    # À partir de Moodle 5.1, les requêtes HTTP doivent pointer vers le sous-dossier public/
     DocumentRoot /var/www/moodle/public
 
     <Directory /var/www/moodle/public>
@@ -751,7 +800,7 @@ apachectl configtest
 systemctl reload apache2
 
 ##############################
-### 10. Cron Moodle
+### 11. Cron Moodle
 ##############################
 
 echo
@@ -775,7 +824,7 @@ else
 fi
 
 ##############################
-### 11. Synthèse
+### 12. Synthèse
 ##############################
 
 echo
@@ -798,6 +847,7 @@ fi
 
 echo
 echo "L'installation doit maintenant être terminée via le navigateur (choix de la langue, paramètres du site, création du compte administrateur, etc.)."
+
 ```
 
 Script disponible dans le dépôt :

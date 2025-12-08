@@ -411,9 +411,31 @@ if [[ -d /var/www/moodle ]]; then
 fi
 
 mv /tmp/moodle /var/www/moodle
-chown -R www-data:www-data /var/www/moodle
+
+##############################
+### 7bis. Gestion automatique du répertoire vendor (Composer)
+##############################
+
+echo "Vérification de la présence du répertoire vendor de Moodle..."
+
+if [[ ! -d /var/www/moodle/vendor ]]; then
+  echo "Répertoire vendor absent. Installation des dépendances PHP via Composer..."
+
+  if ! command -v composer >/dev/null 2>&1; then
+    echo "Composer n'est pas installé. Installation..."
+    apt install -y composer
+  fi
+
+  cd /var/www/moodle
+  composer install --no-dev --optimize-autoloader --classmap-authoritative
+else
+  echo "Répertoire vendor déjà présent, étape Composer non nécessaire."
+fi
+
+cd /
 
 echo "Application des permissions sur le code Moodle..."
+chown -R www-data:www-data /var/www/moodle
 find /var/www/moodle -type d -exec chmod 750 {} \;
 find /var/www/moodle -type f -exec chmod 640 {} \;
 
@@ -517,6 +539,7 @@ echo "Accès à l'installateur Web :"
 echo "  -> http://$MOODLE_HOST/"
 echo
 echo "L'installation doit maintenant être terminée via le navigateur (choix de la langue, paramètres du site, création du compte administrateur, etc.)."
+
 ```
 
 ### 🔧 Rappel rapide d’utilisation
