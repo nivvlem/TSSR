@@ -16,6 +16,7 @@ Mettre en œuvre une installation complète et maîtrisée de Moodle 5.1 sur un 
 - [Installation Moodle - Mode standard](../../310-installation-moodle-debian/01-installation-moodle-debian.md)
 - [Installation Moodle - Hors ligne](../../310-installation-moodle-debian/02-installation-moodle-hors-ligne.md)
 - [Installation Moodle - HTTPS](../../310-installation-moodle-debian/03-installation-moodle-https.md)
+- [Diagnostics](../../310-installation-moodle-debian/04-diagnostics.md)
 
 ---
 

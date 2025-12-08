@@ -480,7 +480,7 @@ sudo ./install_moodle51_https.sh
 
 ---
 
-## 10. Script d'installation Moodle 5.1 avec choix HTTP / HTTPS
+## 9. Script d'installation Moodle 5.1 avec choix HTTP / HTTPS
 
 Nouvelle itération du script ajoutant une question initiale permettant de sélectionner un déploiement HTTP simple ou HTTPS avec certificat auto-signé.
 
