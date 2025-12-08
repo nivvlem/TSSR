@@ -58,7 +58,7 @@ Lorsque le champ `CN` ne correspond pas au nom utilisé dans l’URL (par exempl
 
 Pour Moodle 5.1, les requêtes doivent pointer vers le sous-dossier `public/`.
 
-Exemple de VirtualHost HTTPS :
+Exemple de VirtualHost HTTPS (`moodle_ssl.conf`):
 
 ```apache
 <VirtualHost *:443>
@@ -91,7 +91,7 @@ Exemple de VirtualHost HTTPS :
 
 ### 5.1. HTTPS forcé
 
-Pour forcer l’utilisation de HTTPS, un VirtualHost HTTP minimal est utilisé afin de rediriger toute requête vers HTTPS :
+Pour forcer l’utilisation de HTTPS, un VirtualHost HTTP (ex : `moodle.conf`) minimal est utilisé afin de rediriger toute requête vers HTTPS :
 
 ```apache
 <VirtualHost *:80>
@@ -136,7 +136,7 @@ a2ensite moodle-ssl.conf    # si HTTPS activé
 a2dissite 000-default.conf || true
 
 a2enmod ssl
-A2ENMOD headers
+a2enmod headers
 a2enmod rewrite
 ```
 
@@ -183,6 +183,32 @@ systemctl reload apache2
 
 - Effet : Apache ne redémarre pas correctement après modification.
 - Recommandation : `apachectl configtest` systématique avant `reload`.
+
+## 7.6. Avertissement Apache AH00558 (FQDN non défini)
+
+- **Effet :**  
+    Avertissement lors de `apachectl configtest` ou au démarrage du service. Le message courant est :
+    
+    ```
+    AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1.    Set the 'ServerName' directive globally to suppress this message    
+    ```
+    
+- **Cause :**  
+    Aucun nom d’hôte global n’est défini pour Apache. Il s’agit d’un avertissement non bloquant qui n’empêche pas Moodle ou HTTPS de fonctionner.
+    
+- **Recommandation :**  
+    Déclarer un `ServerName` global pour supprimer l’avertissement :
+    
+    ```bash
+    echo "ServerName <IP_ou_FQDN>" > /etc/apache2/conf-available/servername.conf
+    a2enconf servername.conf
+    apachectl configtest
+    systemctl reload apache2
+    ```
+    
+- **Bonnes pratiques :**
+    - définir un FQDN interne cohérent (`moodle.local`, `moodle.lab.eni`, etc.) ;
+    - en environnement de test, utiliser l’adresse IP du serveur si aucun domaine n’est disponible.
 
 ---
 
