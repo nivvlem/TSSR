@@ -50,6 +50,28 @@ Un fichier `.conf` dans `sites-available` contient typiquement :
 </VirtualHost>
 ```
 
+```apache
+<VirtualHost *:443>
+    ServerName MOODLE_HOST
+
+    DocumentRoot /var/www/moodle/public
+
+    <Directory /var/www/moodle/public>
+        Options FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/moodle.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/moodle.key
+
+    Header always set Strict-Transport-Security "max-age=31536000"
+
+    ErrorLog ${APACHE_LOG_DIR}/moodle_ssl_error.log
+    CustomLog ${APACHE_LOG_DIR}/moodle_ssl_access.log combined
+</VirtualHost>
+```
 ---
 
 ## 🔎 Cas d’usage courant

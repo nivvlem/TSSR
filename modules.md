@@ -23,4 +23,4 @@
 | 170    | GLPI                           | [📘 Voir](/170-glpi/README.md)                                               |
 | 180    | Cloud & Microsoft 365          | [📘 Voir](/180-cloud-et-microsoft365/README.md)                              |
 | 200    | Services transverses Microsoft | [📘 Voir](/200-services-transverses-microsoft/README.md)                     |
-| 310    | Installation Moodle sur Debian | [📘 Voir](/310-installation-moodle-debian/installation-moodle-debian.md)     |
+| 310    | Installation Moodle sur Debian | [📘 Voir](/310-installation-moodle-debian/README.md)                         |
