@@ -1,8 +1,8 @@
-# 💻 Systèmes et Réseaux - Notes et fiches pratiques
+# 💻 Systèmes, Réseaux & Cybersécurité - Notes et fiches pratiques
 
 Bienvenue sur mon espace personnel de travail, de révision et de documentation dans le cadre de mon expérience en **Systèmes et Réseaux**.
 
-Ce site regroupe l’ensemble de mes **cours synthétisés**, **fiches pratiques**, **commandes utiles** et **exemples de mise en situation professionnelle**, organisés par module.
+Ce site regroupe l’ensemble de mes **cours synthétisés**, **expériences**, **fiches pratiques**, **commandes utiles** et **exemples de mise en situation professionnelle**, organisés par module.
 
 ---
 
