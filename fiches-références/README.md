@@ -39,6 +39,7 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [Centreon](centreon.md)
 - [Centreon - Plugin](centreon-plugin.md)
 - [OpenSSL](openssl.md)
+- [Proxmox](proxmox.md)
 - [VPN](vpn.md)
 - [SQL](sql.md)
 - [Squid](squid.md)
@@ -47,3 +48,4 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [Wireshark](wireshark.md)
 - [XiVO](xivo.md)
 - [CLI IOS](cli-ios.md)
+- [ZABBIX](zabbix.md)
