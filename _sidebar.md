@@ -354,6 +354,7 @@
   - [PowerShell](/fiches-références/powershell.md)
   - [PowerShell Scripting](/fiches-références/powershell-scripting.md)
   - [Proxmox](/fiches-références/proxmox.md)
+  - [Redmine](/fiches-références/redmine.md)
   - [Rundeck](/fiches-références/rundeck.md)
   - [SQL](/fiches-références/sql.md)
   - [Squid](/fiches-références/squid.md)
