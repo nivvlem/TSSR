@@ -40,6 +40,7 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [Centreon - Plugin](centreon-plugin.md)
 - [OpenSSL](openssl.md)
 - [Proxmox](proxmox.md)
+- [Rundeck](rundeck.md)
 - [VPN](vpn.md)
 - [SQL](sql.md)
 - [Squid](squid.md)
