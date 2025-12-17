@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "fiches-références/hexanet.md",
+                "file": "fiches-références/noeuds.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hexanet"
+              "title": "noeuds"
             }
           }
         ]
@@ -185,9 +185,13 @@
   },
   "active": "ce36c44e2a72c767",
   "lastOpenFiles": [
-    "fiches-références/rundeck.md",
-    "fiches-références/hexanet.md",
+    "README.md",
+    "_sidebar.md",
+    "fiches-références/noeuds.md",
+    "fiches-références/nextcloud.md",
     "fiches-références/README.md",
+    "fiches-références/hexanet.md",
+    "fiches-références/rundeck.md",
     "fiches-références/zabbix.md",
     "fiches-références/proxmox.md"
   ]

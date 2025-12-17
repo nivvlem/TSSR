@@ -38,6 +38,8 @@ Regrouper en un seul endroit toutes les fiches synthétiques sur les outils, ser
 - [conf Apache](conf-apache.md)
 - [Centreon](centreon.md)
 - [Centreon - Plugin](centreon-plugin.md)
+- [Nextcloud](nextcloud.md)
+- [Noeuds](noeuds.md)
 - [OpenSSL](openssl.md)
 - [Proxmox](proxmox.md)
 - [Rundeck](rundeck.md)
